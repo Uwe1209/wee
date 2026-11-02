@@ -52,6 +52,7 @@ export class App {
     this.slow = 0;
     this.v = 0;
     this.vh = window.innerHeight;
+    this.drawn = new Set();
     this.api = {
       ready: false,
       layout: null,
@@ -128,7 +129,7 @@ export class App {
     this.v = this.scroll.update(dt) / this.vh;
     uploadOne(this.renderer);
     this.render(this.v);
-    this.dom.update(this.v, this.intro, this.chapters.room);
+    this.dom.update(this.v, this.intro, this.drawn.has('room') ? this.chapters.room : null);
     this.adapt(dt);
     if (FLAGS.debug) this.debug(dt);
   }
@@ -180,6 +181,7 @@ export class App {
 
   render(v) {
     const plan = this.plan(v);
+    this.drawn = new Set([plan.a, plan.b].filter(Boolean));
     const a = this.draw(plan.a, v, this.slots[0]);
     let source = this.slots[0];
     let look = (a ?? this.chapters.wall).look;
@@ -208,7 +210,7 @@ export class App {
     this.scroll.setTarget(v * this.vh, { instant: true });
     this.v = this.scroll.update(0) / this.vh;
     this.render(this.v);
-    this.dom.update(this.v, 1, this.chapters.room);
+    this.dom.update(this.v, 1, this.drawn.has('room') ? this.chapters.room : null);
     this.api.info = { state, v: this.v, failed: [...this.failed] };
     this.api.ready = true;
     return this.v;
