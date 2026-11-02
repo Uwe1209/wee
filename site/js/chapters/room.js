@@ -31,7 +31,7 @@ const SIZE = new THREE.Vector2();
 
 // The hall, in world units: side walls at x = left and right, floor and ceiling
 // heights, and its two ends (behind the first camera key, far past the last card).
-const HALL = { left: -3.6, right: 4.6, floor: -2.6, ceiling: 5, near: 14, far: -100 };
+const HALL = { left: -3.6, right: 4.6, floor: -2.6, ceiling: 5, near: 14, far: -130 };
 // One window per bay in the right-hand wall, halfway between two cards. `gobo` is
 // the part of the gobo texture (px of 1024, y down) the opening maps onto: the
 // pane block and a margin of wall around it.
@@ -102,33 +102,54 @@ float sunAt(vec3 p, float lod) {
 }
 `;
 
-// Sunlit haze between the eye and a surface: a jittered march through the slab
-// of air whose sun rays pass the window band (the only air that can be lit).
+// Sunlit haze between the eye and a surface. Along an eye ray, the point where
+// each sample's sun ray meets the window wall moves in a straight line, so the
+// stretches of the ray lit through each window can be solved for: first the band
+// between sill and head, then each window's width in turn, nearest first. All
+// the taps land inside those stretches, a few per window, jittered per pixel
+// (and per window, so the windows' errors don't line up).
 const HAZE_GLSL = /* glsl */ `
 uniform vec3 uHaze;      // scattered light per unit of sunlit path
 uniform float uHazeReach;
-#define HAZE_STEPS 24
+#define HAZE_WINDOWS 6
+#define HAZE_TAPS 6
+
+// Ray parameter where a + s * b reaches the value v (b kept away from zero).
+float reach(float v, float a, float b) {
+  return (v - a) / (b >= 0.0 ? max(b, 1e-4) : min(b, -1e-4));
+}
 
 vec3 sunHaze(vec3 p) {
   vec3 ray = p - cameraPosition;
   float dist = length(ray);
   vec3 dir = ray / max(dist, 1e-4);
-  float slope = uSun.y * uSun.w;
-  float h0 = cameraPosition.y + (uBays.x - cameraPosition.x) * slope;
-  float h1 = dir.y - dir.x * slope;
-  float rate = h1 >= 0.0 ? max(h1, 1e-4) : min(h1, -1e-4);
-  float a = (uOpening.y - h0) / rate;
-  float b = (uOpening.z - h0) / rate;
-  float s0 = max(0.0, min(a, b));
-  float s1 = min(min(dist, uHazeReach), max(a, b));
+  vec3 wall = cameraPosition + (uBays.x - cameraPosition.x) * uSun.w * uSun.xyz;
+  vec3 slide = dir - dir.x * uSun.w * uSun.xyz;
+  float ya = reach(uOpening.y, wall.y, slide.y);
+  float yb = reach(uOpening.z, wall.y, slide.y);
+  float s0 = max(0.0, min(ya, yb));
+  float s1 = min(min(dist, uHazeReach), max(ya, yb));
   if (s1 <= s0) return vec3(0.0);
-  float stride = (s1 - s0) / float(HAZE_STEPS);
-  float jitter = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+  float z0 = wall.z - uBays.y;
+  float side = 0.5 / uOpening.x;
+  float cell = floor((z0 + s0 * slide.z) * uBays.w + 0.5);
+  float onward = slide.z >= 0.0 ? 1.0 : -1.0;
+  float jitter = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
   float sum = 0.0;
-  for (int i = 0; i < HAZE_STEPS; i++) {
-    sum += sunAt(cameraPosition + dir * (s0 + (float(i) + jitter) * stride), 0.5);
+  for (int i = 0; i < HAZE_WINDOWS; i++) {
+    float centre = (cell + onward * float(i)) * uBays.z;
+    float za = reach(centre - side, z0, slide.z);
+    float zb = reach(centre + side, z0, slide.z);
+    float a = max(s0, min(za, zb));
+    float b = min(s1, max(za, zb));
+    if (a >= s1) break;
+    float stride = max(b - a, 0.0) / float(HAZE_TAPS);
+    float phase = fract(jitter + float(i) * 0.618034);
+    for (int j = 0; j < HAZE_TAPS; j++) {
+      sum += sunAt(cameraPosition + dir * (a + (float(j) + phase) * stride), 1.0) * stride;
+    }
   }
-  return uHaze * sum * stride;
+  return uHaze * sum;
 }
 `;
 
@@ -204,7 +225,11 @@ void main() {
     float pane = texture(uPanes, mix(uGoboRect.xy, uGoboRect.zw, local)).r * inOpening(local);
     color = mix(color, uGlass * (0.8 + 0.3 * local.y), pane);
   }
-  color += texture(uHazeMap, gl_FragCoord.xy * uScreen).rgb;
+  // Four bilinear taps a half texel of the haze pass apart: a soft tent that
+  // hides the half-resolution grain.
+  vec2 at = gl_FragCoord.xy * uScreen;
+  color += 0.25 * (texture(uHazeMap, at + uScreen * vec2(-1.0, -1.0)).rgb + texture(uHazeMap, at + uScreen * vec2(1.0, -1.0)).rgb
+    + texture(uHazeMap, at + uScreen * vec2(-1.0, 1.0)).rgb + texture(uHazeMap, at + uScreen * vec2(1.0, 1.0)).rgb);
   gl_FragColor = vec4(color, 1.0);
   #include <fog_fragment>
 }`;
@@ -223,9 +248,11 @@ void main() {
   vec3 drift = vec3(sin(uTime * 0.11 + aSeed * 23.0), sin(uTime * 0.07 + aSeed * 41.0), sin(uTime * 0.09 + aSeed * 13.0));
   vec4 world = modelMatrix * vec4(position + drift * 0.1, 1.0);
   float twinkle = 0.55 + 0.45 * sin(uTime * (0.5 + aSeed) + aSeed * 60.0);
-  vGlow = 0.015 + sunAt(world.xyz, 1.0) * twinkle;
   vec4 mvPosition = viewMatrix * world;
-  gl_PointSize = min(uSize * (0.6 + 0.8 * fract(aSeed * 7.0)) * uScale / max(-mvPosition.z, 0.1), 14.0);
+  // Motes right at the lens would be blurry blobs: they fade out instead.
+  float near = smoothstep(1.2, 3.0, -mvPosition.z);
+  vGlow = (0.015 + sunAt(world.xyz, 1.0) * twinkle) * near;
+  gl_PointSize = min(uSize * (0.5 + fract(aSeed * 7.0)) * uScale / max(-mvPosition.z, 0.1), 8.0);
   gl_Position = projectionMatrix * mvPosition;
   #include <fog_vertex>
 }`;
@@ -327,7 +354,7 @@ export class RoomChapter {
     this.lookCurve = new THREE.CatmullRomCurve3(lookKeys, false, 'centripetal');
     this.keyCount = posKeys.length;
 
-    this.camera = new THREE.PerspectiveCamera(36, 1, 0.1, 140);
+    this.camera = new THREE.PerspectiveCamera(36, 1, 0.1, 160);
     // Compile the haze pass now, not in the first frame that needs it.
     const { renderer } = this.app;
     const target = renderer.getRenderTarget();
@@ -437,13 +464,13 @@ export class RoomChapter {
   // nearly invisible anyway), and glow while the sun is on them.
   dust() {
     const rand = random(17);
-    const count = 16000;
+    const count = 12000;
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     for (let k = 0; k < count;) {
       const x = HALL.left + 0.2 + rand() * (HALL.right - HALL.left - 0.4);
       const y = HALL.floor + 0.05 + rand() * (HALL.ceiling - HALL.floor - 0.3);
-      const z = HALL.far + 25 + rand() * (HALL.near - HALL.far - 25);
+      const z = HALL.far + 50 + rand() * (HALL.near - HALL.far - 50);
       if (inBeam(x, y, z, -0.1) || rand() < 0.08) {
         positions.set([x, y, z], k * 3);
         seeds[k] = rand();
@@ -466,7 +493,7 @@ export class RoomChapter {
       uSize: { value: 0.07 },
       uScale: { value: 540 },
       uDot: { value: dot },
-      uColor: { value: new THREE.Color(1, 0.72, 0.45).multiplyScalar(3) },
+      uColor: { value: new THREE.Color(1, 0.7, 0.42).multiplyScalar(1.8) },
     };
     const material = new THREE.ShaderMaterial({
       vertexShader: DUST_VERT,

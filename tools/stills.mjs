@@ -44,12 +44,12 @@ if (args.states) {
     await page.evaluate((name) => window.__app.goto(name), state);
     await page.waitForFunction(ready, null, { timeout, polling: 100 });
     const file = join(dir, `${raw}.png`);
-    await page.screenshot({ path: file });
+    await page.screenshot({ path: file, timeout: 300000 });
     console.log(`wrote ${file}`);
   }
 } else {
   mkdirSync(dirname(args.out), { recursive: true });
-  await page.screenshot({ path: args.out });
+  await page.screenshot({ path: args.out, timeout: 300000 });
   console.log(`wrote ${args.out}`);
 }
 

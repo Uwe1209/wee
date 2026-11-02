@@ -22,11 +22,12 @@ const backOut = (t) => {
 const AIR_SHADOW = {
   handoff: 0.01, // height above its spot where the real contact shadow takes over
   plane: 0.24, // a raised piece's shadow lies here, above every landed piece
-  blur: [0.065, 0.04], // at contact: the sun's PCF footprint on the page, longer along the light
-  soften: 0.24, // extra blur per unit of height
+  blur: [0.06, 0.05], // at contact: the sun's PCF footprint on the page, longer along the light
+  soften: 0.2, // extra blur per unit of height
   spread: 0.06, // growth past the piece's edges per unit of height
-  fade: 0.6, // strength falls as exp(-fade * height)
-  drift: 0.08, // how far the shadow leans away from the sun, per unit of height
+  fade: 0.35, // strength falls as exp(-fade * height)
+  drift: 0.1, // how far the shadow leans away from the sun, per unit of height
+  selfShade: 0.78, // sunlight a landed piece keeps on itself (its PCF taps partly fall behind its own surface)
 };
 
 // Lit as the page under it (slid along the view ray to z = 0), so it sees the same window gobo.
@@ -84,6 +85,31 @@ const airShadowMaterial = () => {
   };
   material.customProgramCacheKey = () => 'air-shadow';
   return material;
+};
+
+// A piece in the air casts no real shadow, so it no longer shades itself
+// either; it gets the same shade on its sunlight until it lands.
+const SELF_SHADE = /* glsl */ `
+#include <lights_fragment_end>
+  reflectedLight.directDiffuse *= uSelfShade;
+  reflectedLight.directSpecular *= uSelfShade;
+#ifdef USE_CLEARCOAT
+  clearcoatSpecularDirect *= uSelfShade;
+#endif`;
+
+const shadeSelf = (material) => {
+  const shade = { value: 1 };
+  const key = material.customProgramCacheKey();
+  const compile = material.onBeforeCompile;
+  material.onBeforeCompile = (shader, renderer) => {
+    compile.call(material, shader, renderer);
+    shader.uniforms.uSelfShade = shade;
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform float uSelfShade;')
+      .replace('#include <lights_fragment_end>', SELF_SHADE);
+  };
+  material.customProgramCacheKey = () => `${key}|self-shade`;
+  material.userData.selfShade = shade;
 };
 
 export class DeskChapter {
@@ -150,6 +176,7 @@ export class DeskChapter {
       }
       mesh.userData.spinIn = (index % 2 ? 1 : -1) * (0.35 + 0.05 * index);
       mesh.userData.foot = tapeSpec ? 1 : 0.55; // a die-cut sticker shades about a third of its square
+      shadeSelf(mesh.material);
       return mesh;
     });
     const quad = new THREE.PlaneGeometry(1, 1);
@@ -192,6 +219,7 @@ export class DeskChapter {
       const height = mesh.position.z - rest.z;
       const shadow = this.airShadows[index];
       mesh.castShadow = height < AIR_SHADOW.handoff;
+      mesh.material.userData.selfShade.value = mesh.castShadow ? 1 : AIR_SHADOW.selfShade;
       shadow.visible = mesh.visible && !mesh.castShadow;
       if (shadow.visible) this.placeAirShadow(shadow, mesh, height);
     });
@@ -207,7 +235,7 @@ export class DeskChapter {
     const near = (eye.z - z) / (eye.z - mesh.position.z);
     const x = eye.x + (mesh.position.x - eye.x) * near;
     const y = eye.y + (mesh.position.y - eye.y) * near;
-    const lean = (rest.z + 0.01 + AIR_SHADOW.drift * height) / (sun.z - z);
+    const lean = (rest.z - 0.01 + AIR_SHADOW.drift * height) / (sun.z - z); // less the shadow's normal bias
     shadow.position.set(x + (x - sun.x) * lean, y + (y - sun.y) * lean, z);
     shadow.rotation.z = mesh.rotation.z;
     const { uHalf, uSigma, uScale, uStrength } = shadow.material.userData.shadow;
