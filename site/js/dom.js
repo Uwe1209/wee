@@ -78,8 +78,11 @@ export class Dom {
       this.set(el, this.reduced ? '' : `translate3d(0, ${((1 - t) * 22).toFixed(2)}px, 0)`, opacityStyle(t));
     });
 
-    // Project captions follow the camera's focus in the room.
-    if (room?.ready) {
+    // Project captions follow the camera's focus in the room, and are all
+    // hidden whenever the room isn't on screen.
+    if (!room?.ready) {
+      this.projects.forEach((el) => this.set(el, '', '0.000'));
+    } else {
       this.projects.forEach((el, j) => {
         const focus = room.focus[j] ?? 0;
         this.set(el, this.reduced ? '' : `translate3d(0, ${((1 - focus) * 16).toFixed(2)}px, 0)`, opacityStyle(focus));

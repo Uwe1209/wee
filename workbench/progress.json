@@ -29,7 +29,22 @@
     }
    ],
    "status": "open"
+  },
+  "to-room": {
+   "rounds": [
+    {
+     "element": "to-room",
+     "round": 1,
+     "score": 6.5,
+     "gap": "At its peak (5.62-5.73) the leak is a milky near-white cream veil (brightest areas ~#fef1dd, saturation ~0.13 vs ~0.42 in the bar) that lifts the whole frame and blows the portrait out, so it reads as an overexposed white dissolve rather than amber sunlight (#ffc28a) flaring across a lens with a small hot core and saturated orange falloff.",
+     "notes": "(1) Exposure decay is a step: strip mean luma 167 -> 190 -> 148 -> 79 -> 58 (5.51 to 5.94); it rises about +20 per frame but falls -42 then -69 between 5.73 and 5.84, so the room snaps in out of the haze instead of the flare easing off. (2) At 5.73 the room blacks are lifted to a flat muddy brown (~#6c533d over the left half) and the right-edge band is a desaturated grey-beige (~#ddccb6): foggy, not sunlit. (3) Good: the glow travels left to right (centre-left at 5.62, centre-right at 5.65, right edge at 5.73), the room window ghosting through the wall at 5.62 is a lovely bridge, and no frame goes flat (window, coursework card and GPA badge always read). (4) Room is established by 5.94: window, light shaft, SPEX card and copy; 6.05 matches. (5) Minor: a faint FINAL YEAR PROJECT kicker shows bottom-left over the about wall at 5.3 but not at 5.41 (maybe capture residue); body copy overlapping the window pane at 5.94/6.05 is room composition, not this element. No console errors, no failed chapters.",
+     "at": "2026-11-02T10:18:09.793Z",
+     "compare": "rounds/to-room/r1/compare.jpg",
+     "strip": "rounds/to-room/r1/strip.jpg"
+    }
+   ],
+   "status": "open"
   }
  },
- "updated": "2026-11-02T10:16:03.976Z"
+ "updated": "2026-11-02T10:18:09.793Z"
 }
