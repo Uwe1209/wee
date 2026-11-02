@@ -3,3 +3,4 @@ node_modules/
 workbench/film/*.png
 workbench/**/frames/
 *.log
+workbench/rounds/*/r*/snapshot/
