@@ -440,8 +440,120 @@ const cutAndPaste = () => {
     </section>`;
 };
 
+// --------------------------------------------- BC: Golden-hour scrapbook (pick)
+const paperNote = (text, { width = 620, font = '600 74px Caveat', ink = '#1f2c66', seed = 51 } = {}) => {
+  const canvas = makeCanvas(width, Math.round(width * 0.42));
+  const ctx = canvas.getContext('2d');
+  roughRect(ctx, 6, 6, canvas.width - 12, canvas.height - 12, { jitter: 2.5, step: 12, seed });
+  ctx.fillStyle = '#fbf6ea';
+  ctx.fill();
+  ctx.fillStyle = ink;
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 4);
+  return canvas;
+};
+
+const goldenScrapbook = () => {
+  const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 100);
+  camera.position.set(0, 0, 13);
+  camera.lookAt(0, 0, 0);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xd9c7ad);
+
+  const wall = new THREE.Group();
+  wall.position.set(0.6, 0, -0.6);
+  wall.rotation.y = 0.15;
+  scene.add(wall);
+  const { color, normal } = plaster(2048, 1252, { base: [236, 224, 205] });
+  const wallMesh = new THREE.Mesh(new THREE.PlaneGeometry(18, 11), new THREE.MeshStandardMaterial({
+    map: canvasTexture(color), normalMap: canvasTexture(normal, { srgb: false }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 0.94,
+  }));
+  wallMesh.receiveShadow = true;
+  wall.add(wallMesh);
+
+  const sun = new THREE.SpotLight(0xffc28a, 6.0, 0, 0.5, 0.2, 0);
+  sun.position.set(-17, 7, 15);
+  sun.target.position.set(0.4, 0.2, -1);
+  sun.map = canvasTexture(windowGobo());
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.bias = -0.0004;
+  sun.shadow.normalBias = 0.02;
+  scene.add(sun, sun.target, new THREE.HemisphereLight(0xb5c6e4, 0x7a5a44, 0.9));
+
+  const ink = '#1f2c66';
+  const pink = { color: '#ff48b0', channel: (r, g, b) => 1 - (0.15 * r + 0.55 * g + 0.3 * b), angle: 0.26, offset: [0, 0] };
+  const blue = { color: '#0078bf', channel: (r, g, b) => 1 - (0.62 * r + 0.3 * g + 0.08 * b), angle: 1.31, offset: [3, 2] };
+  const stick = (mesh, at) => pin(wall, mesh, at);
+  const tapeOn = (mesh, options) => {
+    const strip = tape(options.width, options);
+    mesh.add(strip);
+    return strip;
+  };
+
+  const poster = printMesh(instantPhoto(images.poster, {
+    width: 860, ratio: 1.24, caption: 'SPEX poster day!', font: '600 66px Caveat', ink, pose: { zoom: 1.35, focusX: 0.66, focusY: 0.45 }, seed: 40,
+  }), 2.25, { gloss: 0.35, roughness: 0.55, curl: 0.12, lift: 0.2 });
+  stick(poster, { x: 0.45, y: 0.55, z: 0.1, rotate: 0.045 });
+  tapeOn(poster, { width: 0.75, color: 'rgba(255,120,190,0.8)', stripes: 'rgba(255,255,255,0.55)', seed: 11, rotate: -0.55, x: -0.95, y: 1.3, z: 0.05 });
+
+  const strip = printMesh(photoStrip(memoryStrip(), { look: 'color', stamp: "'26 11 02", seed: 8 }), 0.98, { gloss: 0.35, roughness: 0.55, curl: 0.12, lift: 0.5 });
+  stick(strip, { x: 2.75, y: 0.0, z: 0.1, rotate: -0.035 });
+  tapeOn(strip, { width: 0.5, color: 'rgba(233,221,190,0.82)', seed: 71, rotate: 0.1, y: strip.userData.size.height / 2 - 0.03, z: 0.06 });
+
+  const stage = printMesh(cutOut(risograph(images.stage, 900, 600, { cell: 6, inks: [pink, blue] }), 900, 600, { seed: 9 }), 2.5, {
+    physical: false, roughness: 0.92, alphaTest: 0.5, lift: 0.4,
+  });
+  stick(stage, { x: 5.05, y: 1.6, z: 0.1, rotate: -0.05 });
+  tapeOn(stage, { width: 0.7, color: 'rgba(255,214,90,0.82)', seed: 13, rotate: 0.48, x: 1.1, y: 0.75, z: 0.05 });
+  const label = printMesh(paperNote('URIIS 2026 · top 5'), 1.55, { physical: false, roughness: 0.9, alphaTest: 0.5, lift: 0.3 });
+  stick(label, { x: 4.6, y: 0.2, z: 0.14, rotate: 0.05 });
+
+  const gators = printMesh(instantPhoto(images.gators, {
+    width: 860, ratio: 0.75, caption: 'gators dc, rawr', font: '600 66px Caveat', ink, seed: 44,
+  }), 2.05, { gloss: 0.35, roughness: 0.55, curl: 0.12, lift: 0.5 });
+  stick(gators, { x: 4.85, y: -1.85, z: 0.1, rotate: 0.06 });
+  tapeOn(gators, { width: 0.6, color: 'rgba(120,180,240,0.8)', stripes: 'rgba(255,255,255,0.45)', seed: 12, rotate: -0.08, y: 0.98, z: 0.05 });
+
+  const ticket = printMesh(ticketStub({
+    lines: [
+      { text: 'ADMIT ONE', font: '800 132px "Bricolage Grotesque"', x: 0.06, y: 0.52 },
+      { text: 'PHOTOBOOTH · KUCHING, SARAWAK', font: '700 30px "JetBrains Mono"', x: 0.065, y: 0.72 },
+      { text: '4 POSES — RM 0 — KEEP THIS ONE', font: '500 25px "JetBrains Mono"', x: 0.065, y: 0.84, color: '#ff48b0' },
+    ],
+  }), 2.5, { physical: false, roughness: 0.9, alphaTest: 0.3, lift: 0.3 });
+  stick(ticket, { x: 1.35, y: -2.5, z: 0.12, rotate: 0.035 });
+
+  [
+    { shape: 'star', fill: '#ffc83d', w: 0.62, x: 1.5, y: 1.95, rot: 0.22, seed: 1 },
+    { shape: 'heart', fill: '#ff5fa2', w: 0.5, x: 3.5, y: 1.85, rot: -0.2, seed: 2 },
+    { shape: 'sparkle', fill: '#3d7bf0', w: 0.42, x: 6.4, y: -0.7, rot: 0.1, seed: 3 },
+  ].forEach((s) => {
+    const mesh = printMesh(stickerCanvas(s.shape, 220, s.fill, { seed: s.seed }), s.w, { physical: true, gloss: 0.8, roughness: 0.35, alphaTest: 0.5 });
+    stick(mesh, { x: s.x, y: s.y, z: 0.2, rotate: s.rot });
+  });
+
+  pipeline.setLook({
+    bloom: 0.05, halation: 0.16, exposure: 1.06, saturation: 0.98, contrast: 1.04,
+    lift: [0.018, 0.012, 0.004], gain: [1.02, 0.995, 0.95], grain: 0.045, vignette: 0.3,
+  });
+  pipeline.renderScene(scene, camera, pipeline.scene, 1);
+  pipeline.present({ time: 2.1 });
+
+  return `
+    <section class="dir-bc">
+      <div class="bar"><span>Memories · 2024 — 2026</span><span>Kuching, Sarawak</span><span>Scrapbook Nº 12</span></div>
+      <h1 class="name">You Wee<br><em class="riso"><span class="ink blue">Liew</span><span class="ink pink">Liew</span></em></h1>
+      <p class="note">software developer: I build things from the data all the way to deployment :)</p>
+      <div class="chips"><span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">FastAPI</span><span class="chip">Supabase</span><span class="chip">PostgreSQL</span></div>
+      <p class="cue">Scroll ↓</p>
+    </section>`;
+};
+
 const started = performance.now();
-const build = { a: darkroom, b: goldenHour, c: cutAndPaste }[direction] ?? darkroom;
+const build = { a: darkroom, b: goldenHour, c: cutAndPaste, bc: goldenScrapbook }[direction] ?? darkroom;
 document.getElementById('overlay').innerHTML = build();
 await document.fonts.ready;
 window.__frame = { ready: true, direction, ms: Math.round(performance.now() - started) };
