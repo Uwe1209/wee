@@ -112,6 +112,16 @@
      "at": "2026-11-02T13:21:05.655Z",
      "compare": "rounds/to-room/r3/compare.jpg",
      "strip": "rounds/to-room/r3/strip.jpg"
+    },
+    {
+     "element": "to-room",
+     "round": 4,
+     "score": 7.5,
+     "gap": "At 6.3 the wall's DOM copy (the 'Next, I want a full-stack developer role' line and its mono meta) stays crisp near-black on top of the flare while the 3D wall behind it washes out, so the leak reads as a layer under the type, not light hitting the lens; the copy should fade or wash with the flare.",
+     "notes": "Capture landed in r5 dir (r4 dir had a partial earlier run); judged r5 frames. Strong: warm sun flare with a hot core and horizontal streak, no flat white or beige frame, the room is clearly there by 6.45 (window, floor gobo light, SPEX card) and fully settled by 6.65. Secondary: exposure jumps between 6.207 and 6.314 (wall nearly untouched, then about 60% washed out) - start the ramp earlier; the meta line is clipped at the top edge at 6.314; the soft circular ghost bottom-right at 6.3 reads like a smudge; ceiling beams are hard to read at 6.45 under the haze.",
+     "at": "2026-11-02T23:54:24.957Z",
+     "compare": "rounds/to-room/r4/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
@@ -365,5 +375,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T19:54:00.019Z"
+ "updated": "2026-11-02T23:54:24.957Z"
 }
