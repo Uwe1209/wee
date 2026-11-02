@@ -195,7 +195,8 @@
      "strip": "rounds/scrapbook/r5/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (7, 7, 7), including one round from a fresh builder on a new layout. Round 5 gap (prints blank grey while developing) is shared with the flash strip and goes to the smoothing pass as a develop-shader fix."
   },
   "flash": {
    "rounds": [
@@ -323,5 +324,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T19:16:21.073Z"
+ "updated": "2026-11-02T19:16:52.822Z"
 }
