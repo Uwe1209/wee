@@ -238,6 +238,16 @@
      "at": "2026-11-02T18:43:46.981Z",
      "compare": "rounds/flash/r5/compare.jpg",
      "strip": "rounds/flash/r5/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 6,
+     "score": 7.5,
+     "gap": "At flash peak the DOM layer (name, Liew, caption, skill chips, header labels) stays clearly legible as ghosted text over the white and the frame edges stay peach, so the moment reads as a translucent warm haze rather than a full HDR whiteout; the DOM needs to wash out with the frame and the white needs to reach the corners at peak.",
+     "notes": "Countdown 3/1/smile lands in the strip's corner-mount frame and reads well; the '1' at v1.418 is caught fading pale pink, so the numeral loses its riso punch early. The strip drops in from above and frames develop top to bottom one after another, which is good. The undeveloped frames are flat grey-beige with no latent-image or chemical tint, so they look like empty boxes. Taped end state matches the art-bible composition closely. The strip is held by dark photo corners, and no tape press is visible in the sampled frames. No console errors and no failed chapters.",
+     "at": "2026-11-02T19:04:14.863Z",
+     "compare": "rounds/flash/r6/compare.jpg",
+     "strip": "rounds/flash/r6/strip.jpg"
     }
    ],
    "status": "open"
@@ -303,5 +313,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T18:53:19.531Z"
+ "updated": "2026-11-02T19:04:14.864Z"
 }

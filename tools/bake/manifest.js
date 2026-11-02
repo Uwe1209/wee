@@ -193,7 +193,7 @@ const riso = (p, key, w, h, options = {}) => cutOut(risograph(p[key], w, h, { ce
 // Window light: two columns of panes, mullions, leaves along one side, softened.
 // `rows` is each row's pane height (px, top to bottom). `nudge` moves single
 // leaves ({ index: [dx, dy] } px) without reseeding the rest.
-const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240], bridges = [] } = {}) => {
+const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240], bridges = [], open = [] } = {}) => {
   const canvas = makeCanvas(1024, 1024);
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
@@ -211,6 +211,8 @@ const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240],
     const barTop = pane.y + rows.slice(0, row + 1).reduce((sum, h) => sum + h, 0) + row * pane.bar;
     ctx.fillRect(pane.x + col * (pane.w + pane.bar), barTop, pane.w, pane.bar);
   }
+  // Extra light: [x, y, w, h] rects opened in the frame (for example to thin a bar).
+  for (const [x, y, w, h] of open) ctx.fillRect(x, y, w, h);
   const rand = random(5);
   ctx.fillStyle = '#000';
   for (let k = 0; k < leaves; k += 1) {
@@ -484,9 +486,14 @@ export const TEXTURES = {
   'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], nudge: { 5: [220, 0], 35: [0, 60], 48: [60, 0] } }), quality: 0.9 },
 
   // --- the wall: about
-  // The about window: the left column's top bar is gone, so its top two panes
-  // are one tall pane that holds the copy column the whole way up the screen.
-  // That bar is off screen whenever the swap from 'gobo' happens, so the
-  // light never jumps.
-  'gobo-about': { make: () => windowGobo({ bridges: [[0, 0]] }), quality: 0.9 },
+  // The about window: the left column is one tall pane (both its bars gone) so
+  // the copy column rises in sun, the mullion is thinned to 14 px so it fits
+  // the gap between the copy and the cluster, and the leaf that fell on the
+  // portrait (5) is moved out of the frame. The right column's middle pane
+  // holds the cluster, with its two bars just above and below it. The wall
+  // cross-fades into this window, so nothing switches.
+  'gobo-about': {
+    make: () => windowGobo({ bridges: [[0, 0], [0, 1]], open: [[470, 120, 8, 780], [492, 120, 8, 780]], nudge: { 5: [0, 2000] } }),
+    quality: 0.9,
+  },
 };
