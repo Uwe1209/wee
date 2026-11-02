@@ -24,6 +24,10 @@ const DAY = { sun: new THREE.Color(0xffc28a), sky: new THREE.Color(0xb5c6e4), gr
 // `aim` re-aims the dusk sun for the contact corner (along the wall, up): the
 // mullions move off the copy column, so the call to action sits in one pane.
 const DUSK = { sun: new THREE.Color(0xff8f5e), sky: new THREE.Color(0xc4a0c4), ground: new THREE.Color(0x5e3f3a), sunIntensity: 4.6, sunY: 3.4, aim: [-2.7, -0.7] };
+// `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
+// about copy: the mullion falls just right of the copy column and the bar
+// under the tall left pane falls below the screen, so every line rises in sun.
+const ABOUT_AIM = [1.9, -3.9];
 
 export const WALL_LOOK = {
   bloom: 0.05, halation: 0.16, exposure: 1.06, saturation: 0.98, contrast: 1.04,
@@ -53,7 +57,7 @@ export class WallChapter {
       'sticker-sparkle', 'sticker-star-pink', 'ticket-admit', 'poster-instant', 'strip-color', 'stage-riso', 'note-uriis',
       'gators-instant', 'portrait-instant', 'card-swinburne', 'card-courses', 'note-looking', 'badge-cgpa', 'strip-contact',
       'note-hello',
-      'gobo-hello', 'photo-corner', 'note-spot', 'gobo-dusk',
+      'gobo-hello', 'photo-corner', 'note-spot', 'gobo-dusk', 'gobo-about',
     ];
     const tex = {};
     await Promise.all(names.map(async (name) => {
@@ -225,12 +229,16 @@ export class WallChapter {
     // wall is off screen (projects to scrapbook), so the light never jumps.
     const dusk = smooth(progress(v, T.contact.dusk));
     const corner = smooth(progress(v, [T.transitions.wallToRoom[1], T.transitions.deskToWall[0]]));
-    const follow = this.lookAt.x * 0.88 + DUSK.aim[0] * corner;
-    this.sun.position.set(follow - 15.6, lerp(DAY.sunY, DUSK.sunY, dusk), 16.5);
-    this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner, 0);
+    // The about aim is exactly zero outside its window; it eases in while the
+    // tall pane's missing bar is off screen and out after the leak hides the wall.
+    const about = smooth(progress(v, T.about.light.in)) * (1 - smooth(progress(v, T.about.light.out)));
+    const follow = this.lookAt.x * 0.88 + DUSK.aim[0] * corner + ABOUT_AIM[0] * about;
+    const lower = ABOUT_AIM[1] * about;
+    this.sun.position.set(follow - 15.6, lerp(DAY.sunY, DUSK.sunY, dusk) + lower, 16.5);
+    this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
-    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : this.tex.gobo;
+    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? this.tex['gobo-about'] : this.tex.gobo;
     // The note under the spot retires under the same white.
     this.spotNote.visible = v < T.flash.fire;
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);

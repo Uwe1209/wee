@@ -193,7 +193,7 @@ const riso = (p, key, w, h, options = {}) => cutOut(risograph(p[key], w, h, { ce
 // Window light: two columns of panes, mullions, leaves along one side, softened.
 // `rows` is each row's pane height (px, top to bottom). `nudge` moves single
 // leaves ({ index: [dx, dy] } px) without reseeding the rest.
-const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240] } = {}) => {
+const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240], bridges = [] } = {}) => {
   const canvas = makeCanvas(1024, 1024);
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
@@ -204,6 +204,12 @@ const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240] 
   for (const h of rows) {
     for (let col = 0; col < 2; col += 1) ctx.fillRect(pane.x + col * (pane.w + pane.bar), top, pane.w, h);
     top += h + pane.bar;
+  }
+  // A bridge [col, row] fills the bar under that row in that column, so the
+  // two panes either side of it read as one tall pane.
+  for (const [col, row] of bridges) {
+    const barTop = pane.y + rows.slice(0, row + 1).reduce((sum, h) => sum + h, 0) + row * pane.bar;
+    ctx.fillRect(pane.x + col * (pane.w + pane.bar), barTop, pane.w, pane.bar);
   }
   const rand = random(5);
   ctx.fillStyle = '#000';
@@ -464,4 +470,11 @@ export const TEXTURES = {
   // note and the heart moved off them (5 into the frame, 35 below the note, 48
   // past the heart).
   'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], nudge: { 5: [220, 0], 35: [0, 60], 48: [60, 0] } }), quality: 0.9 },
+
+  // --- the wall: about
+  // The about window: the left column's top bar is gone, so its top two panes
+  // are one tall pane that holds the copy column the whole way up the screen.
+  // That bar is off screen whenever the swap from 'gobo' happens, so the
+  // light never jumps.
+  'gobo-about': { make: () => windowGobo({ bridges: [[0, 0]] }), quality: 0.9 },
 };
