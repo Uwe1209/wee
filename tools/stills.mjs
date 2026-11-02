@@ -39,10 +39,11 @@ await page.waitForFunction(ready, null, { timeout, polling: 250 });
 if (args.states) {
   const dir = args['out-dir'] ?? '.';
   mkdirSync(dir, { recursive: true });
-  for (const state of String(args.states).split(',')) {
+  for (const raw of String(args.states).split(',')) {
+    const state = /^-?\d+(\.\d+)?$/.test(raw) ? Number(raw) : raw;
     await page.evaluate((name) => window.__app.goto(name), state);
     await page.waitForFunction(ready, null, { timeout, polling: 100 });
-    const file = join(dir, `${state}.png`);
+    const file = join(dir, `${raw}.png`);
     await page.screenshot({ path: file });
     console.log(`wrote ${file}`);
   }

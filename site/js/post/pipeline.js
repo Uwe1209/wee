@@ -131,9 +131,23 @@ void main() {
     float front = mix(-0.35, 1.45, uMix);
     float m = smoothstep(front - 0.22, front + 0.22, x);
     color = mix(b, a, m);
-    float band = exp(-pow((x - front) / 0.16, 2.0));
+    // Amber sun flaring across the lens: a small hot core riding the front in
+    // the upper third, an amber band, a wide orange falloff. Blue stays far
+    // below red and green so the filmic shoulder keeps it orange, not cream.
     float swell = sin(clamp(uMix, 0.0, 1.0) * 3.14159265);
-    color += vec3(1.0, 0.6, 0.3) * band * swell * 3.0 + vec3(1.0, 0.75, 0.5) * swell * 0.3;
+    float d = x - front;
+    float band = exp(-d * d / 0.0256);
+    float haze = exp(-d * d / 0.1764);
+    // The core fades near the frame edges, where the vignette greys a hot white.
+    float coreX = (front - 0.08) / 0.85;
+    vec2 core = vec2(uv.x - coreX, (uv.y - 0.68) * aspect);
+    float r2 = dot(core, core);
+    float hot = exp(-r2 / 0.0012) * swell * smoothstep(-0.1, 0.25, coreX) * (1.0 - smoothstep(0.6, 1.05, coreX));
+    float leak = band * mix(0.5, 1.0, exp(-r2 / 0.04)) * swell;
+    // Like light through a warm gel: what sits under the leak loses blue and
+    // green instead of lifting toward white.
+    color *= mix(vec3(1.0), vec3(0.95, 0.56, 0.3), clamp(leak + haze * swell * 0.35, 0.0, 1.0));
+    color += vec3(1.0, 0.31, 0.11) * leak * 1.4 + vec3(1.0, 0.52, 0.2) * hot * 1.5 + vec3(0.5, 0.11, 0.025) * haze * swell * 0.5;
   } else if (uType < 2.5) {
     float edge = uMix;
     if (uv.y < edge) {
