@@ -103,6 +103,7 @@ const SUN_GLSL = /* glsl */ `
 #define CARD_Z0 (${cardSpot(0).z.toFixed(3)})
 #define CARD_BAY (${SPACING.toFixed(3)})
 #define SHADE_LEAD (${((SHADE_REACH - 0.5) / 2).toFixed(3)})
+#define SHADE_SOFT 0.3
 uniform sampler2D uGobo;
 uniform vec4 uSun;      // xyz: toward the sun; w: 1 / x
 uniform vec4 uBays;     // window wall x, centre z of one window, bay length, 1 / bay length
@@ -173,6 +174,37 @@ float reach(float v, float a, float b) {
   return (v - a) / (b >= 0.0 ? max(b, 1e-4) : min(b, -1e-4));
 }
 
+// The share of the eye ray between s0 and s1 that a card keeps the sun from,
+// solved along the ray (point taps would make the shadow's edge grainy). The
+// card is the one that can shade the stretch's middle. In card space, the sun
+// ray from the eye ray's point s meets the card's plane at h0 + s * hd; the
+// shadow is where that lies inside the card while the point is in front of it.
+// Its edge is softened by averaging a smaller and a larger outline.
+float shadeAlong(vec3 dir, float s0, float s1) {
+  float slot = floor((CARD_Z0 + SHADE_LEAD - cameraPosition.z - dir.z * 0.5 * (s0 + s1)) / CARD_BAY + 0.5);
+  if (slot < 0.0 || slot > float(CARDS - 1)) return 0.0;
+  int k = int(slot);
+  vec3 sun = uCardSun[k];
+  vec3 a = (uCards[k] * vec4(cameraPosition, 1.0)).xyz;
+  vec3 b = mat3(uCards[k]) * dir;
+  float lift = 1.0 / max(-sun.z, 0.05);
+  vec2 h0 = a.xy + a.z * lift * sun.xy;
+  vec2 hd = b.xy + b.z * lift * sun.xy;
+  float plane = reach(0.0, a.z, b.z);
+  float lo = b.z >= 0.0 ? max(s0, plane) : s0;
+  float hi = b.z >= 0.0 ? s1 : min(s1, plane);
+  float shade = 0.0;
+  for (int i = 0; i < 2; i++) {
+    vec2 extent = uCardHalf[k] + (float(i) - 0.5) * SHADE_SOFT;
+    vec2 e0 = vec2(reach(-extent.x, h0.x, hd.x), reach(-extent.y, h0.y, hd.y));
+    vec2 e1 = vec2(reach(extent.x, h0.x, hd.x), reach(extent.y, h0.y, hd.y));
+    vec2 enter = min(e0, e1);
+    vec2 leave = max(e0, e1);
+    shade += max(min(hi, min(leave.x, leave.y)) - max(lo, max(enter.x, enter.y)), 0.0);
+  }
+  return 0.5 * shade / max(s1 - s0, 1e-4);
+}
+
 vec3 sunHaze(vec3 p) {
   vec3 ray = p - cameraPosition;
   float dist = length(ray);
@@ -199,8 +231,8 @@ vec3 sunHaze(vec3 p) {
     float stride = max(b - a, 0.0) / float(HAZE_TAPS);
     float phase = fract(jitter + float(i) * 0.618034);
     for (int j = 0; j < HAZE_TAPS; j++) {
-      vec3 tap = cameraPosition + dir * (a + (float(j) + phase) * stride);
-      sum += sunAt(tap, 1.0) * (1.0 - cardShade(tap)) * stride;
+      float lit = 1.0 - shadeAlong(dir, a + float(j) * stride, a + float(j + 1) * stride);
+      sum += sunAt(cameraPosition + dir * (a + (float(j) + phase) * stride), 1.0) * lit * stride;
     }
   }
   return uHaze * sum;
@@ -514,7 +546,7 @@ export class RoomChapter {
       uBays: this.sun.uBays,
       uOpening: this.sun.uOpening,
       uGoboRect: this.sun.uGoboRect,
-      uGlint: { value: new THREE.Color(1, 0.62, 0.36).multiplyScalar(8) },
+      uGlint: { value: new THREE.Color(1, 0.62, 0.36).multiplyScalar(7) },
       uGlintSpread: { value: new THREE.Vector4(0.03, 0.25, 0.5, HALL.near) },
     };
 

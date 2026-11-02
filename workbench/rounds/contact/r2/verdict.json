@@ -1,0 +1,8 @@
+{
+ "element": "contact",
+ "round": 2,
+ "score": 6.5,
+ "gap": "The dusk light reads as a flat salmon filter rather than a lower sun: the window shadow survives only as soft dark bands along the top edge and bottom-right corner, there are no long raking window patches with cooler shade across the wall, and the paper whites (strip border, say-hi note) render the same coral as the wall (~#da7b55) instead of reading as paper.",
+ "notes": "1) The 'say hi! ↓' note points down at empty wall on the last page instead of at the email/GitHub links, and the strip+note cluster sits ~450px right of the links, so it does not frame the CTA. 2) 'next memory.' is flat pink with no riso-blue misregistered copy (art-bible display spec), so it looks pasted on rather than printed. 3) to-wall: the page slide is a dead-straight horizontal cut with no paper edge, thickness or curl, so it reads as a screen wipe (a faint contact darkening on the wall side is there). 4) A dark vertical plaster seam (x≈582 at contact, x≈687 at to-wall) runs through the copy column, far stronger than in the bar. 5) Strip photos come out muddy red-brown under the cast. 6) Working: links are large, crisp, pink-underlined and obviously clickable; the strip developing frame by frame at 14 plus 'Let's make the next memory.' closes the story well; no console errors or failed chapters.",
+ "at": "2026-11-02T14:12:18.677Z"
+}
