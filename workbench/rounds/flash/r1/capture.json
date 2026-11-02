@@ -1,0 +1,34 @@
+{
+ "element": "flash",
+ "round": 1,
+ "url": "http://localhost:8080/workbench/rounds/flash/r1/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/flash/r1/countdown.jpg",
+  "workbench/rounds/flash/r1/flash.jpg",
+  "workbench/rounds/flash/r1/strip.jpg",
+  "workbench/rounds/flash/r1/taped.jpg"
+ ],
+ "strip": [
+  "workbench/rounds/flash/r1/strip-00-v1.jpg",
+  "workbench/rounds/flash/r1/strip-01-v1.209.jpg",
+  "workbench/rounds/flash/r1/strip-02-v1.418.jpg",
+  "workbench/rounds/flash/r1/strip-03-v1.627.jpg",
+  "workbench/rounds/flash/r1/strip-04-v1.836.jpg",
+  "workbench/rounds/flash/r1/strip-05-v2.045.jpg",
+  "workbench/rounds/flash/r1/strip-06-v2.255.jpg",
+  "workbench/rounds/flash/r1/strip-07-v2.464.jpg",
+  "workbench/rounds/flash/r1/strip-08-v2.673.jpg",
+  "workbench/rounds/flash/r1/strip-09-v2.882.jpg",
+  "workbench/rounds/flash/r1/strip-10-v3.091.jpg",
+  "workbench/rounds/flash/r1/strip-11-v3.3.jpg"
+ ],
+ "failed": [],
+ "problems": [],
+ "ms": 369689,
+ "at": "2026-11-02T11:48:40.419Z"
+}
