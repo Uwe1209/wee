@@ -263,6 +263,16 @@
      "at": "2026-11-02T13:30:26.160Z",
      "compare": "rounds/about/r2/compare.jpg",
      "strip": "rounds/about/r2/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 3,
+     "score": 6.5,
+     "gap": "The horizontal window-mullion shadow cuts straight across the portrait's face and the Swinburne index card (and a vertical bar darkens the portrait's left half), so the cluster's hero sits in shade while the empty wall around it is lit; move the gobo/light so the portrait and cards sit in sun.",
+     "notes": "Copy is legible, in light, left 40%, never over a photo: good. At 5.6 the CGPA badge is cropped by the right frame edge; it only reads fully at 6.1. Cluster composition is otherwise close to the bar (5 papers + 2 stickers, tape, tilt), but the grid is a bit stiff/rectilinear versus the bar's looser scatter. Transition 4.5-5.0 passes a long stretch of empty wall (strip 4.964 has only half-cropped opening pieces and a dark mullion), which feels like dead time; then the heading rises in from the bottom while the wall pans sideways, so text and wall still read as two motions. At 6.25 a hot bloom blob appears top-left behind the copy. No console errors or failed chapters.",
+     "at": "2026-11-02T18:53:19.530Z",
+     "compare": "rounds/about/r3/compare.jpg",
+     "strip": "rounds/about/r3/strip.jpg"
     }
    ],
    "status": "open"
@@ -293,5 +303,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T18:49:31.949Z"
+ "updated": "2026-11-02T18:53:19.531Z"
 }

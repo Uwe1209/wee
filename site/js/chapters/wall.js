@@ -124,7 +124,7 @@ export class WallChapter {
     this.strip = card(tex['strip-color'], 0.98, { rects: stripRects(stripSize), lift: 0.5, segments: [6, 48] });
     this.strip.userData.rest = { x: 2.75, y: 0.0, z: 0.1, rot: -0.035 };
     wall.add(this.strip);
-    this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.5, rot: 0.1 });
+    this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.62, rot: 0.08, dy: -0.01 });
 
     // Its spot waits in the sun the way an album page waits for a photo: four
     // black corner mounts, and a ballpoint note pointing up into the spot. Each
@@ -165,6 +165,8 @@ export class WallChapter {
       mount.userData.group = 'hello';
       pieces.push(mount);
     });
+    // The tape lands over the top mounts, so it sits clear of their height.
+    this.stripTape.position.z = Math.max(cornerHeight(-1, 1), cornerHeight(1, 1)) + 0.02;
     // Ballpoint on the plaster under the spot (texture at 400 px per unit, laid
     // out from x -0.02, y -1.38 in the spot's frame).
     const noteSize = tex['note-spot'].userData.size;
@@ -274,20 +276,34 @@ export class WallChapter {
     strip.visible = v > print[0] - 0.02;
     const drop = 1 - easeOut(p);
     const swing = 0.1 * (1 - p) ** 2 * Math.sin(p * 9);
-    const pressed = smooth(progress(v, tapeRange));
-    strip.position.set(rest.x + drop * 0.25, rest.y + drop * 5.6, rest.z + 0.18 * (1 - pressed));
-    strip.rotation.z = rest.rot + swing;
+    // The tape drops in from above the camera, a little big and skewed,
+    // slaps onto the top edge at `hit`, pushes the strip a hair into the wall,
+    // and both settle. The strip seats itself as the tape comes down.
+    const u = progress(v, tapeRange);
+    const hit = 0.35;
+    const fall = clamp01(u / hit);
+    const press = Math.sin(Math.PI * clamp01((u - hit) / ((1 - hit) * 0.5)));
+    const seated = smooth(fall);
+    strip.position.set(
+      rest.x + drop * 0.25,
+      rest.y + drop * 5.6 - 0.016 * press,
+      rest.z + 0.18 * (1 - seated) - 0.035 * press,
+    );
+    strip.rotation.z = rest.rot + swing + 0.006 * press;
     const frames = strip.material.userData.develop;
     const span = (develop[1] - develop[0]) / (frames.length + 1.5);
     frames.forEach((_, i) => {
       frames[i] = smooth(progress(v, [develop[0] + i * span, develop[0] + (i + 2.5) * span]));
     });
-    const tapeIn = clamp01((v - tapeRange[0]) / ((tapeRange[1] - tapeRange[0]) * 0.4));
     const tapePiece = strip.children[0];
     if (tapePiece) {
-      tapePiece.visible = tapeIn > 0;
-      tapePiece.scale.setScalar(lerp(1.35, 1, easeOut(tapeIn)));
-      tapePiece.material.opacity = tapeIn;
+      const base = (tapePiece.userData.base ??= { x: tapePiece.position.x, y: tapePiece.position.y, z: tapePiece.position.z, rot: tapePiece.rotation.z });
+      const away = 1 - fall * fall; // accelerates into the hit
+      tapePiece.visible = u > 0;
+      tapePiece.position.set(base.x - 0.04 * away, base.y + 0.2 * away, base.z + 0.5 * away);
+      tapePiece.rotation.z = base.rot + 0.28 * away;
+      tapePiece.scale.set(1 + 0.3 * away + 0.05 * press, 1 + 0.3 * away - 0.04 * press, 1);
+      tapePiece.material.opacity = smooth(clamp01(fall / 0.4));
     }
   }
 

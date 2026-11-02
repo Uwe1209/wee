@@ -448,7 +448,19 @@ export const TEXTURES = {
   'room-floor': { make: () => floorboards(), quality: 0.86 },
 
   // --- scrapbook
-  'gators-riso': { make: (p) => riso(p, 'gators', 900, 675, { seed: 21 }) },
+  // gamma > 1 thins the dots, so the team reads in light paper, not a purple slab.
+  'gators-riso': { make: (p) => riso(p, 'gators', 900, 675, { seed: 21, gamma: 1.55 }) },
+  'ticket-outreach': {
+    make: () => ticketStub({
+      serial: 'Nº 110426',
+      seed: 23,
+      lines: [
+        { text: 'OUTREACH', font: '800 112px "Bricolage Grotesque"', x: 0.06, y: 0.5 },
+        { text: 'SSDC DODGEBALL · TUNKU PUTRA-HELP', font: '700 26px "JetBrains Mono"', x: 0.065, y: 0.7 },
+        { text: '11 APRIL 2026 — FACILITATOR', font: '500 25px "JetBrains Mono"', x: 0.065, y: 0.83, color: '#ff48b0' },
+      ],
+    }),
+  },
   'game-riso': { make: (p) => riso(p, 'game', 900, 600, { seed: 22 }) },
   'team-instant': { make: (p) => instant(p, 'team', 'outreach crew', { ratio: 0.8, seed: 110 }) },
   'certificate-instant': { make: (p) => instant(p, 'certificate', 'facilitator! 11 april', { ratio: 1.2, pose: { focusY: 0.32 }, seed: 111 }) },
