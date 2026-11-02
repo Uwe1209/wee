@@ -2,7 +2,9 @@
 // through a row of windows in the right-hand wall and lands on the floorboards
 // as warm, window-shaped patches; the shafts in between carry glowing dust.
 // Project cards hang down the hall; the camera flies past them, slowing at
-// each, and each photo develops as it comes close.
+// each, and each photo develops as it comes close. The cards are curled, glossy
+// prints: their coat reflects the windows, and they block the sun, darkening the
+// beam, the dust and the floor behind them.
 import * as THREE from 'three';
 import { TIMELINE as T, clamp01, progress, smooth } from '../motion/timeline.js';
 import { texture } from '../engine/textures.js';
@@ -47,6 +49,21 @@ const PLANKS = [2.88, 5.76];
 // by the bounce off this line.
 const POOL_X = HALL.right - ((WINDOW.sill + WINDOW.head) / 2 - HALL.floor) * (SUN.x / SUN.y);
 
+// The cards' paper, in card space (z toward the viewer): the right part bows back
+// (`bend` is its slope at the right edge) and the bottom-right corner lifts away
+// further. The bowed side's coat faces back up the hall, toward the windows the
+// camera has just passed, so that is where the glossy reflection lands.
+const CURL = { from: -0.2, bend: 0.2, corner: 0.13 };
+const curlZ = (x, y, width, height) => {
+  const start = CURL.from * width / 2;
+  const bow = Math.max(0, x - start);
+  const corner = Math.max(0, x / (width / 2) - y / (height / 2) - 1);
+  return (-CURL.bend * bow * bow) / (2 * (width / 2 - start)) - CURL.corner * corner * corner;
+};
+// The sun slants toward the viewer, so a card's shadow (on the floor, in the
+// haze, on the dust) lies at most this far in front of it, never behind it.
+const SHADE_REACH = 3.6;
+
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
   lift: [0.02, 0.012, 0.008], gain: [1.03, 0.99, 0.94], grain: 0.055, vignette: 0.45,
@@ -78,6 +95,10 @@ const inBeam = (x, y, z, margin = 0) => {
 // The sun ray from a point is followed back to the window wall; the window cells
 // repeat down the hall, every other one mirrored so the leaves don't line up.
 const SUN_GLSL = /* glsl */ `
+#define CARDS ${PROJECTS.length}
+#define CARD_Z0 (${cardSpot(0).z.toFixed(3)})
+#define CARD_BAY (${SPACING.toFixed(3)})
+#define SHADE_LEAD (${((SHADE_REACH - 0.5) / 2).toFixed(3)})
 uniform sampler2D uGobo;
 uniform vec4 uSun;      // xyz: toward the sun; w: 1 / x
 uniform vec4 uBays;     // window wall x, centre z of one window, bay length, 1 / bay length
@@ -85,6 +106,9 @@ uniform vec4 uOpening;  // 1 / width, sill, head, 1 / (head - sill)
 uniform vec4 uGoboRect; // the opening's corners in the gobo (uv)
 uniform float uSoft;    // penumbra growth per unit the light has travelled
 uniform float uHalfWidth;
+uniform mat4 uCards[CARDS];   // world to card space
+uniform vec3 uCardSun[CARDS]; // toward the sun, in card space
+uniform vec2 uCardHalf[CARDS];
 #define FLOOR (${HALL.floor.toFixed(3)})
 #define POOL_X (${POOL_X.toFixed(3)})
 #define PLANKS vec2(${PLANKS.map((n) => n.toFixed(3)).join(', ')})
@@ -108,6 +132,23 @@ float sunAt(vec3 p, float lod) {
   float travel;
   vec2 local = sunCell(p, travel);
   return textureLod(uGobo, mix(uGoboRect.xy, uGoboRect.zw, local), lod + log2(1.0 + travel * uSoft)).r * inOpening(local);
+}
+
+// How much of the sun a card takes from p (0..1). Only one card can: the one
+// hanging up to SHADE_REACH beyond p. The ray toward the sun meets its plane, and
+// the edge softens with the distance behind the card, like the window's light.
+float cardShade(vec3 p) {
+  float slot = floor((CARD_Z0 + SHADE_LEAD - p.z) / CARD_BAY + 0.5);
+  if (slot < 0.0 || slot > float(CARDS - 1)) return 0.0;
+  int k = int(slot);
+  vec3 q = (uCards[k] * vec4(p, 1.0)).xyz;
+  vec3 s = uCardSun[k];
+  if (q.z <= 0.0 || s.z > -0.05) return 0.0;
+  float t = q.z / -s.z;
+  vec2 hit = abs(q.xy + t * s.xy);
+  vec2 soft = vec2(0.02 + t * uSoft * 0.25);
+  vec2 inside = smoothstep(-soft, soft, uCardHalf[k] - hit);
+  return inside.x * inside.y;
 }
 `;
 
@@ -154,7 +195,8 @@ vec3 sunHaze(vec3 p) {
     float stride = max(b - a, 0.0) / float(HAZE_TAPS);
     float phase = fract(jitter + float(i) * 0.618034);
     for (int j = 0; j < HAZE_TAPS; j++) {
-      sum += sunAt(cameraPosition + dir * (a + (float(j) + phase) * stride), 1.0) * stride;
+      vec3 tap = cameraPosition + dir * (a + (float(j) + phase) * stride);
+      sum += sunAt(tap, 1.0) * (1.0 - cardShade(tap)) * stride;
     }
   }
   return uHaze * sum;
@@ -209,6 +251,7 @@ uniform vec3 uGlass;
 uniform float uGlassOn;
 uniform sampler2D uBoards;
 uniform float uDado;
+uniform float uShaded;
 varying vec3 vWorld;
 
 // Sun on a surface: the gobo at the screen's own mip level, softer the further
@@ -235,6 +278,7 @@ void main() {
   vec3 bump = texture(uBump, uv).xyz * 2.0 - 1.0;
   vec3 n = normalize(uFace * bump.z + (uAxisU * bump.x + uAxisV * bump.y) * uBumpScale);
   float sun = sunOn(vWorld) * max(dot(n, uSun.xyz), 0.0);
+  if (uShaded > 0.5) sun *= 1.0 - cardShade(vWorld);
   vec3 pool = vec3(POOL_X, FLOOR + 0.01, vWorld.z);
   vec3 off = vWorld - pool;
   float bounce = sunAt(pool, 5.0) / (1.0 + 0.06 * dot(off, off));
@@ -271,7 +315,7 @@ void main() {
   vec4 mvPosition = viewMatrix * world;
   // Motes right at the lens would be blurry blobs: they fade out instead.
   float near = smoothstep(1.2, 3.0, -mvPosition.z);
-  vGlow = (0.015 + sunAt(world.xyz, 1.0) * twinkle) * near;
+  vGlow = (0.015 + sunAt(world.xyz, 1.0) * (1.0 - cardShade(world.xyz)) * twinkle) * near;
   gl_PointSize = min(uSize * (0.5 + fract(aSeed * 7.0)) * uScale / max(-mvPosition.z, 0.1), 8.0);
   gl_Position = projectionMatrix * mvPosition;
   #include <fog_vertex>
@@ -290,6 +334,97 @@ void main() {
   #endif
   gl_FragColor = vec4(uColor * vGlow * fade * texture2D(uDot, gl_PointCoord).r, 1.0);
 }`;
+
+// The cards' gloss: the window wall as the coat reflects it. The reflected ray is
+// followed to the wall and the window glass looked up there (the same panes the
+// wall shows), blurred by the coat's spread, which grows with the distance. So the
+// reflection sits where the real windows would, slides as the camera passes and
+// stretches over the bowed paper. A sharp coat plus a broad, weaker sheen.
+const GLINT_GLSL = /* glsl */ `
+uniform sampler2D uPanes;
+uniform vec4 uBays;
+uniform vec4 uOpening;
+uniform vec4 uGoboRect;
+uniform vec3 uGlint;       // the windows' radiance, as the coat sees them
+uniform vec4 uGlintSpread; // sharp spread, broad spread (radians), broad weight, z of the hall's near end
+varying vec3 vRoomWorld;
+
+float windowSeen(vec3 p, vec3 r, float spread) {
+  float rx = max(r.x, 0.02);
+  float t = (uBays.x - p.x) / rx;
+  vec3 h = p + r * t;
+  float along = h.z - uBays.y;
+  float cell = floor(along * uBays.w + 0.5);
+  vec2 local = vec2((along - cell * uBays.z) * uOpening.x + 0.5, (h.y - uOpening.y) * uOpening.w);
+  local.x = mod(cell, 2.0) > 0.5 ? 1.0 - local.x : local.x;
+  // The blur's footprint on the wall, stretched along it where the ray grazes it.
+  vec2 blur = spread * t * vec2(uOpening.x / rx, uOpening.w) + 0.006;
+  vec2 edge = smoothstep(-blur, blur, local) * smoothstep(-blur, blur, 1.0 - local);
+  vec2 texels = vec2(${WINDOW.gobo[2] - WINDOW.gobo[0]}.0, ${WINDOW.gobo[3] - WINDOW.gobo[1]}.0);
+  vec2 footprint = max(blur, fwidth(local)) * texels;
+  float lod = min(log2(1.0 + sqrt(footprint.x * footprint.y)), 9.0);
+  float glass = textureLod(uPanes, mix(uGoboRect.xy, uGoboRect.zw, clamp(local, 0.0, 1.0)), lod).r;
+  float hall = 1.0 - smoothstep(uGlintSpread.w - 1.5, uGlintSpread.w, h.z);
+  return glass * edge.x * edge.y * hall * step(0.02, r.x) * (0.8 + 0.3 * local.y);
+}
+`;
+
+const GLINT_MAIN = /* glsl */ `
+{
+  vec3 coatNormal = inverseTransformDirection(normal, viewMatrix);
+  vec3 eye = normalize(vRoomWorld - cameraPosition);
+  vec3 mirror = reflect(eye, coatNormal);
+  float fresnel = 0.04 + 0.96 * pow(1.0 - saturate(dot(coatNormal, -eye)), 5.0);
+  float seen = windowSeen(vRoomWorld, mirror, uGlintSpread.x) + uGlintSpread.z * windowSeen(vRoomWorld, mirror, uGlintSpread.y);
+  outgoingLight += uGlint * fresnel * seen;
+}
+`;
+
+// Adds the window gloss to a print material, after whatever it already does to its
+// shader (the develop effect).
+const coat = (material, uniforms) => {
+  const before = material.onBeforeCompile;
+  const key = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader, renderer) => {
+    before.call(material, shader, renderer);
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vRoomWorld;')
+      .replace('#include <project_vertex>', '#include <project_vertex>\nvRoomWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\n${GLINT_GLSL}`)
+      .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`);
+  };
+  material.customProgramCacheKey = () => `${key}-glint`;
+};
+
+// A card's sheet, bent to curlZ.
+const curledSheet = (width, height) => {
+  const geometry = new THREE.PlaneGeometry(width, height, 32, 24);
+  const position = geometry.attributes.position;
+  for (let i = 0; i < position.count; i += 1) position.setZ(i, curlZ(position.getX(i), position.getY(i), width, height));
+  geometry.computeVertexNormals();
+  return geometry;
+};
+
+// Re-meshes tape or a sticker (a flat child of the card) so it follows the curled
+// sheet under it and keeps its height above it.
+const stickTo = (piece, { width, height }) => {
+  const { width: w, height: h } = piece.geometry.parameters;
+  const geometry = new THREE.PlaneGeometry(w, h, 12, 6);
+  const position = geometry.attributes.position;
+  const { x, y } = piece.position;
+  const cos = Math.cos(piece.rotation.z);
+  const sin = Math.sin(piece.rotation.z);
+  for (let i = 0; i < position.count; i += 1) {
+    const u = position.getX(i);
+    const v = position.getY(i);
+    position.setZ(i, curlZ(x + u * cos - v * sin, y + u * sin + v * cos, width, height));
+  }
+  geometry.computeVertexNormals();
+  piece.geometry.dispose();
+  piece.geometry = geometry;
+};
 
 export class RoomChapter {
   constructor(app) {
@@ -325,33 +460,51 @@ export class RoomChapter {
       uGoboRect: { value: new THREE.Vector4(g0, 1 - g3, g2, 1 - g1) },
       uSoft: { value: 0.25 },
       uHalfWidth: { value: WINDOW.width / 2 },
+      uCards: { value: PROJECTS.map(() => new THREE.Matrix4()) },
+      uCardSun: { value: PROJECTS.map(() => new THREE.Vector3()) },
+      uCardHalf: { value: PROJECTS.map(() => new THREE.Vector2()) },
     };
     this.hall(tex);
     this.dust();
 
-    // Light for the cards: warm key from behind the viewer, sky fill, glossy
-    // reflections of a bright window.
+    // Light for the cards: warm key from behind the viewer, sky fill, and in the
+    // coat the windows themselves (GLINT_GLSL).
     const key = new THREE.DirectionalLight(0xffc08a, 2.1);
     key.position.set(-4, 6, 8);
     scene.add(key, new THREE.HemisphereLight(0x6c5a7a, 0x20140c, 0.65));
     scene.environment = this.environment();
     scene.environmentIntensity = 0.45;
+    const glint = {
+      uPanes: { value: tex['window-panes'] },
+      uBays: this.sun.uBays,
+      uOpening: this.sun.uOpening,
+      uGoboRect: this.sun.uGoboRect,
+      uGlint: { value: new THREE.Color(1, 0.62, 0.36).multiplyScalar(9) },
+      uGlintSpread: { value: new THREE.Vector4(0.012, 0.09, 0.35, HALL.near) },
+    };
 
-    // The cards.
+    // The cards: curled sheets, tape and stickers following the curl.
     this.cards = PROJECTS.map((project, index) => {
       const map = tex[project.tex];
       const rects = project.typeCard ? [] : [instantRect(map.userData.size, project.ratio)];
-      const mesh = card(map, project.width, { rects, curl: 0.16, cup: 0.08, lift: 0.3, gloss: 0.45 });
+      const mesh = card(map, project.width, { rects, curl: 0, gloss: 0.45, segments: [1, 1] });
+      const { size } = mesh.userData;
+      mesh.geometry.dispose();
+      mesh.geometry = curledSheet(size.width, size.height);
+      coat(mesh.material, glint);
+      this.sun.uCardHalf.value[index].set(size.width / 2, size.height / 2);
       const spot = cardSpot(index);
       mesh.position.copy(spot);
       mesh.rotation.set(0, -0.2 + (index % 2 ? 0.08 : -0.04), (index % 2 ? 1 : -1) * 0.045);
       mesh.userData.home = spot.clone();
       mesh.userData.spin = mesh.rotation.z;
-      tapeTop(mesh, tex[`tape-${project.tape}`], { width: 0.62, rot: (index % 3 - 1) * 0.12 });
+      stickTo(tapeTop(mesh, tex[`tape-${project.tape}`], { width: 0.62, rot: (index % 3 - 1) * 0.12 }), size);
       if (project.badge) {
         const badge = sticker(tex[project.badge], 0.95);
-        badge.position.set(project.width / 2 - 0.25, mesh.userData.size.height / 2 - 0.35, 0.06);
+        badge.position.set(size.width / 2 - 0.25, size.height / 2 - 0.35, 0.06);
         badge.rotation.z = 0.2;
+        stickTo(badge, size);
+        coat(badge.material, glint);
         mesh.add(badge);
       }
       scene.add(mesh);
@@ -403,7 +556,7 @@ export class RoomChapter {
     const plaster = { map: tex.plaster, bump: tex['plaster-n'], tile: [1 / 8, 1 / 4.9], tint: new THREE.Color(0x8a6e5c), bumpScale: 0.8 };
     const boards = { map: tex.floor, bump: flat, tile: PLANKS.map((n) => 1 / n), tint: new THREE.Color(1, 1, 1), bumpScale: 0 };
     const surfaces = [
-      { name: 'floor', size: [width, length], at: [mid.x, floor, mid.z], turn: [-Math.PI / 2, 0], face: Y, u: X, v: Z, ...boards },
+      { name: 'floor', size: [width, length], at: [mid.x, floor, mid.z], turn: [-Math.PI / 2, 0], face: Y, u: X, v: Z, ...boards, shaded: true },
       { name: 'ceiling', size: [width, length], at: [mid.x, ceiling, mid.z], turn: [Math.PI / 2, 0], face: Y.clone().negate(), u: X, v: Z, ...plaster, tint: new THREE.Color(0x6e5848) },
       { name: 'left', size: [length, height], at: [left, mid.y, mid.z], turn: [0, Math.PI / 2], face: X, u: Z, v: Y, ...plaster, dado: 1.15 },
       { name: 'right', size: [length, height], at: [right, mid.y, mid.z], turn: [0, -Math.PI / 2], face: X.clone().negate(), u: Z, v: Y, ...plaster, dado: 1.15, glass: true },
@@ -452,6 +605,7 @@ export class RoomChapter {
           uGlassOn: { value: spec.glass ? 1 : 0 },
           uBoards: { value: tex.floor },
           uDado: { value: spec.dado ?? 0 },
+          uShaded: { value: spec.shaded ? 1 : 0 },
         },
       });
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(...spec.size), material);
@@ -570,10 +724,14 @@ export class RoomChapter {
     if (this.camera.aspect < 1) this.camera.position.x += 0.9;
     this.camera.lookAt(look);
 
+    const { uCards, uCardSun } = this.sun;
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
       mesh.position.set(home.x, home.y + Math.sin(time * 0.6 + j) * 0.05, home.z);
       mesh.rotation.z = mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012;
+      mesh.updateMatrixWorld();
+      uCards.value[j].copy(mesh.matrixWorld).invert();
+      uCardSun.value[j].copy(SUN).transformDirection(uCards.value[j]);
       const develop = mesh.material.userData.develop;
       if (develop) develop[0] = smooth(progress(c, [j - 0.95, j - 0.3]));
     });

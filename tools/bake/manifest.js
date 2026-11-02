@@ -459,4 +459,9 @@ export const TEXTURES = {
     ], { look: 'color', stamp: "'26 11 02", seed: 9 }),
   },
   'note-hello': { make: () => note('say hi! ↓', { width: 420, font: '600 76px Caveat', seed: 53 }) },
+  // The dusk window: a taller middle row, so one pane holds the call to action
+  // all the way up the screen, and the leaves that would land on the copy, the
+  // note and the heart moved off them (5 into the frame, 35 below the note, 48
+  // past the heart).
+  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], nudge: { 5: [220, 0], 35: [0, 60], 48: [60, 0] } }), quality: 0.9 },
 };

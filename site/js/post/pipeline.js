@@ -130,18 +130,23 @@ void main() {
   if (uType < 1.5) {
     vec3 b = texture2D(tB, uv).rgb;
     float g = uGlare;
+    // The glare peaks exactly as the chapters cross, and its top is the burn:
+    // there the source blooms wide and clips to white.
+    float burn = g * g * g;
     // The swap is a dissolve in a compressed range, x / (1 + x), so the room's
-    // HDR window fades in like any other surface. The wall dips under the
-    // light as the swap starts and leaves faster than the room arrives, so the
-    // two never double-expose; the room then rises out of the light, its
+    // HDR window fades in like any other surface. Both chapters sink under the
+    // burn while they cross, so each is glimpsed through the light but the two
+    // never double-expose readably; the room then rises out of the light, its
     // window glowing through it.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    float leave = (1.0 - uMix) * (1.0 - uMix) * (1.0 - uMix) * (1.0 - 0.95 * smoothstep(0.0, 0.3, uMix) * g);
-    vec3 k = ka * leave + kb * uMix * uMix;
+    float sink = 1.0 - 0.5 * burn;
+    float leave = (1.0 - uMix) * (1.0 - uMix) * sink;
+    float arrive = uMix * uMix * sink;
+    vec3 k = ka * leave + kb * arrive;
     color = k / max(vec3(1.0) - k, vec3(0.002));
     // Light fills in for whatever of the two chapters is missing mid-swap.
-    float fill = max(1.0 - leave - uMix * uMix, 0.0);
+    float fill = max(1.0 - leave - arrive, 0.0);
     // Flare light scatters inside the lens and is not vignetted, but the scene
     // is: the composite eases its vignette with the glare, so it moves here.
     float wh = uResolution.x / max(uResolution.y, 1.0);
@@ -159,17 +164,20 @@ void main() {
     // light amber instead of cream.
     color *= vec3(1.0) + vec3(0.15, -0.22, -0.5) * g * reach;
     // The room is darker than the wall, so the light carries more of it.
-    float wash = g * ((0.45 + 1.25 * uMix) * reach + 0.7 * fill * (0.4 + 0.6 * reach));
+    float wash = g * ((0.45 + 0.9 * uMix) * reach + 0.4 * fill * (0.4 + 0.6 * reach));
     wash *= 0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0));
     // A small white-gold core in a gold halo.
     float halo = exp(-r * 9.0);
     float core = exp(-r * r / 0.0015);
+    // The burn: a wide bloom around the source whose core clips to white and
+    // spreads as it peaks; the filmic shoulder turns its falloff gold, then amber.
+    float hot = 14.0 * burn * exp(-r / mix(0.04, 0.1, burn));
     // Lens character: a soft horizontal streak through the source, and a faint
     // ghost mirrored through the centre.
     float streak = exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.5);
     float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
     float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
-    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.5, 0.18) * (halo + streak * 0.6) + vec3(1.0, 0.72, 0.42) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
+    color += vec3(1.0, 0.45, 0.15) * wash + vec3(1.0, 0.55, 0.25) * hot + g * (vec3(1.0, 0.5, 0.18) * (halo + streak * 0.6) + vec3(1.0, 0.72, 0.42) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
   } else if (uType < 2.5) {
     // A sheet of paper slid up over the room, not a wipe. It comes in a couple
     // of degrees off square, left corner first, and squares up as it lands.
