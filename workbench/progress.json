@@ -218,6 +218,16 @@
      "at": "2026-11-02T13:54:06.162Z",
      "compare": "rounds/flash/r4/compare.jpg",
      "strip": "rounds/flash/r4/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 5,
+     "score": 7,
+     "gap": "No tape ever lands: the strip is held by the black photo corners that have been on the wall since the countdown, so at 2.95-3.2 nothing presses down; a translucent masking or washi tape strip should slap onto the strip's top edge with a small press and settle, as in the bar.",
+     "notes": "Countdown is strong: big riso-pink numerals with blue offset, centred in the corner marks where the strip lands, with a 'the photo lands here!' note. The 1 at v1.418 is a washed-out pale pink and 'smile!' is ballpoint blue, which is weaker than 3 and 2. The flash whites out with a warm hot centre and recovers fast; the peak is creamy peach, not hard white, and the amber edges and ghosted name keep it short of HDR. The strip enters blank from the top and develops frame by frame, top to bottom, cleanly. No swing or overshoot is visible, because it hangs dead upright in every strip frame. The caption 'four sittings...' reads well and leaves before taped. The taped frame matches the bar composition closely.",
+     "at": "2026-11-02T18:43:46.981Z",
+     "compare": "rounds/flash/r5/compare.jpg",
+     "strip": "rounds/flash/r5/strip.jpg"
     }
    ],
    "status": "open"
@@ -273,5 +283,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T14:12:18.678Z"
+ "updated": "2026-11-02T18:43:46.982Z"
 }
