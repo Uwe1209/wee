@@ -23,6 +23,7 @@ const SPACING = 6.2;
 const AXIS = new THREE.Vector3();
 const FACE = new THREE.Vector3();
 const SIDE = new THREE.Vector3();
+const VIEW = new THREE.Vector3();
 const BASIS = new THREE.Matrix4();
 const DWELL = 0.55; // 0 = constant speed; 0.55 = 0.45× speed at each card
 
@@ -42,6 +43,24 @@ const glowTexture = (width, height, draw) => {
 };
 
 const additive = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false };
+
+// Dust glow: each mote brightens with its distance to each beam's axis.
+const dustHead = (count) => /* glsl */ `
+#define BEAMS ${count}
+uniform vec3 uBeamFrom[BEAMS];
+uniform vec3 uBeamTo[BEAMS];
+uniform float uBeamGain[BEAMS];
+`;
+const DUST_GLOW = /* glsl */ `
+  vec3 dustAt = (modelMatrix * vec4(position, 1.0)).xyz;
+  float dustGlow = 0.05;
+  for (int i = 0; i < BEAMS; i++) {
+    vec3 axis = uBeamTo[i] - uBeamFrom[i];
+    float along = clamp(dot(dustAt - uBeamFrom[i], axis) / max(dot(axis, axis), 1e-4), 0.0, 1.0);
+    dustGlow += max(0.0, 1.0 - distance(dustAt, uBeamFrom[i] + axis * along) / 2.2) * uBeamGain[i];
+  }
+  vColor *= dustGlow;
+`;
 
 export class RoomChapter {
   constructor(app) {
@@ -63,12 +82,15 @@ export class RoomChapter {
     const tex = {};
     await Promise.all(names.map(async (name) => { tex[name] = await texture(name); }));
 
-    // The far window and its beams.
-    const window = new THREE.Mesh(new THREE.PlaneGeometry(13, 13), new THREE.MeshBasicMaterial({
+    // The far window and its beams ride along with the camera as a far backdrop, so the
+    // window holds the gap between the captions and the cards, high above the next cards.
+    this.light = new THREE.Group();
+    scene.add(this.light);
+    const window = new THREE.Mesh(new THREE.PlaneGeometry(16.5, 16.5), new THREE.MeshBasicMaterial({
       map: tex['window-panes'], color: new THREE.Color(1, 0.78, 0.52).multiplyScalar(7), fog: false,
     }));
-    window.position.set(-9, 4, -66);
-    scene.add(window);
+    window.position.set(2.6, 20.3, -100);
+    this.light.add(window);
 
     const beamMap = glowTexture(256, 64, (ctx, w, h) => {
       const across = ctx.createLinearGradient(0, 0, 0, h);
@@ -86,10 +108,12 @@ export class RoomChapter {
       ctx.fillRect(0, 0, w, h);
     });
     this.beams = [];
+    // Beams fall from the window toward the viewer and pass below and right of the
+    // camera, so they never cross the caption column.
     [
-      { from: [-9, 4.5, -66], to: [4, -3.5, -8], width: 3.2, strength: 0.16 },
-      { from: [-7, 2.5, -66], to: [6, -3.8, -24], width: 2.4, strength: 0.12 },
-      { from: [-11, 6, -66], to: [1, -3.2, 2], width: 4.2, strength: 0.09 },
+      { from: [1.72, 14.25, -100], to: [2.4, -4.6, -9], width: 3.0, strength: 0.16 },
+      { from: [4.14, 16.45, -100], to: [6.2, -3.6, -14], width: 2.4, strength: 0.12 },
+      { from: [0.4, 17.0, -100], to: [0.9, -4.4, -6], width: 4.0, strength: 0.09 },
     ].forEach((beam) => {
       const from = new THREE.Vector3(...beam.from);
       const to = new THREE.Vector3(...beam.to);
@@ -99,26 +123,19 @@ export class RoomChapter {
       }));
       mesh.position.copy(from).lerp(to, 0.5);
       mesh.userData = { from, to, strength: beam.strength };
-      scene.add(mesh);
+      this.light.add(mesh);
       this.beams.push(mesh);
     });
 
-    // Dust lit by the beams.
+    // Dust hangs still in the room along the whole flight; a mote glows while a beam
+    // passes over it (computed per vertex from where the beams are this frame).
     const rand = random(17);
-    const count = 1800;
+    const count = 2300;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
-    const lit = new THREE.Vector3();
     for (let k = 0; k < count; k += 1) {
-      const p = new THREE.Vector3(-7 + rand() * 15, -3.5 + rand() * 8, -60 + rand() * 66);
-      positions.set([p.x, p.y, p.z], k * 3);
-      let glow = 0.05;
-      this.beams.forEach(({ userData: { from, to, strength } }) => {
-        const line = new THREE.Line3(from, to);
-        line.closestPointToPoint(p, true, lit);
-        glow += Math.max(0, 1 - lit.distanceTo(p) / 2.2) * strength * 12;
-      });
-      const v = glow * (0.4 + rand() * rand() * 1.8);
+      positions.set([-7 + rand() * 15, -4.5 + rand() * 9, -78 + rand() * 84], k * 3);
+      const v = 0.4 + rand() * rand() * 1.8;
       colors.set([v, v * 0.82, v * 0.6], k * 3);
     }
     const dustGeometry = new THREE.BufferGeometry();
@@ -132,7 +149,19 @@ export class RoomChapter {
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, 64, 64);
     });
-    this.dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({ size: 0.05, map: dot, vertexColors: true, sizeAttenuation: true, ...additive }));
+    const dustMaterial = new THREE.PointsMaterial({ size: 0.05, map: dot, vertexColors: true, sizeAttenuation: true, ...additive });
+    this.beamUniforms = {
+      uBeamFrom: { value: this.beams.map(() => new THREE.Vector3()) },
+      uBeamTo: { value: this.beams.map(() => new THREE.Vector3()) },
+      uBeamGain: { value: this.beams.map((beam) => beam.userData.strength * 12) },
+    };
+    dustMaterial.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, this.beamUniforms);
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', `#include <common>\n${dustHead(this.beams.length)}`)
+        .replace('#include <color_vertex>', `#include <color_vertex>\n${DUST_GLOW}`);
+    };
+    this.dust = new THREE.Points(dustGeometry, dustMaterial);
     scene.add(this.dust);
 
     // Light: warm key from behind the viewer, sky fill, glossy reflections of the window.
@@ -217,6 +246,7 @@ export class RoomChapter {
     const look = this.lookCurve.getPoint(t);
     if (this.camera.aspect < 1) this.camera.position.x += 0.9;
     this.camera.lookAt(look);
+    this.light.position.z = this.camera.position.z;
 
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
@@ -229,16 +259,19 @@ export class RoomChapter {
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
     this.dust.rotation.y = Math.sin(time * 0.05) * 0.02;
     this.dust.position.y = Math.sin(time * 0.17) * 0.12;
-    // Beams are ribbons along their axis, turned to face the camera.
+    // Beams are ribbons along their axis, turned to face the camera (in the light's frame).
+    VIEW.subVectors(this.camera.position, this.light.position);
     this.beams.forEach((beam, i) => {
       beam.material.opacity = 0.85 + Math.sin(time * 0.7 + i * 2.1) * 0.15;
       const { from, to } = beam.userData;
       AXIS.subVectors(to, from).normalize();
-      FACE.subVectors(this.camera.position, beam.position).normalize();
+      FACE.subVectors(VIEW, beam.position).normalize();
       FACE.addScaledVector(AXIS, -FACE.dot(AXIS)).normalize();
       SIDE.crossVectors(FACE, AXIS);
       BASIS.makeBasis(AXIS, SIDE, FACE);
       beam.quaternion.setFromRotationMatrix(BASIS);
+      this.beamUniforms.uBeamFrom.value[i].addVectors(from, this.light.position);
+      this.beamUniforms.uBeamTo.value[i].addVectors(to, this.light.position);
     });
   }
 

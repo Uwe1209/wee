@@ -200,7 +200,7 @@ export class App {
   }
 
   async goto(state) {
-    const v = typeof state === 'number' ? state : STATES[state];
+    const v = typeof state === 'number' ? state : STATES[state] ?? (Number.isFinite(Number(state)) ? Number(state) : undefined);
     if (v === undefined) throw new Error(`unknown state ${state}`);
     this.api.ready = false;
     await this.whenBuilt;
