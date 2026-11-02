@@ -345,6 +345,16 @@
      "at": "2026-11-02T19:54:00.013Z",
      "compare": "rounds/about/r4/compare.jpg",
      "strip": "rounds/about/r4/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 5,
+     "score": 7,
+     "gap": "Wall and copy still move in sequence, not together: the camera finishes its dolly to the about cluster by about v4.96 while the copy hasn't entered yet (4.6 is a near-empty wall with only a cut-off portrait at the right edge), and then the cluster sits almost still while 'Hi, I'm You Wee.' scrolls up by itself from 5.0 to 6.1. Start the copy's rise during the dolly and keep a slow push or drift on the wall while the copy scrolls.",
+     "notes": "Settled frame (5.6) is close to the bar: copy is legible, in light, in the left 40% and off the photos; the cluster of portrait, Swinburne card, 3.49 badge, coursework card and looking-for note is balanced and warm, with two stickers. Secondary: (1) in the 4.1-4.9 transit the middle third is a big empty wall under the darkest mullion shadow, so it feels like dead air. (2) At 6.1-6.25 an unexplained bright hotspot blooms at the upper left, and the copy runs off the top while the cluster is still centred, which leaves the frame unbalanced. (3) The cluster sits mostly in flat light with no gobo bars across it, so it has less depth than the bar's hero cluster. (4) The portrait has no washi tape or lifted corner; it reads flatter than the bar's instant photos. No console errors and no failed chapters.",
+     "at": "2026-11-02T23:57:38.479Z",
+     "compare": "rounds/about/r5/compare.jpg",
+     "strip": "rounds/about/r5/strip.jpg"
     }
    ],
    "status": "open"
@@ -375,5 +385,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T23:54:24.957Z"
+ "updated": "2026-11-02T23:57:38.484Z"
 }
