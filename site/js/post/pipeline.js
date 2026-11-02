@@ -167,15 +167,50 @@ void main() {
     float streak = exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.5);
     float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
     float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
-    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.55, 0.22) * (halo + streak * 0.6) + vec3(1.0, 0.8, 0.55) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
+    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.5, 0.18) * (halo + streak * 0.6) + vec3(1.0, 0.72, 0.42) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
   } else if (uType < 2.5) {
-    float edge = uMix;
-    if (uv.y < edge) {
-      color = texture2D(tB, vec2(uv.x, uv.y + 1.0 - edge)).rgb;
-    } else {
-      float d = (uv.y - edge) * aspect;
-      color = a * (1.0 - 0.5 * exp(-d * 40.0) * step(0.0005, edge));
-    }
+    // A sheet of paper slid up over the room, not a wipe. It comes in a couple
+    // of degrees off square, left corner first, and squares up as it lands.
+    // Its top edge is deckled and curls back toward the room, most at the
+    // leading corner, so the window light catches a thin lip along it; the
+    // room gets a soft shadow above the edge that widens as the sheet lifts.
+    // Lengths are in frame heights, with x scaled by the aspect so the tilt doesn't shear.
+    float m = uMix;
+    float wide = uResolution.x / max(uResolution.y, 1.0);
+    float px = 1.0 / max(uResolution.y, 1.0);
+    // Curl and lip flatten as it lands, so the last frame is exactly the desk.
+    float settle = 1.0 - smoothstep(0.95, 1.0, m);
+    float tilt = -0.05 * (1.0 - m);
+    // Starts low enough that the turned corner is still out of frame at 0.
+    float rise = m * 1.08 - 0.08;
+    vec2 q = vec2((uv.x - 0.5) * wide, uv.y - rise);
+    float cs = cos(tilt);
+    float sn = sin(tilt);
+    // Sheet space: x along the top edge, y up from it.
+    vec2 s = vec2(cs * q.x + sn * q.y, cs * q.y - sn * q.x);
+    float sx = s.x / max(wide, 0.001);
+    float lead = smoothstep(-0.5, 0.5, -sx);
+    float curl = settle * mix(0.35, 1.0, lead);
+    // The curl foreshortens the edge, most at the leading corner, and the sheet flexes a little as it moves.
+    float bend = settle * (0.005 * sin(sx * 4.7 + 1.1 + 1.8 * m) - 0.005 * curl);
+    float deckle = 0.0026 * (0.65 * tNoise(vec2(s.x * 40.0, 1.7)) + 0.35 * tNoise(vec2(s.x * 146.0, 5.3)));
+    float base = max(0.0012, 1.5 * px);
+    float depth = base + deckle + bend - s.y;
+    float cover = smoothstep(-0.75 * px, 0.75 * px, depth);
+    // The desk rides with the sheet; mirrored so a turned corner never samples off the render.
+    vec2 st = vec2(0.5 + sx, 1.0 + s.y);
+    st = 1.0 - abs(1.0 - abs(st));
+    vec3 page = texture2D(tB, st).rgb;
+    float glow = 1.0 - smoothstep(0.0, mix(0.008, 0.022, curl), depth);
+    float lip = 1.0 - smoothstep(0.0, max(2.0 * px, 0.0019), depth);
+    float catchLight = settle * mix(0.6, 1.0, lead) * (0.75 + 0.5 * tNoise(vec2(s.x * 84.0, 9.1)));
+    page = page * (1.0 + 0.35 * catchLight * glow * glow) + vec3(1.0, 0.72, 0.48) * catchLight * (0.45 * lip + 0.08 * glow * glow);
+    float lift = smoothstep(0.0, 0.8, m);
+    float h = max(s.y - base - bend, 0.0);
+    float soft = mix(0.014, 0.08, lift) * (0.85 + 0.3 * curl);
+    float shade = mix(0.8, 0.6, lift) * exp(-h / soft) + 0.15 * exp(-h / (3.0 * px));
+    shade *= smoothstep(0.0, 0.06, m);
+    color = mix(a * (1.0 - min(shade, 0.9)), page, cover);
   } else if (uType < 3.5) {
     float edge = 1.0 - uMix;
     if (uv.y < edge) {
