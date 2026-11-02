@@ -485,7 +485,7 @@ export const TEXTURES = {
   // The dusk window, thrown at a grazing angle: the left column is one tall pane
   // (both bars bridged), widened to the left, so the call to action sits in one
   // long patch of sun; the right column's bars and leaves rake across the strip.
-  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], bridges: [[0, 0], [0, 1]], open: [[60, 120, 110, 780]] }), quality: 0.9 },
+  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], bridges: [[0, 0], [0, 1]], open: [[60, 120, 110, 880], [170, 900, 300, 100]] }), quality: 0.9 },
 
   // --- the wall: about
   // The about window: the left column is one tall pane (both its bars gone) so
