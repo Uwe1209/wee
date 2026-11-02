@@ -279,9 +279,20 @@
      "at": "2026-11-02T19:34:24.125Z",
      "compare": "rounds/flash/r8/compare.jpg",
      "strip": "rounds/flash/r8/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 9,
+     "score": 8,
+     "gap": "The tape lands through the heart sticker: at 3.0 the masking tape comes in at a steep angle and overlaps the pink heart before snapping flat, so the final press reads as a collision rather than a clean slap onto the strip's top edge.",
+     "notes": "The full sequence works: 3, 1, smile! land in the corner-mark target, the flash goes to warm HDR white and recovers cleanly, the strip drops in from above and frames develop top to bottom (2.46 to 2.88), and the tape settles with a small press between 3.05 and 3.1. The taped frame is close to the bar. Secondary: the strip sits about 130px further left than in the bar, crowding the SPEX polaroid; the '1' in the 1.418 sample is a washed pastel pink, not saturated riso; at 2.045 the falling strip is a faint ghost that briefly crosses the heart. No console errors or failed chapters.",
+     "at": "2026-11-02T19:43:08.643Z",
+     "compare": "rounds/flash/r9/compare.jpg",
+     "strip": "rounds/flash/r9/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Met the bar at 8 in round 9. Secondary for smoothing: the tape path crosses the heart sticker at 3.0; the countdown 1 fades to pastel early."
   },
   "about": {
    "rounds": [
@@ -344,5 +355,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T19:34:24.126Z"
+ "updated": "2026-11-02T19:43:19.920Z"
 }
