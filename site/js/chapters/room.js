@@ -41,6 +41,11 @@ const WINDOW = { z: -2 + SPACING / 2, width: 2.6, sill: -1.3, head: 3.3, gobo: [
 // the left wall, so the caption side of the frame stays in shade.
 const SUN = new THREE.Vector3(0.8, 0.75, -0.55).normalize();
 const SUN_LIGHT = new THREE.Color(0xffc28a).multiplyScalar(7);
+// World size of one tile of the floorboard texture (eight planks across).
+const PLANKS = [2.88, 5.76];
+// Where the middle of each window's light lands across the floor: walls are lit
+// by the bounce off this line.
+const POOL_X = HALL.right - ((WINDOW.sill + WINDOW.head) / 2 - HALL.floor) * (SUN.x / SUN.y);
 
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
@@ -79,6 +84,10 @@ uniform vec4 uBays;     // window wall x, centre z of one window, bay length, 1 
 uniform vec4 uOpening;  // 1 / width, sill, head, 1 / (head - sill)
 uniform vec4 uGoboRect; // the opening's corners in the gobo (uv)
 uniform float uSoft;    // penumbra growth per unit the light has travelled
+uniform float uHalfWidth;
+#define FLOOR (${HALL.floor.toFixed(3)})
+#define POOL_X (${POOL_X.toFixed(3)})
+#define PLANKS vec2(${PLANKS.map((n) => n.toFixed(3)).join(', ')})
 
 vec2 sunCell(vec3 p, out float travel) {
   travel = max(uBays.x - p.x, 0.0) * uSun.w;
@@ -131,15 +140,14 @@ vec3 sunHaze(vec3 p) {
   float s1 = min(min(dist, uHazeReach), max(ya, yb));
   if (s1 <= s0) return vec3(0.0);
   float z0 = wall.z - uBays.y;
-  float side = 0.5 / uOpening.x;
   float cell = floor((z0 + s0 * slide.z) * uBays.w + 0.5);
   float onward = slide.z >= 0.0 ? 1.0 : -1.0;
   float jitter = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
   float sum = 0.0;
   for (int i = 0; i < HAZE_WINDOWS; i++) {
     float centre = (cell + onward * float(i)) * uBays.z;
-    float za = reach(centre - side, z0, slide.z);
-    float zb = reach(centre + side, z0, slide.z);
+    float za = reach(centre - uHalfWidth, z0, slide.z);
+    float zb = reach(centre + uHalfWidth, z0, slide.z);
     float a = max(s0, min(za, zb));
     float b = min(s1, max(za, zb));
     if (a >= s1) break;
@@ -199,6 +207,8 @@ uniform vec3 uGround;
 uniform vec3 uBounce;
 uniform vec3 uGlass;
 uniform float uGlassOn;
+uniform sampler2D uBoards;
+uniform float uDado;
 varying vec3 vWorld;
 
 // Sun on a surface: the gobo at the screen's own mip level, softer the further
@@ -212,12 +222,22 @@ float sunOn(vec3 p) {
 void main() {
   vec2 uv = vec2(dot(vWorld, uAxisU), dot(vWorld, uAxisV)) * uTile;
   vec3 albedo = texture(uMap, uv).rgb * uTint;
+  if (uDado > 0.0) {
+    // Side walls: board panelling up to a rail, on a dark skirting.
+    float h = vWorld.y - FLOOR;
+    float aa = max(fwidth(h), 1e-4);
+    vec3 panel = texture(uBoards, vec2(vWorld.z, h) / PLANKS).rgb * 0.62;
+    albedo = mix(panel, albedo, smoothstep(uDado - aa, uDado + aa, h));
+    float rail = smoothstep(uDado - aa, uDado + aa, h) * (1.0 - smoothstep(uDado + 0.09 - aa, uDado + 0.09 + aa, h));
+    albedo = mix(albedo, vec3(0.3, 0.19, 0.11), rail);
+    albedo *= mix(0.3, 1.0, smoothstep(0.2 - aa, 0.2 + aa, h));
+  }
   vec3 bump = texture(uBump, uv).xyz * 2.0 - 1.0;
   vec3 n = normalize(uFace * bump.z + (uAxisU * bump.x + uAxisV * bump.y) * uBumpScale);
   float sun = sunOn(vWorld) * max(dot(n, uSun.xyz), 0.0);
-  vec3 pool = vec3(1.7, ${HALL.floor.toFixed(2)} + 0.01, vWorld.z);
+  vec3 pool = vec3(POOL_X, FLOOR + 0.01, vWorld.z);
   vec3 off = vWorld - pool;
-  float bounce = sunAt(pool, 5.0) / (1.0 + 0.12 * dot(off, off));
+  float bounce = sunAt(pool, 5.0) / (1.0 + 0.06 * dot(off, off));
   vec3 color = albedo * (mix(uGround, uSky, 0.5 + 0.5 * n.y) + uBounce * bounce + uSunLight * sun);
   if (uGlassOn > 0.5) {
     float travel;
@@ -304,6 +324,7 @@ export class RoomChapter {
       uOpening: { value: new THREE.Vector4(1 / WINDOW.width, WINDOW.sill, WINDOW.head, 1 / (WINDOW.head - WINDOW.sill)) },
       uGoboRect: { value: new THREE.Vector4(g0, 1 - g3, g2, 1 - g1) },
       uSoft: { value: 0.25 },
+      uHalfWidth: { value: WINDOW.width / 2 },
     };
     this.hall(tex);
     this.dust();
@@ -379,19 +400,18 @@ export class RoomChapter {
     const X = new THREE.Vector3(1, 0, 0);
     const Y = new THREE.Vector3(0, 1, 0);
     const Z = new THREE.Vector3(0, 0, 1);
-    const linear = (hex, scale) => new THREE.Color(hex).multiplyScalar(scale);
-    const plaster = { map: tex.plaster, bump: tex['plaster-n'], tile: [1 / 8, 1 / 4.9], tint: linear(0x8a6e5c, 1), bumpScale: 0.8 };
-    const boards = { map: tex.floor, bump: flat, tile: [1 / 2.88, 1 / 5.76], tint: linear(0xffffff, 1), bumpScale: 0 };
+    const plaster = { map: tex.plaster, bump: tex['plaster-n'], tile: [1 / 8, 1 / 4.9], tint: new THREE.Color(0x8a6e5c), bumpScale: 0.8 };
+    const boards = { map: tex.floor, bump: flat, tile: PLANKS.map((n) => 1 / n), tint: new THREE.Color(1, 1, 1), bumpScale: 0 };
     const surfaces = [
       { name: 'floor', size: [width, length], at: [mid.x, floor, mid.z], turn: [-Math.PI / 2, 0], face: Y, u: X, v: Z, ...boards },
-      { name: 'ceiling', size: [width, length], at: [mid.x, ceiling, mid.z], turn: [Math.PI / 2, 0], face: Y.clone().negate(), u: X, v: Z, ...plaster, tint: linear(0x6e5848, 1) },
-      { name: 'left', size: [length, height], at: [left, mid.y, mid.z], turn: [0, Math.PI / 2], face: X, u: Z, v: Y, ...plaster },
-      { name: 'right', size: [length, height], at: [right, mid.y, mid.z], turn: [0, -Math.PI / 2], face: X.clone().negate(), u: Z, v: Y, ...plaster, glass: true },
+      { name: 'ceiling', size: [width, length], at: [mid.x, ceiling, mid.z], turn: [Math.PI / 2, 0], face: Y.clone().negate(), u: X, v: Z, ...plaster, tint: new THREE.Color(0x6e5848) },
+      { name: 'left', size: [length, height], at: [left, mid.y, mid.z], turn: [0, Math.PI / 2], face: X, u: Z, v: Y, ...plaster, dado: 1.15 },
+      { name: 'right', size: [length, height], at: [right, mid.y, mid.z], turn: [0, -Math.PI / 2], face: X.clone().negate(), u: Z, v: Y, ...plaster, dado: 1.15, glass: true },
       { name: 'far', size: [width, height], at: [mid.x, mid.y, far], turn: [0, 0], face: Z, u: X, v: Y, ...plaster },
       { name: 'near', size: [width, height], at: [mid.x, mid.y, near], turn: [0, Math.PI], face: Z.clone().negate(), u: X, v: Y, ...plaster },
     ];
-    const sky = new THREE.Color(0xb5c6e4).multiplyScalar(0.55);
-    const ground = new THREE.Color(0x7a5a44).multiplyScalar(0.7);
+    const sky = new THREE.Color(0xb5c6e4).multiplyScalar(0.7);
+    const ground = new THREE.Color(0x7a5a44).multiplyScalar(0.9);
     this.haze = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, depthBuffer: false });
     this.hazeScene = new THREE.Scene();
     this.hazeScene.background = new THREE.Color(0x000000);
@@ -427,9 +447,11 @@ export class RoomChapter {
           uSunLight: { value: SUN_LIGHT },
           uSky: { value: sky },
           uGround: { value: ground },
-          uBounce: { value: new THREE.Color(0xffc28a).multiplyScalar(0.5) },
+          uBounce: { value: new THREE.Color(0xffc28a).multiplyScalar(0.8) },
           uGlass: { value: new THREE.Color(1, 0.55, 0.25).multiplyScalar(2.5) },
           uGlassOn: { value: spec.glass ? 1 : 0 },
+          uBoards: { value: tex.floor },
+          uDado: { value: spec.dado ?? 0 },
         },
       });
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(...spec.size), material);
@@ -437,22 +459,21 @@ export class RoomChapter {
       mesh.rotation.set(spec.turn[0], spec.turn[1], 0);
       mesh.name = spec.name;
       this.scene.add(mesh);
-      const veil = new THREE.Mesh(mesh.geometry, hazeMaterial);
-      veil.position.copy(mesh.position);
-      veil.rotation.copy(mesh.rotation);
-      this.hazeScene.add(veil);
+      const air = new THREE.Mesh(mesh.geometry, hazeMaterial);
+      air.position.copy(mesh.position);
+      air.rotation.copy(mesh.rotation);
+      this.hazeScene.add(air);
       return mesh;
     });
   }
 
   // Marches the sunlit haze at half resolution before the room is drawn, and
   // leaves the renderer pointed at the room's own target.
-  hazePass() {
+  hazePass(size) {
     const { renderer } = this.app;
-    renderer.getDrawingBufferSize(SIZE);
-    this.screen.set(1 / SIZE.x, 1 / SIZE.y);
-    const width = Math.max(1, Math.round(SIZE.x / 2));
-    const height = Math.max(1, Math.round(SIZE.y / 2));
+    this.screen.set(1 / size.x, 1 / size.y);
+    const width = Math.max(1, Math.round(size.x / 2));
+    const height = Math.max(1, Math.round(size.y / 2));
     if (this.haze.width !== width || this.haze.height !== height) this.haze.setSize(width, height);
     const target = renderer.getRenderTarget();
     renderer.setRenderTarget(this.haze);
@@ -558,9 +579,10 @@ export class RoomChapter {
     });
     this.focus = this.cards.map((_, j) => 1 - smooth(clamp01((Math.abs(c - j) - 0.16) / 0.3)));
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
-    this.hazePass();
+    const size = this.app.renderer.getDrawingBufferSize(SIZE);
+    this.hazePass(size);
     this.dustUniforms.uTime.value = time;
-    this.dustUniforms.uScale.value = SIZE.y / 2;
+    this.dustUniforms.uScale.value = size.y / 2;
   }
 
   stills(v) {
