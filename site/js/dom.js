@@ -5,10 +5,12 @@ import { TIMELINE as T, clamp01, flashEnvelope, progress, smooth, softPin } from
 
 const opacityStyle = (value) => value.toFixed(3);
 
-// The flash veil matches the composite's flash: warm white in the middle,
-// running to gold at the edges, where it also thins a little. Distances are in
-// frame heights, as in the composite.
-const VEIL = { centre: [255, 252, 243], edge: [247, 210, 156], falloff: 2, edgeOpacity: 0.9 };
+// The flash veil matches the composite's flash at its peak: white-hot in the
+// middle, only a breath warmer at the edges, and opaque edge to edge so the
+// page's text whites out with the scene. The warmth of the build and decay
+// comes from the composite showing through as the veil fades. Distances are
+// in frame heights, as in the composite.
+const VEIL = { centre: [255, 252, 244], edge: [251, 239, 218], falloff: 2, edgeOpacity: 1 };
 
 export class Dom {
   constructor(doc, { reduced }) {
@@ -123,10 +125,10 @@ export class Dom {
     }
 
     // The text blows out with the scene: the veil rides the composite's flash
-    // envelope, holds near full at the peak and is gone before the strip
-    // drops in. Reduced motion keeps a gentle fade, as the composite does.
+    // envelope, is fully opaque for the top of it (about 0.05 vh round the
+    // peak, so nothing reads) and is gone before the strip drops in. Reduced motion keeps a gentle fade, as the composite does.
     if (this.veil) {
-      const veil = T.flash.veil * smooth(progress(flashEnvelope(v), [0.05, 1])) * (this.reduced ? 0.05 : 1);
+      const veil = T.flash.veil * smooth(progress(flashEnvelope(v), [0.05, 0.9])) * (this.reduced ? 0.05 : 1);
       this.set(this.veil, '', opacityStyle(veil));
     }
 
