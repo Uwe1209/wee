@@ -173,6 +173,16 @@
      "at": "2026-11-02T12:52:54.194Z",
      "compare": "rounds/scrapbook/r3/compare.jpg",
      "strip": "rounds/scrapbook/r3/strip.jpg"
+    },
+    {
+     "element": "scrapbook",
+     "round": 4,
+     "score": 7,
+     "gap": "At rest (12.5) the memory cluster spills off the right edge: a fifth photo and a 'wa...' caption card are cut in half at x≈1830-1920, so the right side reads as cropped clutter instead of a composed four- or five-piece spread like the bar.",
+     "notes": "Page slide (11.15) now reads as paper: deckled top edge, soft contact shadow, gobo light on it; good. Drops land one by one with tape and settle; window light matches the wall. Text column is legible and lit, but the dark mullion bar sits right next to it and a heavy dark band runs across the top, so the page is moodier and murkier than the bar's warm open light. Photos all carry the same purple duotone, darker than the bar's warm prints; the two group shots read muddy. Only two stickers (star, sparkle); no ticket or label chips, so less cut-and-paste variety than the bar. At 11.557 one print is still a blank grey card mid-develop, fine in motion.",
+     "at": "2026-11-02T18:49:31.948Z",
+     "compare": "rounds/scrapbook/r4/compare.jpg",
+     "strip": "rounds/scrapbook/r4/strip.jpg"
     }
    ],
    "status": "open"
@@ -283,5 +293,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T18:43:46.982Z"
+ "updated": "2026-11-02T18:49:31.949Z"
 }
