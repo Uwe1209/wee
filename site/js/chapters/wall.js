@@ -30,7 +30,7 @@ const DAY = { sun: new THREE.Color(0xffc28a), sky: new THREE.Color(0xb5c6e4), gr
 // angle of incidence. All of the geometry changes while the wall is off screen.
 const DUSK = {
   sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x98a0dc), ground: new THREE.Color(0x584a62), skyIntensity: 1.8,
-  sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -0.7], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
+  sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -1.0], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
 };
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
 // about chapter: with the about window, the copy rises in its tall left pane,
