@@ -56,7 +56,7 @@ await page.waitForFunction(() => window.__app?.ready, null, { timeout: 300000, p
 const shoot = async (state, file) => {
   await page.evaluate((s) => window.__app.goto(s), state);
   await page.waitForFunction(() => window.__app.ready, null, { timeout: 120000, polling: 100 });
-  await page.screenshot({ path: file, type: 'jpeg', quality: 88 });
+  await page.screenshot({ path: file, type: 'jpeg', quality: 88, timeout: 300000 });
 };
 
 const frames = [];
