@@ -60,3 +60,7 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - [ ] User picks a style frame (becomes the art bible)
 - [ ] Build, element by element
 - [ ] Motion QA and film
+
+## Smoothing-pass notes (seams between elements)
+
+- The light leak (6.15-6.75) burns the 3D scene to white, but the about copy is page text and stays crisp over the burn. Drive the flash's page veil from the leak's glare too (lower peak), so page text washes with the scene.
