@@ -35,9 +35,12 @@
   font: italic 400 22vw/1 var(--serif); color: var(--pink); text-shadow: 0.35vw 0.25vw 0 rgba(0, 120, 191, 0.55);
 }
 .count.smile { font: 600 6.5vw/1 var(--hand); color: var(--ballpoint); text-shadow: none; rotate: -6deg; }
+/* Written on the plaster under the printed strip, between the ticket and the
+   gators photo, one sitting per line. The wall scales with the screen's height,
+   so the caption is placed from the centre in vh to stay on that bare patch. */
 .flash-caption {
-  position: absolute; right: 4.6vw; bottom: calc(var(--vh) * 14); max-width: 20vw; rotate: -2deg;
-  font-size: 1.55vw; line-height: 1.15; color: #19214f; text-align: right;
+  position: absolute; left: calc(50vw + var(--vh) * 36.1); bottom: calc(var(--vh) * 10.1); max-width: calc(var(--vh) * 13.5); rotate: -2deg;
+  font-size: calc(var(--vh) * 2.35); line-height: 1.15; color: var(--ballpoint);
 }
 /* The flash blows the page out with the scene: a veil over the text, painted
    (dithered) by dom.js and faded by the frame loop on the flash envelope. */

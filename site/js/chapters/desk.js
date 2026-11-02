@@ -125,7 +125,7 @@ export class DeskChapter {
     scene.background = new THREE.Color(0x4a3526);
     this.scene = scene;
     const names = [
-      'paper', 'gobo', 'gators-riso', 'game-riso', 'team-instant', 'certificate-instant', 'coaching-instant',
+      'paper', 'gobo-desk', 'gators-riso', 'game-riso', 'team-instant', 'certificate-instant', 'coaching-instant',
       'tape-cream', 'tape-pink', 'tape-blue', 'tape-yellow', 'sticker-star', 'sticker-heart', 'sticker-sparkle',
     ];
     const tex = {};
@@ -141,7 +141,10 @@ export class DeskChapter {
     const sun = new THREE.SpotLight(0xffc28a, 5.2, 0, 0.55, 0.25, 0);
     sun.position.set(-15, 4, 13);
     sun.target.position.set(2, 0, 0);
-    sun.map = tex.gobo;
+    // The window's tall middle pane holds the whole text column, title to
+    // Toolbox, while the camera drifts through the pin; the mullion and the
+    // leaves fall across the memories.
+    sun.map = tex['gobo-desk'];
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     // A tight depth range keeps precision high enough for a small bias, so
