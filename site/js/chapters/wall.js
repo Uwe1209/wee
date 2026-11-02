@@ -83,7 +83,7 @@ export class WallChapter {
     this.wall = wall;
 
     const names = [
-      'plaster', 'plaster-n', 'gobo', 'tape-cream', 'tape-pink', 'tape-blue', 'tape-yellow', 'sticker-star', 'sticker-heart',
+      'plaster', 'plaster-n', 'gobo', 'tape-cream', 'tape-masking', 'tape-pink', 'tape-blue', 'tape-yellow', 'sticker-star', 'sticker-heart',
       'sticker-sparkle', 'sticker-star-pink', 'ticket-admit', 'poster-instant', 'strip-color', 'stage-riso', 'note-uriis',
       'gators-instant', 'portrait-instant', 'card-swinburne', 'card-courses', 'note-looking', 'badge-cgpa', 'strip-contact',
       'note-hello',
@@ -155,7 +155,7 @@ export class WallChapter {
     this.strip = card(tex['strip-color'], 0.98, { rects: stripRects(stripSize), lift: 0.5, segments: [6, 48] });
     this.strip.userData.rest = { x: 2.75, y: 0.0, z: 0.1, rot: -0.035 };
     wall.add(this.strip);
-    this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.74, rot: 0.06, dy: 0.0 });
+    this.stripTape = tapeTop(this.strip, ink.tape('masking'), { width: 0.74, rot: 0.06, dy: 0.0 });
 
     // Its spot waits in the sun the way an album page waits for a photo: four
     // black corner mounts, and a ballpoint note pointing up into the spot. Each
@@ -185,6 +185,9 @@ export class WallChapter {
     const mountMaterial = new THREE.MeshPhysicalMaterial({
       map: tex['photo-corner'], roughness: 0.5, clearcoat: 0.3, clearcoatRoughness: 0.2, transparent: true, depthWrite: false,
     });
+    // The mounts mark the spot for the countdown, then fade before the strip
+    // seats, so the tape alone holds it (as in the bar).
+    this.mountMaterial = mountMaterial;
     [[-1, 1, 0], [1, 1, -Math.PI / 2], [1, -1, Math.PI], [-1, -1, Math.PI / 2]].forEach(([sx, sy, turn]) => {
       const mount = place(spot, new THREE.Mesh(mountGeometry, mountMaterial), {
         x: sx * (stripW / 2 + slack - inset),
@@ -294,6 +297,9 @@ export class WallChapter {
     });
 
     this.updateStrip(this.strip, v, T.flash);
+    const mounts = 1 - smooth(progress(v, [T.flash.develop[1] - 0.25, T.flash.tape[0] + 0.03]));
+    this.mountMaterial.opacity = mounts;
+    this.mountMaterial.visible = mounts > 0;
     this.updateStrip(this.contactStrip, v, { print: T.contact.strip, develop: [T.contact.strip[0] + 0.2, T.contact.strip[1] + 0.2], tape: [T.contact.strip[1] - 0.1, T.contact.strip[1] + 0.1] });
 
     // Anticipation: the room dims a touch during the countdown.
@@ -311,7 +317,7 @@ export class WallChapter {
     const drop = 1 - easeOut(p);
     const swing = 0.1 * (1 - p) ** 2 * Math.sin(p * 9);
     // The tape drops in from above the camera, a little big and skewed,
-    // slaps onto the top edge at `hit`, pushes the strip a hair into the wall,
+    // slaps onto the top edge at `hit`, shoves the strip down into the wall,
     // and both settle. The strip seats itself as the tape comes down.
     const u = progress(v, tapeRange);
     const hit = 0.35;
@@ -320,10 +326,10 @@ export class WallChapter {
     const seated = smooth(fall);
     strip.position.set(
       rest.x + drop * 0.25,
-      rest.y + drop * 5.6 - 0.016 * press,
-      rest.z + 0.18 * (1 - seated) - 0.035 * press,
+      rest.y + drop * 5.6 - 0.045 * press,
+      rest.z + 0.18 * (1 - seated) - 0.07 * press,
     );
-    strip.rotation.z = rest.rot + swing + 0.006 * press;
+    strip.rotation.z = rest.rot + swing + 0.014 * press;
     const frames = strip.material.userData.develop;
     const span = (develop[1] - develop[0]) / (frames.length + 1.5);
     frames.forEach((_, i) => {
@@ -375,6 +381,8 @@ export class WallChapter {
       this.strip.rotation.z = rest.rot;
       this.strip.material.userData.develop.fill(1);
     }
+    this.mountMaterial.opacity = done ? 0 : 1;
+    this.mountMaterial.visible = !done;
   }
 
   report() {
