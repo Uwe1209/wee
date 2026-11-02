@@ -1,1 +1,20 @@
-{"elements": {}}
+{
+ "elements": {
+  "opening": {
+   "rounds": [
+    {
+     "element": "opening",
+     "round": 1,
+     "score": 7.5,
+     "gap": "The strip landing spot (blank plaster between the SPEX photo and the right column, about x 1300-1560) has nothing marking it and the window-transom shadow ends in a soft dark smudge across its middle, so it reads as a hole in the cluster rather than an inviting reserved place: mark it (for example a waiting piece of masking tape plus faint pencil corner ticks) and keep it in clean sunlight.",
+     "notes": "Name, Liew riso offset, note and chips all sit in full sun and are crisp (the note is better lit than in the bar); 5 papers + 2 stickers, within budget; nothing clipped; no console errors. Top chrome now falls in shadow: KUCHING, SARAWAK sits inside the mullion shadow (about 1.8:1, lit in the bar) and SCRAPBOOK N 12 is near-illegible in the dark top-right corner (about 1.2:1). Contact shadows are faint: the SPEX photo and ADMIT ONE ticket show almost no shadow under their bottom edges and no lifted corner, so they read slightly printed-on, and the cream ticket barely separates from the wall. URIIS 2026 label sits in the transom shadow (legible but dim). SCROLL TO TAKE A PHOTO says what happens next but is small, low contrast (about 2.9:1) and far from the spot. Overall frame is slightly brighter and creamier than the rose-amber bar.",
+     "at": "2026-11-02T10:12:47.898Z",
+     "compare": "rounds/opening/r1/compare.jpg",
+     "strip": null
+    }
+   ],
+   "status": "open"
+  }
+ },
+ "updated": "2026-11-02T10:12:47.899Z"
+}
