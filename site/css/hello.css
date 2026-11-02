@@ -38,23 +38,25 @@
   position: absolute; left: 0; top: 0; width: 98px; height: 323px; translate: -50% -50%; pointer-events: none;
 }
 /* Every beat fills the frame between the corner mounts. The figures are Archivo
-   Black at its narrowest, squeezed to 0.6 again so that at 82% of the slot's
+   Black at its narrowest, squeezed to 0.58 again so that at 82% of the slot's
    height they still fit its width, blue copy included: a stencilled photobooth
    countdown. As on the name, the riso pink face has a solid riso blue copy
    behind it, offset down and right. Each beat's line is centred on the slot (a
-   grid start-aligns a line wider than the slot); the copy widens the ink to the
-   right, so the figure moves back by half its offset. */
+   grid start-aligns a line wider than the slot); the copy widens the ink down
+   and right, so the figures move back by about half its offset, which centres
+   the widest, the 3, to a unit. */
 .sec-hello .count {
-  position: absolute; left: 50%; top: 50%; translate: calc(-50% - 0.011em) -50%; white-space: nowrap; opacity: 0; visibility: hidden;
-  font: 900 372px/1 'Archivo', var(--sans); font-stretch: 62%; scale: 0.6 1;
+  position: absolute; left: 50%; top: 50%; translate: calc(-50% - 0.007em) calc(-50% + 0.005em); white-space: nowrap; opacity: 0; visibility: hidden;
+  font: 900 372px/1 'Archivo', var(--sans); font-stretch: 62%; scale: 0.58 1;
   color: var(--pink); text-shadow: 0.031em 0.0135em 0 var(--blue);
 }
-/* "smile!" is written up the slot in ballpoint, as long as the figures are tall:
-   0.755 em of ink across the slot and 1.965 em along it. Caveat's "!" hangs
-   0.142 em past the word's advance and the ink sits 0.018 em high; turned, those
-   point up and left, so the word moves down and right by them. */
+/* "smile!" is written up the slot in ballpoint, nearly as long as the figures
+   are tall: 0.755 em of ink across the slot and 1.965 em along it (letter-spacing
+   would stretch it, but it swaps Caveat's alternates). Caveat's "!" hangs 0.14 em
+   past the word's advance and the ink sits 0.028 em high; turned, those point up
+   and left, so the word moves down and right by them. */
 .sec-hello .count.smile {
-  font: 600 126px/1 var(--hand); scale: none; rotate: -90deg; translate: calc(-50% + 0.018em) calc(-50% + 0.142em);
+  font: 600 126px/1 var(--hand); scale: none; rotate: -90deg; translate: calc(-50% + 0.028em) calc(-50% + 0.14em);
   color: var(--ballpoint); text-shadow: none;
 }
 /* Written on the plaster under the printed strip, between the ticket and the
