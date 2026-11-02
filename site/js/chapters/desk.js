@@ -47,8 +47,12 @@ export class DeskChapter {
     sun.map = tex.gobo;
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.02;
+    // A tight depth range keeps precision high enough for a small bias, so
+    // paper a few millimetres off the surface still casts a contact shadow.
+    sun.shadow.camera.near = 8;
+    sun.shadow.camera.far = 60;
+    sun.shadow.bias = -0.00006;
+    sun.shadow.normalBias = 0.012;
     scene.add(sun, sun.target, new THREE.HemisphereLight(0xc9d4ea, 0x8a6a50, 1.05));
 
     const items = [
