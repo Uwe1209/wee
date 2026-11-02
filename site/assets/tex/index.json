@@ -1,0 +1,194 @@
+{
+ "badge-cgpa": {
+  "w": 420,
+  "h": 420
+ },
+ "badge-top5": {
+  "w": 420,
+  "h": 420
+ },
+ "card-aws": {
+  "w": 860,
+  "h": 880
+ },
+ "card-bar": {
+  "w": 860,
+  "h": 744
+ },
+ "card-buildup": {
+  "w": 860,
+  "h": 774
+ },
+ "card-courses": {
+  "w": 980,
+  "h": 648
+ },
+ "card-haojia": {
+  "w": 900,
+  "h": 779
+ },
+ "card-herbarium": {
+  "w": 860,
+  "h": 729
+ },
+ "card-kacha": {
+  "w": 860,
+  "h": 1031
+ },
+ "card-lemon": {
+  "w": 860,
+  "h": 744
+ },
+ "card-petaid": {
+  "w": 900,
+  "h": 779
+ },
+ "card-spex": {
+  "w": 860,
+  "h": 804
+ },
+ "card-swinburne": {
+  "w": 980,
+  "h": 392
+ },
+ "certificate-instant": {
+  "w": 860,
+  "h": 1182
+ },
+ "coaching-instant": {
+  "w": 860,
+  "h": 1258
+ },
+ "game-riso": {
+  "w": 956,
+  "h": 656
+ },
+ "gators-instant": {
+  "w": 860,
+  "h": 842
+ },
+ "gators-riso": {
+  "w": 956,
+  "h": 731
+ },
+ "gobo": {
+  "w": 1024,
+  "h": 1024
+ },
+ "gobo-desk": {
+  "w": 1024,
+  "h": 1024
+ },
+ "gobo-dusk": {
+  "w": 1024,
+  "h": 1024
+ },
+ "gobo-hello": {
+  "w": 1024,
+  "h": 1024
+ },
+ "note-hello": {
+  "w": 420,
+  "h": 163
+ },
+ "note-looking": {
+  "w": 860,
+  "h": 198
+ },
+ "note-spot": {
+  "w": 460,
+  "h": 400
+ },
+ "note-uriis": {
+  "w": 640,
+  "h": 151
+ },
+ "paper": {
+  "w": 2048,
+  "h": 1260
+ },
+ "photo-corner": {
+  "w": 256,
+  "h": 256
+ },
+ "plaster": {
+  "w": 2048,
+  "h": 1252
+ },
+ "plaster-n": {
+  "w": 2048,
+  "h": 1252
+ },
+ "portrait-instant": {
+  "w": 860,
+  "h": 1212
+ },
+ "poster-instant": {
+  "w": 860,
+  "h": 1212
+ },
+ "room-floor": {
+  "w": 1024,
+  "h": 2048
+ },
+ "stage-riso": {
+  "w": 956,
+  "h": 656
+ },
+ "sticker-heart": {
+  "w": 317,
+  "h": 317
+ },
+ "sticker-sparkle": {
+  "w": 317,
+  "h": 317
+ },
+ "sticker-star": {
+  "w": 317,
+  "h": 317
+ },
+ "sticker-star-pink": {
+  "w": 317,
+  "h": 317
+ },
+ "strip-color": {
+  "w": 640,
+  "h": 2110
+ },
+ "strip-contact": {
+  "w": 640,
+  "h": 2110
+ },
+ "strip-mono": {
+  "w": 640,
+  "h": 2179
+ },
+ "tape-blue": {
+  "w": 360,
+  "h": 104
+ },
+ "tape-cream": {
+  "w": 360,
+  "h": 104
+ },
+ "tape-pink": {
+  "w": 360,
+  "h": 104
+ },
+ "tape-yellow": {
+  "w": 360,
+  "h": 104
+ },
+ "team-instant": {
+  "w": 860,
+  "h": 880
+ },
+ "ticket-admit": {
+  "w": 900,
+  "h": 378
+ },
+ "window-panes": {
+  "w": 1024,
+  "h": 1024
+ }
+}

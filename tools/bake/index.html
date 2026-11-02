@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bake</title>
+<link rel="stylesheet" href="../../site/assets/fonts/fonts.css">
+<script type="importmap">{ "imports": { "three": "../../site/vendor/three/three.module.js" } }</script>
+</head>
+<body>
+<script type="module">
+import { TEXTURES, loadPhotos } from './manifest.js';
+
+const only = new URLSearchParams(location.search).get('only');
+const wanted = only ? only.split(',') : Object.keys(TEXTURES);
+await Promise.all([
+  '600 66px Caveat', '400 40px "Gochi Hand"', '500 17px "JetBrains Mono"', '700 34px "JetBrains Mono"',
+  '800 60px "Bricolage Grotesque"', '400 60px "Instrument Serif"',
+].map((font) => document.fonts.load(font)));
+const photos = await loadPhotos();
+const report = [];
+for (const name of wanted) {
+  const spec = TEXTURES[name];
+  if (!spec) { report.push({ name, error: 'unknown' }); continue; }
+  const started = performance.now();
+  const canvas = await spec.make(photos);
+  const url = canvas.toDataURL('image/webp', spec.quality ?? 0.9);
+  await window.__save(name, url, canvas.width, canvas.height);
+  report.push({ name, w: canvas.width, h: canvas.height, ms: Math.round(performance.now() - started) });
+}
+window.__bake = { done: true, report };
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+#gl { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+#overlay { position: fixed; inset: 0; pointer-events: none; }
+
+.bar {
+  position: absolute; left: 4.2vw; right: 4.2vw; top: 3.4vh;
+  display: flex; justify-content: space-between; align-items: center;
+  font: 500 0.72vw/1 'JetBrains Mono', monospace; letter-spacing: 0.18em; text-transform: uppercase;
+}
+
+/* A — Darkroom */
+.dir-a { color: #f4f1ea; }
+.dir-a .bar { color: rgba(244, 241, 234, 0.62); }
+.dir-a .bar b { color: #ff3b1f; font-weight: 500; }
+.dir-a .name {
+  position: absolute; left: 4.2vw; top: 17vh;
+  font-family: 'Archivo', sans-serif; font-weight: 900; font-stretch: 62%;
+  font-size: 15.2vw; line-height: 0.8; letter-spacing: -0.005em; text-transform: uppercase;
+  text-shadow: 0 0 2.4vw rgba(255, 245, 230, 0.12);
+}
+.dir-a .name span { display: block; }
+.dir-a .role {
+  position: absolute; left: 4.4vw; top: 66vh; max-width: 30vw;
+  font: 400 1.32vw/1.35 'Inter Tight', sans-serif; color: rgba(244, 241, 234, 0.78);
+}
+.dir-a .role em { font-style: normal; color: #f4f1ea; }
+.dir-a .cue {
+  position: absolute; left: 4.4vw; bottom: 6vh; display: flex; align-items: center; gap: 1.1vw;
+  font: 500 0.72vw/1 'JetBrains Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244, 241, 234, 0.7);
+}
+.dir-a .count {
+  width: 3.3vw; height: 3.3vw; border-radius: 50%; border: 1px solid rgba(255, 59, 31, 0.9);
+  display: grid; place-items: center; color: #ff3b1f;
+  font: 900 1.7vw/1 'Archivo', sans-serif; font-stretch: 62%;
+  box-shadow: 0 0 1.4vw rgba(255, 59, 31, 0.35);
+}
+
+/* B — Golden hour */
+.dir-b { color: #2b1b12; }
+.dir-b .bar { color: rgba(60, 38, 24, 0.66); }
+.dir-b .name {
+  position: absolute; left: 4.6vw; top: 15vh; white-space: nowrap;
+  font: 400 11.4vw/0.86 'Instrument Serif', serif; letter-spacing: -0.012em; word-spacing: 0.06em; color: #2a1a10;
+}
+.dir-b .name em { font-style: italic; color: #a8461f; padding-left: 3.6vw; }
+.dir-b .note {
+  position: absolute; left: 6.2vw; top: 57vh; max-width: 24vw; transform: rotate(-2.5deg);
+  font: 600 2.1vw/1.12 'Caveat', cursive; color: #19214f;
+}
+.dir-b .cue {
+  position: absolute; left: 5vw; bottom: 6vh;
+  font: 400 1.05vw/1 'Instrument Serif', serif; font-style: italic; color: rgba(43, 27, 18, 0.7);
+}
+
+/* C — Cut & paste */
+.dir-c { color: #111; }
+.dir-c .bar { color: #0078bf; }
+.dir-c .name {
+  position: absolute; left: 4.4vw; top: 18vh; white-space: nowrap;
+  font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-stretch: 75%;
+  font-size: 11.6vw; line-height: 0.84; letter-spacing: -0.035em; text-transform: uppercase;
+}
+.dir-c .name .ink { display: block; mix-blend-mode: multiply; }
+.dir-c .name .pink { color: #ff48b0; }
+.dir-c .name .blue { position: absolute; left: 0.5vw; top: 0.3vw; color: #0078bf; }
+.dir-c .scribble {
+  position: absolute; left: 5vw; top: 64vh; max-width: 27vw; transform: rotate(-3deg);
+  font: 400 2vw/1.15 'Gochi Hand', cursive; color: #0078bf;
+}
+.dir-c .chips { position: absolute; left: 4.6vw; bottom: 6.5vh; display: flex; gap: 0.6vw; flex-wrap: wrap; max-width: 34vw; }
+.dir-c .chip {
+  font: 700 0.78vw/1 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.55vw 0.8vw; background: #111; color: #f6f1e6; border-radius: 0.2vw;
+}
+.dir-c .chip:nth-child(3n + 2) { transform: rotate(-2deg); background: #0078bf; }
+.dir-c .chip:nth-child(3n) { transform: rotate(1.5deg); background: #ff48b0; color: #111; }
+
+/* BC — Golden-hour scrapbook (the pick) */
+.dir-bc { color: #2b1b12; }
+.dir-bc .bar { color: rgba(60, 38, 24, 0.66); }
+.dir-bc .name {
+  position: absolute; left: 4.6vw; top: 15vh; white-space: nowrap;
+  font: 400 11.4vw/0.86 'Instrument Serif', serif; letter-spacing: -0.012em; word-spacing: 0.06em; color: #2a1a10;
+}
+.dir-bc .riso { position: relative; display: inline-block; margin-left: 3.6vw; font-style: italic; }
+.dir-bc .riso .ink { display: block; mix-blend-mode: multiply; }
+.dir-bc .riso .pink { color: #ff48b0; }
+.dir-bc .riso .blue { position: absolute; left: 0.45vw; top: 0.3vw; color: #0078bf; }
+.dir-bc .note {
+  position: absolute; left: 6.2vw; top: 57vh; max-width: 24vw; transform: rotate(-2.5deg);
+  font: 600 2.1vw/1.12 'Caveat', cursive; color: #19214f;
+}
+.dir-bc .chips { position: absolute; left: 4.6vw; bottom: 6.5vh; display: flex; gap: 0.6vw; flex-wrap: wrap; max-width: 34vw; }
+.dir-bc .chip {
+  font: 700 0.78vw/1 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.55vw 0.8vw; background: #2a1a10; color: #f6efe2; border-radius: 0.2vw;
+}
+.dir-bc .chip:nth-child(3n + 2) { transform: rotate(-2deg); background: #0078bf; }
+.dir-bc .chip:nth-child(3n) { transform: rotate(1.5deg); background: #ff48b0; color: #2a1a10; }
+.dir-bc .cue {
+  position: absolute; right: 4.2vw; bottom: 6.5vh;
+  font: 500 0.72vw/1 'JetBrains Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(43, 27, 18, 0.7);
+}

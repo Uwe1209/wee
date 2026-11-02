@@ -1,0 +1,34 @@
+{
+ "element": "flight",
+ "round": 2,
+ "url": "http://localhost:8080/workbench/rounds/flight/r2/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/flight/r2/spex.jpg",
+  "workbench/rounds/flight/r2/kacha.jpg",
+  "workbench/rounds/flight/r2/herbarium.jpg",
+  "workbench/rounds/flight/r2/lemon.jpg"
+ ],
+ "strip": [
+  "workbench/rounds/flight/r2/strip-00-v5.8.jpg",
+  "workbench/rounds/flight/r2/strip-01-v6.195.jpg",
+  "workbench/rounds/flight/r2/strip-02-v6.591.jpg",
+  "workbench/rounds/flight/r2/strip-03-v6.986.jpg",
+  "workbench/rounds/flight/r2/strip-04-v7.382.jpg",
+  "workbench/rounds/flight/r2/strip-05-v7.777.jpg",
+  "workbench/rounds/flight/r2/strip-06-v8.173.jpg",
+  "workbench/rounds/flight/r2/strip-07-v8.568.jpg",
+  "workbench/rounds/flight/r2/strip-08-v8.964.jpg",
+  "workbench/rounds/flight/r2/strip-09-v9.359.jpg",
+  "workbench/rounds/flight/r2/strip-10-v9.755.jpg",
+  "workbench/rounds/flight/r2/strip-11-v10.15.jpg"
+ ],
+ "failed": [],
+ "problems": [],
+ "ms": 404796,
+ "at": "2026-11-02T10:49:08.596Z"
+}

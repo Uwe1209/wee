@@ -1,0 +1,18 @@
+{
+ "element": "opening",
+ "round": 3,
+ "url": "http://localhost:8080/workbench/rounds/opening/r3/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/opening/r3/hello.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 46909,
+ "at": "2026-11-02T11:34:09.568Z"
+}

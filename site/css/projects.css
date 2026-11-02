@@ -1,0 +1,25 @@
+/* ---- projects: the room ---- */
+.sec-projects { color: var(--cream); }
+.projects-head { position: absolute; left: var(--pad); top: calc(var(--vh) * 7); }
+.projects-head .kicker { color: rgba(243, 233, 218, 0.72); }
+.projects-head .hand { font-size: 1.7vw; color: var(--sun); rotate: -2deg; transform-origin: left; }
+.projects { list-style: none; }
+.project { position: absolute; left: var(--pad); top: calc(var(--vh) * 30); width: 33vw; opacity: 0; visibility: hidden; }
+.project h3 { font: 400 5vw/0.95 var(--serif); letter-spacing: -0.01em; margin: 0.9vw 0 1.2vw; }
+.project > p:not(.meta):not(.links) { font: 400 max(15px, 1.12vw)/1.5 var(--sans); color: rgba(243, 233, 218, 0.9); }
+.project .meta { font-size: max(11px, 0.7vw); line-height: 1.45; letter-spacing: 0.14em; color: var(--sun); }
+/* Label-maker tape, as on the opening wall; an ink chip would vanish in the dark room, so cream stands in for it. */
+.stack { display: flex; flex-wrap: wrap; gap: 0.6vw; list-style: none; margin-top: 1.3vw; }
+.stack li {
+  font-size: max(10px, 0.66vw); letter-spacing: 0.06em; font-weight: 700; line-height: 1;
+  padding: 0.45vw 0.65vw; background: var(--cream); color: var(--ink); border-radius: 0.2vw;
+}
+.stack li:nth-child(3n + 2) { rotate: -2deg; background: var(--blue); color: #fffaf2; }
+.stack li:nth-child(3n) { rotate: 1.5deg; background: var(--pink); }
+.links { margin-top: 1.4vw; display: flex; flex-wrap: wrap; gap: 1.4vw; }
+.links a, .contact-links a {
+  text-decoration: underline; text-decoration-color: var(--pink); text-decoration-thickness: 2px; text-underline-offset: 0.28em;
+}
+.links a { font: 600 max(14px, 0.95vw)/1.3 var(--sans); }
+
+.project p, .project h3 { text-wrap: pretty; }

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench</title>
+<link rel="stylesheet" href="../site/assets/fonts/fonts.css">
+<style>
+  :root { --ink: #2a1a10; --pink: #ff48b0; --blue: #0078bf; --paper: #f6efe2; --wall: #e9dcc6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--wall); color: var(--ink); font: 15px/1.5 'Inter Tight', system-ui, sans-serif; padding: 40px 4vw 80px; }
+  h1 { font: 400 64px/1 'Instrument Serif', serif; }
+  h1 em { color: var(--pink); }
+  .meta { font: 500 11px/1.5 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #6b5442; margin-top: 10px; }
+  .bar { display: grid; grid-template-columns: 420px 1fr; gap: 28px; margin: 32px 0 40px; align-items: start; }
+  .bar img { width: 100%; border-radius: 3px; box-shadow: 0 8px 30px rgba(60,38,24,.18); }
+  .el { background: var(--paper); border-radius: 4px; padding: 22px 24px; margin-top: 18px; box-shadow: 0 4px 18px rgba(60,38,24,.1); }
+  .el header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .el h2 { font: 400 32px/1.1 'Instrument Serif', serif; }
+  .score { font: 700 13px/1 'JetBrains Mono', monospace; padding: 6px 9px; border-radius: 3px; background: var(--ink); color: var(--paper); }
+  .score.met { background: var(--blue); }
+  .status { font: 500 11px 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; color: #6b5442; }
+  .crit { margin: 10px 0 0 18px; color: #4a3626; font-size: 13px; }
+  .rounds { display: grid; gap: 14px; margin-top: 16px; }
+  .round { display: grid; grid-template-columns: 70px 1fr; gap: 14px; border-top: 1px dashed rgba(60,38,24,.25); padding-top: 14px; }
+  .round b { font: 700 13px 'JetBrains Mono', monospace; }
+  .gap { font: 600 20px/1.25 'Caveat', cursive; color: #1f2c66; }
+  .notes { font-size: 13px; color: #5a4535; margin-top: 4px; }
+  .thumbs { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  .thumbs img { height: 150px; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+  .final { margin-top: 12px; font: 600 22px 'Caveat', cursive; color: var(--pink); }
+  .empty { color: #6b5442; font-style: italic; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>Work<em>bench</em></h1>
+<p class="meta" id="updated">loading…</p>
+<section class="bar">
+  <img src="art-bible/art-bible-frame.png" alt="The art bible frame: the bar every element is judged against">
+  <div>
+    <p class="meta">The bar</p>
+    <p>Golden-hour scrapbook. Each element below is captured from a frozen snapshot by a fresh critic, scored 1–10 against this frame and its own criteria (8 meets the bar), and handed to a builder who fixes the single biggest gap.</p>
+    <p class="meta" style="margin-top:14px">Rules: <a href="art-bible/README.md">art bible</a> · <a href="HANDBOOK.md">handbook</a> · <a href="brief.md">brief</a></p>
+  </div>
+</section>
+<main id="list"></main>
+<script type="module">
+const [spec, progress] = await Promise.all([
+  fetch('elements.json', { cache: 'no-store' }).then((r) => r.json()),
+  fetch('progress.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { elements: {} })).catch(() => ({ elements: {} })),
+]);
+document.getElementById('updated').textContent = progress.updated ? `updated ${new Date(progress.updated).toLocaleString()}` : 'no rounds yet';
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+document.getElementById('list').innerHTML = spec.elements.map((el) => {
+  const entry = progress.elements[el.id] ?? { rounds: [] };
+  const last = entry.rounds.at(-1);
+  const rounds = entry.rounds.map((r) => `
+    <div class="round">
+      <div><b>R${r.round}</b><br><span class="score ${r.score >= spec.target ? 'met' : ''}">${r.score}</span></div>
+      <div>
+        <p class="gap">${esc(r.gap)}</p>
+        ${r.notes ? `<p class="notes">${esc(r.notes)}</p>` : ''}
+        <div class="thumbs"><a href="${r.compare}"><img src="${r.compare}" alt="compare R${r.round}" loading="lazy"></a>${r.strip ? `<a href="${r.strip}"><img src="${r.strip}" alt="strip R${r.round}" loading="lazy"></a>` : ''}</div>
+      </div>
+    </div>`).join('');
+  return `
+    <article class="el">
+      <header><h2>${esc(el.name)}</h2>${last ? `<span class="score ${last.score >= spec.target ? 'met' : ''}">${last.score} / 10</span>` : ''}<span class="status">${esc(entry.status ?? 'not started')} · ${entry.rounds.length} round${entry.rounds.length === 1 ? '' : 's'}</span></header>
+      <ul class="crit">${el.criteria.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>
+      ${rounds ? `<div class="rounds">${rounds}</div>` : '<p class="empty">waiting for its first critic</p>'}
+      ${entry.final ? `<p class="final">${esc(entry.final)}</p>` : ''}
+    </article>`;
+}).join('');
+</script>
+</body>
+</html>

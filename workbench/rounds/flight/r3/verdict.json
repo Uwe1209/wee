@@ -1,0 +1,8 @@
+{
+ "element": "flight",
+ "round": 3,
+ "score": 6.5,
+ "gap": "The window light never travels into the room: the beams are short grey wisps that vanish behind the card stack within ~150 px, never land as a warm window-shaped patch on a floor or wall, and carry almost no visible dust, so ~70% of every frame is flat #1e140d void.",
+ "notes": "Hero card top-left corner overlaps or butts the window's lower-right pane in every state (spex, buildup, herbarium, aws, bar, lemon); give them dark air. Window is pinned at the same screen spot and size (x 865-1040, y 50-265) for all nine cards with zero parallax, and is a flat white lightbox with no frame or wall, so the room reads as a static backdrop. Cards: tape, develop and captions are good, but no visible gloss sheen or curl; far cards bunch into a thin sliver behind the hero's left edge, so near/far depth is shallow. Textures: herbarium crop cuts the title to 'barium Project'; kacha print is a blank beige field with a tiny camera icon (reads undeveloped, crop tighter); HaoJia and PetAid carry large empty flat colour blocks that read as placeholders; BuildUp 'TOP 5' stamp has the 5 half erased. Motion: camera eases to ~15 px per 0.05 vh at each card (no whip), but mid-transit the outgoing card sweeps ~380 px per 0.05 vh and shows as a blank cream slab at the right edge (6.35, 7.78). SPEX card's right edge is ~20 px from the frame edge at 6.2. Entry at 5.8: flare and haze sit behind the header copy. 3 px light seam along the bottom edge at 10.15. No console errors or failed chapters.",
+ "at": "2026-11-02T11:53:46.375Z"
+}
