@@ -8,8 +8,8 @@ import { card, instantRect, sticker, tapeTop } from '../engine/paper3d.js';
 import { makeCanvas, random } from '../lib/paper.js';
 
 export const PROJECTS = [
-  { key: 'spex', tex: 'card-spex', ratio: 0.7, width: 3.0, tape: 'pink' },
-  { key: 'buildup', tex: 'card-buildup', ratio: 0.66, width: 3.0, tape: 'yellow', badge: 'badge-top5' },
+  { key: 'spex', tex: 'card-spex', ratio: 0.7, width: 2.8, tape: 'pink' },
+  { key: 'buildup', tex: 'card-buildup', ratio: 0.66, width: 2.8, tape: 'yellow', badge: 'badge-top5' },
   { key: 'kacha', tex: 'card-kacha', ratio: 1.0, width: 2.25, tape: 'blue' },
   { key: 'haojia', tex: 'card-haojia', ratio: 0.62, width: 2.6, tape: 'cream', typeCard: true },
   { key: 'petaid', tex: 'card-petaid', ratio: 0.62, width: 2.6, tape: 'pink', typeCard: true },
@@ -19,20 +19,31 @@ export const PROJECTS = [
   { key: 'lemon', tex: 'card-lemon', ratio: 0.62, width: 2.7, tape: 'yellow' },
 ];
 
-const SPACING = 6.2;
+// Cards hang SPACING apart; the camera rests STAND in front of each one, so the card
+// just passed is already 0.9 behind the lens at every stop and has left the frame
+// (never nearer than ~1.1 while on screen) before the next caption is up.
+const SPACING = 7.4;
+const STAND = 6.5;
 const AXIS = new THREE.Vector3();
 const FACE = new THREE.Vector3();
 const SIDE = new THREE.Vector3();
 const VIEW = new THREE.Vector3();
+const UP = new THREE.Vector3(0, 1, 0);
 const BASIS = new THREE.Matrix4();
-const DWELL = 0.55; // 0 = constant speed; 0.55 = 0.45× speed at each card
+const DWELL = 0.85; // 0 = constant speed; 0.85 = 0.15× speed at each card
+// Camera heading (rad, right of -z) the window and beams were laid out for; the light
+// rig turns by however much further right the camera looks, so they keep their place.
+const RIG_HEADING = Math.atan2(0.2, 6.1);
 
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
   lift: [0.02, 0.012, 0.008], gain: [1.03, 0.99, 0.94], grain: 0.055, vignette: 0.45,
 };
 
-const cardSpot = (index) => new THREE.Vector3(1.45 + (index % 2 ? 0.45 : -0.15), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
+const cardSpot = (index) => new THREE.Vector3(1.6 + (index % 2 ? 0.08 : -0.08), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
+
+// Cubic from 0 to 1 over x in [0, 1] with slope a at the start and b at the end.
+const hermite = (x, a, b) => a * (x * x * x - 2 * x * x + x) + (3 * x * x - 2 * x * x * x) + b * (x * x * x - x * x);
 
 const glowTexture = (width, height, draw) => {
   const canvas = makeCanvas(width, height);
@@ -84,6 +95,7 @@ export class RoomChapter {
 
     // The far window and its beams ride along with the camera as a far backdrop, so the
     // window holds the gap between the captions and the cards, high above the next cards.
+    // The rig also turns with the camera's heading (see RIG_HEADING).
     this.light = new THREE.Group();
     scene.add(this.light);
     const window = new THREE.Mesh(new THREE.PlaneGeometry(16.5, 16.5), new THREE.MeshBasicMaterial({
@@ -130,11 +142,12 @@ export class RoomChapter {
     // Dust hangs still in the room along the whole flight; a mote glows while a beam
     // passes over it (computed per vertex from where the beams are this frame).
     const rand = random(17);
-    const count = 2300;
+    const far = -2 - SPACING * (PROJECTS.length - 1) - 26; // 26 past the last card
+    const count = Math.round(27.4 * (6 - far)); // same density as before (2300 over 84)
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     for (let k = 0; k < count; k += 1) {
-      positions.set([-7 + rand() * 15, -4.5 + rand() * 9, -78 + rand() * 84], k * 3);
+      positions.set([-7 + rand() * 15, -4.5 + rand() * 9, far + rand() * (6 - far)], k * 3);
       const v = 0.4 + rand() * rand() * 1.8;
       colors.set([v, v * 0.82, v * 0.6], k * 3);
     }
@@ -193,12 +206,14 @@ export class RoomChapter {
     });
 
     // Camera keys: one in front of each card, plus an establishing key and an exit key.
+    // The camera stands well left of each card and looks right toward it, so it passes
+    // every card with room to spare and the card sits right of the caption column.
     const posKeys = [new THREE.Vector3(0.2, 0.4, 7.5)];
     const lookKeys = [new THREE.Vector3(0.6, 0.1, -6)];
     this.cards.forEach((mesh) => {
       const home = mesh.userData.home;
-      posKeys.push(new THREE.Vector3(home.x - 1.95, home.y + 0.12, home.z + 6.1));
-      lookKeys.push(new THREE.Vector3(home.x - 1.75, home.y - 0.05, home.z));
+      posKeys.push(new THREE.Vector3(home.x - 2.2, home.y + 0.12, home.z + STAND));
+      lookKeys.push(new THREE.Vector3(home.x - 1.45, home.y - 0.05, home.z));
     });
     const last = this.cards.at(-1).userData.home;
     posKeys.push(new THREE.Vector3(last.x - 1.6, last.y - 0.4, last.z + 1.6));

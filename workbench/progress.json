@@ -86,10 +86,21 @@
      "at": "2026-11-02T11:07:35.729Z",
      "compare": "rounds/captions/r1/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "captions",
+     "round": 2,
+     "score": 8,
+     "gap": "BuildUp's meta line wraps and strands 'PRIZE' alone on a second line, which pushes its title 18px below where the other three titles sit; fit the meta on one line (e.g. 'URIIS 2026 · TOP 5 · CONSOLATION PRIZE') so every title lands at the same height.",
+     "notes": "Criteria pass: one caption per frame (shadow-boosted check shows no ghosts); counter matches the card (01 SPEX, 02 BuildUp, 04 HaoJia, 07 AWS); caption block ends by x~714, about 200px clear of the nearest card; capture.json clean. Contrast is ample: body ~12.9:1, meta ~12:1, counter ~8.8:1, cream chips ~14.5:1, pink chips ~5:1, blue chips ~4.7:1 (borderline for ~12px text). Type system matches the bible: mono meta, Instrument Serif title, Inter Tight body at ~1.2vw/1.4, tilted riso chips, and a Caveat aside in peach instead of ballpoint, which is right on a dark wall. Secondary: HaoJia's body ends line 1 on a dangling 'It' and splits 'role-/based' (text-wrap: pretty would fix it). Chips mix deliverables with stack: 'Web + mobile prototypes' repeats the body, and 'Pitch' and 'Architecture' are not stack. Titles are plain upright cream with none of the bar's italic riso-pink accent, so the scrapbook voice rests on the chips and one Caveat line. SPEX's Three.js/TypeScript/LightGBM chips and HaoJia's Tailwind chip are not in brief.md; confirm them against the repos.",
+     "at": "2026-11-02T11:19:06.911Z",
+     "compare": "rounds/captions/r2/compare.jpg",
+     "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Met the bar at 8 in round 2. Polished after: BuildUp meta fits one line, text-wrap: pretty on captions."
   }
  },
- "updated": "2026-11-02T11:07:35.730Z"
+ "updated": "2026-11-02T11:19:30.722Z"
 }
