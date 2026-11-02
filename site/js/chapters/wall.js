@@ -14,8 +14,8 @@ const RAIL = new Rail([
   { v: 0, pos: [-2.63, 0, 13.36], look: [-0.68, 0, 0.5] },
   { v: T.flash.push[1], pos: [-1.35, 0.12, 11.6], look: [0.75, 0.05, 0.45] },
   { v: T.about.dolly[0], pos: [-1.9, 0.04, 12.7], look: [0.05, 0, 0.5] },
-  { v: T.about.dolly[1], pos: [9.7, 0.0, 12.9], look: [11.7, 0, 0.5] },
-  { v: T.about.dolly[2], pos: [10.6, 0.05, 12.4], look: [12.5, 0, 0.5] },
+  { v: T.about.dolly[1], pos: [11.7, -1.5, 12.9], look: [13.7, -1.5, 0.5] },
+  { v: T.about.dolly[2], pos: [12.6, -1.45, 12.4], look: [14.5, -1.5, 0.5] },
   { v: T.transitions.deskToWall[0], pos: [25.6, -0.05, 12.8], look: [27.6, 0, 0.5] },
   { v: T.total, pos: [26.3, 0.0, 11.7], look: [28.1, 0, 0.5] },
 ]);
@@ -171,16 +171,16 @@ export class WallChapter {
     spot.add(this.spotNote);
 
     // About cluster, further along the wall.
-    const portrait = add(card(tex['portrait-instant'], 2.1, { rects: [instantRect(tex['portrait-instant'].userData.size, 1.24)], lift: 0.3 }), { x: 13.2, y: 0.75, rot: -0.04 }, 'about');
+    const portrait = add(card(tex['portrait-instant'], 2.1, { rects: [instantRect(tex['portrait-instant'].userData.size, 1.24)], lift: 0.3 }), { x: 15.2, y: -0.75, rot: -0.04 }, 'about');
     tapeTop(portrait, ink.tape('cream'), { width: 0.55, rot: 0.06 });
-    const school = add(card(tex['card-swinburne'], 2.9, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 16.0, y: 1.55, rot: 0.02 }, 'about');
+    const school = add(card(tex['card-swinburne'], 2.9, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 18.0, y: 0.05, rot: 0.02 }, 'about');
     tapeTop(school, ink.tape('yellow'), { width: 0.55, x: -1.1, rot: -0.3 });
-    add(sticker(tex['badge-cgpa'], 1.1), { x: 18.1, y: 0.45, z: 0.07, rot: 0.08 }, 'about');
-    const courses = add(card(tex['card-courses'], 2.8, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.4 }), { x: 16.1, y: -1.15, rot: -0.03 }, 'about');
+    add(sticker(tex['badge-cgpa'], 1.1), { x: 20.1, y: -1.05, z: 0.07, rot: 0.08 }, 'about');
+    const courses = add(card(tex['card-courses'], 2.8, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.4 }), { x: 18.1, y: -2.65, rot: -0.03 }, 'about');
     tapeTop(courses, ink.tape('pink'), { width: 0.6, x: 1.0, rot: 0.25 });
-    add(card(tex['note-looking'], 2.4, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 13.5, y: -1.95, z: 0.13, rot: 0.03 }, 'about');
-    add(sticker(tex['sticker-star-pink'], 0.5), { x: 18.6, y: -1.7, z: 0.06, rot: -0.3 }, 'about');
-    add(sticker(tex['sticker-sparkle'], 0.38), { x: 12.1, y: 2.35, z: 0.16, rot: 0.2 }, 'about'); // touches the portrait's corner
+    add(card(tex['note-looking'], 2.4, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 15.5, y: -3.45, z: 0.13, rot: 0.03 }, 'about');
+    add(sticker(tex['sticker-star-pink'], 0.5), { x: 20.6, y: -3.2, z: 0.06, rot: -0.3 }, 'about');
+    add(sticker(tex['sticker-sparkle'], 0.38), { x: 14.1, y: 0.85, z: 0.16, rot: 0.2 }, 'about'); // touches the portrait's corner
 
     // Contact corner, at the far end, lit at dusk.
     this.contactStrip = card(tex['strip-contact'], 0.98, { rects: stripRects(tex['strip-contact'].userData.size), lift: 0.4, segments: [6, 48] });

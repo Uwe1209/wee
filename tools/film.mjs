@@ -30,7 +30,7 @@ const FRAME_MS = 16;
 const FPS = 60;
 
 // Slow zones (vh): the flash, the three chapter transitions.
-const SLOW = [[1.0, 3.3], [5.3, 6.05], [10.0, 10.7], [12.1, 12.75]];
+const SLOW = [[1.0, 3.3], [6.1, 6.85], [10.8, 11.5], [12.9, 13.55]];
 const RAMP = 0.5;
 const FAST = 0.75;
 const SLOWEST = 0.4;
