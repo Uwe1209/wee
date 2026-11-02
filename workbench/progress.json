@@ -51,10 +51,20 @@
      "at": "2026-11-02T10:18:09.793Z",
      "compare": "rounds/to-room/r1/compare.jpg",
      "strip": "rounds/to-room/r1/strip.jpg"
+    },
+    {
+     "element": "to-room",
+     "round": 2,
+     "score": 6.5,
+     "gap": "The leak plays as a fast left-to-right dark wipe instead of a flare: between 5.62 and 5.84 a near-black edge sweeps in from the left behind a thin orange band and mean luminance drops 0.58 to 0.32 to 0.19 in two neighbouring strip frames, so the room arrives as a cliff rather than warm light blooming over the whole frame and then receding over several frames.",
+     "notes": "(1) The room window pops in at 5.62-5.65 as a crisp, flat cream cutout stamped over the wall, overlapping the top of the portrait polaroid, with no glow until 5.73; it should emerge through the haze. (2) The flare hot core lands on the portrait face at 5.65 and blanks it to a white blob. (3) At 5.73 the wall coursework list and 3.49 badge ghost through the SPEX map and caption. (4) The flare never lifts exposure (linear mean +5% at peak, nothing clips) and has no lens character (no streak, ghosts or halation); the far-left edge burns dark brown instead of reading as the light source. (5) Strip 5.30-5.51 is identical and 5.94-6.05 nearly so: only about 0.25 of the 0.75 vh window is used. Good: always warm, never white or flat beige; room fully established by 5.84 (window, light shaft, taped SPEX card); no console errors or failed chapters.",
+     "at": "2026-11-02T10:51:58.781Z",
+     "compare": "rounds/to-room/r2/compare.jpg",
+     "strip": "rounds/to-room/r2/strip.jpg"
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-02T10:51:03.567Z"
+ "updated": "2026-11-02T10:51:58.782Z"
 }
