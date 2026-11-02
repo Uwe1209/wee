@@ -19,6 +19,7 @@ export class Dom {
     this.blocks = [...doc.querySelectorAll('[data-block]')];
     this.reveals = [...doc.querySelectorAll('[data-reveal]')].map((el) => ({ el, spec: T.reveals[el.dataset.reveal] }));
     this.counts = [...doc.querySelectorAll('[data-count]')];
+    this.countdown = doc.querySelector('.countdown');
     this.veil = doc.querySelector('[data-flash-veil]');
     this.intros = [...doc.querySelectorAll('[data-intro]')];
     this.projects = [...doc.querySelectorAll('[data-project]')];
@@ -49,6 +50,9 @@ export class Dom {
       block.style.top = `${(T.blocks[block.dataset.block] - start) * vh}px`;
     });
     if (this.veil) this.paintVeil(Math.ceil(this.root.clientWidth / 2), Math.ceil(vh / 2));
+    // The countdown's box is the strip's slot at a fixed layout size; each
+    // frame scales it from that width to the slot's width on screen.
+    this.countdownWidth = this.countdown?.offsetWidth ?? 0;
   }
 
   // Painted once per layout at half resolution, never per frame. The gradient
@@ -83,7 +87,7 @@ export class Dom {
     context.putImageData(image, 0, 0);
   }
 
-  update(v, intro, room) {
+  update(v, intro, room, wall) {
     const { vh } = this;
     this.pins.forEach((el) => {
       const [a, b] = T.pins[el.dataset.pin];
@@ -109,6 +113,14 @@ export class Dom {
       const scale = 0.86 + 0.14 * smooth(clamp01(local * 3));
       this.set(el, this.reduced ? '' : `scale(${scale.toFixed(3)})`, opacityStyle(local < 0 ? 0 : show));
     });
+    // The beats wait where the strip will land: the box is laid on the slot as
+    // the wall camera sees it this frame (centre, tilt, width), so they stay
+    // centred between the corner mounts while the camera pushes in, on any screen.
+    if (wall?.ready && this.countdownWidth > 0 && v > c0 && v < T.flash.fire) {
+      const slot = wall.slot();
+      const fit = slot.width / this.countdownWidth;
+      this.set(this.countdown, `translate3d(${slot.x.toFixed(2)}px, ${slot.y.toFixed(2)}px, 0) rotate(${slot.tilt.toFixed(4)}rad) scale(${fit.toFixed(4)})`, '');
+    }
 
     // The text blows out with the scene: the veil rides the composite's flash
     // envelope, holds near full at the peak and is gone before the strip
