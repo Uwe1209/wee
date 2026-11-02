@@ -24,14 +24,14 @@ const backOut = (t) => {
 // gather in the lower part of the frame.
 const SPREAD = {
   wide: {
-    'gators-riso': { at: [0.585, 0.3], width: 0.2, rot: -0.05 },
-    'certificate-instant': { at: [0.8, 0.335], width: 0.14, rot: 0.06 },
-    'team-instant': { at: [0.56, 0.7], width: 0.14, rot: -0.035 },
-    'coaching-instant': { at: [0.725, 0.69], width: 0.115, rot: 0.045 },
-    'ticket-outreach': { at: [0.875, 0.75], width: 0.16, rot: -0.09 },
-    'sticker-star': { at: [0.733, 0.175], width: 0.034, rot: 0.2 },
-    'sticker-heart': { at: [0.915, 0.235], width: 0.028, rot: -0.2 },
-    'sticker-sparkle': { at: [0.94, 0.88], width: 0.024, rot: 0.15 },
+    'gators-riso': { at: [0.585, 0.29], width: 0.215, rot: -0.05 },
+    'certificate-instant': { at: [0.805, 0.33], width: 0.15, rot: 0.06 },
+    'team-instant': { at: [0.565, 0.7], width: 0.15, rot: -0.035 },
+    'coaching-instant': { at: [0.735, 0.7], width: 0.125, rot: 0.045 },
+    'ticket-outreach': { at: [0.862, 0.795], width: 0.165, rot: -0.09 },
+    'sticker-star': { at: [0.737, 0.16], width: 0.036, rot: 0.2 },
+    'sticker-heart': { at: [0.884, 0.47], width: 0.03, rot: -0.2 },
+    'sticker-sparkle': { at: [0.683, 0.445], width: 0.026, rot: 0.15 },
   },
   narrow: {
     'gators-riso': { at: [0.33, 0.6], width: 0.5, rot: -0.05 },

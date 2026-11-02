@@ -124,7 +124,7 @@ export class WallChapter {
     this.strip = card(tex['strip-color'], 0.98, { rects: stripRects(stripSize), lift: 0.5, segments: [6, 48] });
     this.strip.userData.rest = { x: 2.75, y: 0.0, z: 0.1, rot: -0.035 };
     wall.add(this.strip);
-    this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.62, rot: 0.08, dy: -0.01 });
+    this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.74, rot: 0.06, dy: 0.0 });
 
     // Its spot waits in the sun the way an album page waits for a photo: four
     // black corner mounts, and a ballpoint note pointing up into the spot. Each
@@ -303,7 +303,7 @@ export class WallChapter {
       tapePiece.position.set(base.x - 0.04 * away, base.y + 0.2 * away, base.z + 0.5 * away);
       tapePiece.rotation.z = base.rot + 0.28 * away;
       tapePiece.scale.set(1 + 0.3 * away + 0.05 * press, 1 + 0.3 * away - 0.04 * press, 1);
-      tapePiece.material.opacity = smooth(clamp01(fall / 0.4));
+      tapePiece.material.opacity = 0.85 * smooth(clamp01(fall / 0.4)); // stays see-through
     }
   }
 
