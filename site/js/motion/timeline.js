@@ -55,7 +55,7 @@ export const TIMELINE = {
     tape: [2.95, 3.2], // settles and gets taped
     push: [1.0, 1.8], // camera eases toward the empty spot
     peak: 9, // HDR flash intensity
-    veil: 0.95, // peak opacity of the warm veil that blows the page's text out with the scene
+    veil: 1, // peak opacity of the veil that blows the page's text out with the scene (opaque at the peak)
   },
 
   about: {
