@@ -1,0 +1,29 @@
+{
+ "element": "scrapbook",
+ "round": 4,
+ "url": "http://localhost:8080/workbench/rounds/scrapbook/r4/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/scrapbook/r4/11.15.jpg",
+  "workbench/rounds/scrapbook/r4/11.7.jpg",
+  "workbench/rounds/scrapbook/r4/12.5.jpg"
+ ],
+ "strip": [
+  "workbench/rounds/scrapbook/r4/strip-00-v10.85.jpg",
+  "workbench/rounds/scrapbook/r4/strip-01-v11.086.jpg",
+  "workbench/rounds/scrapbook/r4/strip-02-v11.321.jpg",
+  "workbench/rounds/scrapbook/r4/strip-03-v11.557.jpg",
+  "workbench/rounds/scrapbook/r4/strip-04-v11.793.jpg",
+  "workbench/rounds/scrapbook/r4/strip-05-v12.029.jpg",
+  "workbench/rounds/scrapbook/r4/strip-06-v12.264.jpg",
+  "workbench/rounds/scrapbook/r4/strip-07-v12.5.jpg"
+ ],
+ "failed": [],
+ "problems": [],
+ "ms": 292840,
+ "at": "2026-11-02T18:49:16.975Z"
+}
