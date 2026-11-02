@@ -67,3 +67,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Phone, scrapbook: phone text boxes cover most of the screen so memories sit behind them; the paper stops short of top and bottom, leaving dark bands (for the phone element).
 - Develop shader: undeveloped prints in the scrapbook drops are flat grey-beige boxes. paper3d.js now has `material.userData.tone = { latent: 1 }` (flash r8); turn it on for the desk prints.
 - Scrapbook: heavy vertical window-bar shadow cuts the riso print and "outreach crew"; at 11.79 the ticket overlaps a still-grey photo.
+- Flash tape: at 3.0 the tape comes in steeply across the heart sticker before it flattens (reads as a collision); bring it in from straight above the strip's top edge. Countdown "1" fades to pastel pink too early.
