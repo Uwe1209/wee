@@ -1,7 +1,7 @@
 // Every texture the site uses, baked once by `node tools/bake.mjs` into
 // site/assets/tex/. Each entry draws a canvas with the shared paper kit.
 import {
-  loadImage, makeCanvas, paperCanvas, plaster, random, risograph, roughRect, stickerCanvas, tapeCanvas,
+  fbm, loadImage, makeCanvas, paperCanvas, plaster, random, risograph, roughRect, stickerCanvas, tapeCanvas,
 } from '../../site/js/lib/paper.js';
 import { instantPhoto, photoStrip, ticketStub } from '../../site/js/lib/prints.js';
 
@@ -287,6 +287,46 @@ const wallNote = ({ w, h, lines, arrow, scale = 400, size = 0.24, weight = 0.008
   return canvas;
 };
 
+// Floorboards for the projects room: planks run down the hall (texture v),
+// `plank` px wide, with staggered butt joints, long grain streaks, a slower
+// figure, and dark seams. Mirrored repeat keeps the grain continuous.
+const floorboards = (width = 1024, height = 2048, { plank = 128, seed = 77 } = {}) => {
+  const rand = random(seed);
+  const canvas = makeCanvas(width, height);
+  const ctx = canvas.getContext('2d');
+  const image = ctx.createImageData(width, height);
+  const boards = Array.from({ length: Math.ceil(width / plank) }, () => {
+    const list = [];
+    for (let y = -rand() * 1100; y < height; y += 700 + rand() * 900) list.push({ y, tone: rand(), grain: rand() * 100 });
+    return list;
+  });
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const column = Math.floor(x / plank);
+      const across = x - column * plank;
+      const list = boards[column];
+      let k = list.length - 1;
+      while (k > 0 && list[k].y > y) k -= 1;
+      const board = list[k];
+      const streak = fbm(x / 3 + board.grain, y / 90, { octaves: 3, seed: 5 });
+      const figure = fbm(x / 40 + board.grain, y / 300, { octaves: 2, seed: 9 });
+      let shade = 0.8 + board.tone * 0.3 + (streak - 0.5) * 0.4 + (figure - 0.5) * 0.3;
+      const seam = Math.min(across, plank - 1 - across);
+      if (seam < 2) shade *= 0.3;
+      else if (seam < 5) shade *= 0.82;
+      const butt = Math.min(y - board.y, k + 1 < list.length ? list[k + 1].y - y : Infinity);
+      if (butt < 2) shade *= 0.35;
+      const i = (y * width + x) * 4;
+      image.data[i] = 128 * shade;
+      image.data[i + 1] = 86 * shade;
+      image.data[i + 2] = 56 * shade;
+      image.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+  return canvas;
+};
+
 // name -> { make(photos) -> canvas, type, quality }
 export const TEXTURES = {
   // --- surfaces and light
@@ -367,6 +407,7 @@ export const TEXTURES = {
   'card-aws': { make: (p) => instant(p, 'aws', 'AWS, drawn properly', { ratio: 0.8, seed: 107 }) },
   'card-bar': { make: (p) => instant(p, 'bar', 'Bar: drinks shop', { ratio: 0.62, seed: 108 }) },
   'card-lemon': { make: (p) => instant(p, 'lemon', 'little lemon', { ratio: 0.62, seed: 109 }) },
+  'room-floor': { make: () => floorboards(), quality: 0.86 },
 
   // --- scrapbook
   'gators-riso': { make: (p) => riso(p, 'gators', 900, 675, { seed: 21 }) },

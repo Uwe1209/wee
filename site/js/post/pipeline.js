@@ -278,7 +278,18 @@ void main() {
   }
   vec3 bloom = texture2D(tBloom, uv).rgb / max(uBloomLevels, 1.0);
   color = mix(color, bloom, uBloom) + bloom * uHalation * uHalationTint;
-  color += uFlash * uFlashTint;
+  // The flash (uFlash: 0 at rest, 9 at its peak) is warm light (uFlashTint)
+  // from the lens axis. It lights the scene, so the sunlit wall and the paper
+  // clip first and the darks hold out longest; it pours out of everything
+  // bright as bloom with a halation fringe; and near the peak a white-hot core
+  // floods the middle of the frame. The vignette opens with it (below), so the
+  // falloff runs to gold, not grey. Distances are in frame heights.
+  vec2 flashAxis = fromCenter * vec2(uResolution.x / max(uResolution.y, 1.0), 1.0);
+  float flashR2 = dot(flashAxis, flashAxis);
+  vec3 flashLight = uFlash * uFlashTint;
+  color *= 1.0 + flashLight * (0.1 + 0.25 * exp(-2.2 * flashR2));
+  color += bloom * (1.0 + 0.8 * uHalationTint) * flashLight * (0.003 * uFlash);
+  color += uFlashTint * (3.0 * smoothstep(6.0, 9.0, uFlash) * exp(-4.5 * flashR2));
   color *= uExposure;
   color = filmic(color);
 
@@ -291,7 +302,7 @@ void main() {
 
   float aspect = uResolution.x / max(uResolution.y, 1.0);
   float radius = length(fromCenter * vec2(aspect, 1.0)) / (0.5 * sqrt(aspect * aspect + 1.0));
-  display *= 1.0 - uVignette * smoothstep(0.35, 1.0, radius);
+  display *= 1.0 - uVignette * (1.0 - smoothstep(0.0, 5.0, uFlash)) * smoothstep(0.35, 1.0, radius);
 
   vec2 pixel = uv * uResolution;
   float frame = floor(uTime * 24.0);
@@ -328,7 +339,7 @@ export const DEFAULT_LOOK = {
   vignette: 0.25,
   aberration: 0.0,
   flash: 0.0,
-  flashTint: [1.0, 0.97, 0.92],
+  flashTint: [1.0, 0.78, 0.5], // a warm gel: blows out to cream-white, falls off to gold
 };
 
 export class Pipeline {

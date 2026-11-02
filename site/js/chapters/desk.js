@@ -15,6 +15,77 @@ const backOut = (t) => {
   return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2;
 };
 
+// The sun is low, so a memory still in the air would throw its real shadow far
+// across the page. While it drops it casts none; a soft shadow rides under it
+// instead, wider, blurrier and fainter the higher it is, and tightens to the
+// real contact shadow's size and strength just as it hands back on landing.
+const AIR_SHADOW = {
+  handoff: 0.01, // height above its spot where the real contact shadow takes over
+  plane: 0.24, // a raised piece's shadow lies here, above every landed piece
+  blur: [0.065, 0.04], // at contact: the sun's PCF footprint on the page, longer along the light
+  soften: 0.24, // extra blur per unit of height
+  spread: 0.06, // growth past the piece's edges per unit of height
+  fade: 0.6, // strength falls as exp(-fade * height)
+  drift: 0.08, // how far the shadow leans away from the sun, per unit of height
+};
+
+// Lit as the page under it (slid along the view ray to z = 0), so it sees the same window gobo.
+const AIR_SHADOW_VERTEX = /* glsl */ `
+#include <worldpos_vertex>
+#if NUM_SPOT_LIGHT_COORDS > 0
+  vec3 toEye = cameraPosition - worldPosition.xyz;
+  worldPosition.xyz -= toEye * (worldPosition.z / toEye.z);
+#endif`;
+
+const AIR_SHADOW_HEAD = /* glsl */ `
+uniform vec2 uHalf;
+uniform vec2 uSigma;
+uniform vec2 uScale;
+uniform float uStrength;
+varying vec2 vShadow;
+vec2 shadowErf(vec2 x) {
+  vec2 s = sign(x);
+  vec2 a = abs(x);
+  vec2 k = 1.0 + (0.278393 + (0.230389 + 0.078108 * a * a) * a) * a;
+  k *= k;
+  return s - s / (k * k);
+}`;
+
+// A gaussian-blurred rectangle that takes away only sunlight, as a real shadow
+// does: nothing where the window bars already shade the page.
+const AIR_SHADOW_OUT = /* glsl */ `
+  vec2 p = vShadow * uScale;
+  vec2 g = 0.70710678 / uSigma;
+  vec2 band = 0.5 * (shadowErf((p + uHalf) * g) - shadowErf((p - uHalf) * g));
+  float sun = dot(reflectedLight.directDiffuse, vec3(0.2126, 0.7152, 0.0722));
+  float sky = dot(reflectedLight.indirectDiffuse, vec3(0.2126, 0.7152, 0.0722));
+  float share = sun / max(sun + sky, 1e-4);
+  gl_FragColor = vec4(vec3(1.0 - uStrength * band.x * band.y * share), 1.0);`;
+
+const airShadowMaterial = () => {
+  const uniforms = {
+    uHalf: { value: new THREE.Vector2(1, 1) },
+    uSigma: { value: new THREE.Vector2(1, 1) },
+    uScale: { value: new THREE.Vector2(1, 1) },
+    uStrength: { value: 0 },
+  };
+  // Multiplies whatever is already drawn under it: the page, or a piece that has landed.
+  const material = new THREE.MeshLambertMaterial({ transparent: true, depthWrite: false, blending: THREE.MultiplyBlending, toneMapped: false });
+  material.userData.shadow = uniforms;
+  material.onBeforeCompile = (shader) => {
+    Object.assign(shader.uniforms, uniforms);
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec2 vShadow;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvShadow = position.xy;')
+      .replace('#include <worldpos_vertex>', AIR_SHADOW_VERTEX);
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>\n${AIR_SHADOW_HEAD}`)
+      .replace('#include <opaque_fragment>', AIR_SHADOW_OUT);
+  };
+  material.customProgramCacheKey = () => 'air-shadow';
+  return material;
+};
+
 export class DeskChapter {
   constructor(app) {
     this.app = app;
@@ -56,6 +127,7 @@ export class DeskChapter {
     sun.shadow.radius = 5; // soft edge, like paper an inch from the wall
     sun.shadow.intensity = 0.62; // shadows the eye barely notices
     scene.add(sun, sun.target, new THREE.HemisphereLight(0xc9d4ea, 0x8a6a50, 1.05));
+    this.sun = sun;
 
     const items = [
       { mesh: card(tex['gators-riso'], 2.6, { alphaTest: 0.5, gloss: 0, roughness: 0.92, lift: 0.4 }), at: { x: 1.9, y: 1.25, rot: -0.06 }, tape: ['pink', -0.95, 0.9, -0.6] },
@@ -77,7 +149,16 @@ export class DeskChapter {
         mesh.add(strip);
       }
       mesh.userData.spinIn = (index % 2 ? 1 : -1) * (0.35 + 0.05 * index);
+      mesh.userData.foot = tapeSpec ? 1 : 0.55; // a die-cut sticker shades about a third of its square
       return mesh;
+    });
+    const quad = new THREE.PlaneGeometry(1, 1);
+    this.airShadows = this.items.map(() => {
+      const shadow = new THREE.Mesh(quad, airShadowMaterial());
+      shadow.renderOrder = 1; // after the paper, before the tape
+      shadow.visible = false;
+      page.add(shadow);
+      return shadow;
     });
 
     this.camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
@@ -108,7 +189,35 @@ export class DeskChapter {
       mesh.rotation.z = rest.rot + (1 - land) * mesh.userData.spinIn;
       const develop = mesh.material.userData.develop;
       if (develop) develop[0] = smooth(clamp01(t * 1.6 - 0.4));
+      const height = mesh.position.z - rest.z;
+      const shadow = this.airShadows[index];
+      mesh.castShadow = height < AIR_SHADOW.handoff;
+      shadow.visible = mesh.visible && !mesh.castShadow;
+      if (shadow.visible) this.placeAirShadow(shadow, mesh, height);
     });
+  }
+
+  // Under the piece as the eye sees it (a raised piece looks further from the
+  // page centre than the spot below it), leaning a little away from the sun.
+  placeAirShadow(shadow, mesh, height) {
+    const { rest, size, foot } = mesh.userData;
+    const eye = this.camera.position;
+    const sun = this.sun.position;
+    const z = Math.min(AIR_SHADOW.plane, mesh.position.z - 0.004);
+    const near = (eye.z - z) / (eye.z - mesh.position.z);
+    const x = eye.x + (mesh.position.x - eye.x) * near;
+    const y = eye.y + (mesh.position.y - eye.y) * near;
+    const lean = (rest.z + 0.01 + AIR_SHADOW.drift * height) / (sun.z - z);
+    shadow.position.set(x + (x - sun.x) * lean, y + (y - sun.y) * lean, z);
+    shadow.rotation.z = mesh.rotation.z;
+    const { uHalf, uSigma, uScale, uStrength } = shadow.material.userData.shadow;
+    const spread = AIR_SHADOW.spread * height;
+    const soften = AIR_SHADOW.soften * height;
+    uHalf.value.set((size.width * foot * near) / 2 + spread, (size.height * foot * near) / 2 + spread);
+    uSigma.value.set(AIR_SHADOW.blur[0] + soften, AIR_SHADOW.blur[1] + soften);
+    uStrength.value = this.sun.shadow.intensity * Math.exp(-AIR_SHADOW.fade * height);
+    shadow.scale.set(2 * (uHalf.value.x + 3 * uSigma.value.x), 2 * (uHalf.value.y + 3 * uSigma.value.y), 1);
+    uScale.value.set(shadow.scale.x, shadow.scale.y);
   }
 
   stills() {
