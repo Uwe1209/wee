@@ -44,7 +44,7 @@ const glowTexture = (width, height, draw) => {
 
 const additive = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false };
 
-// Dust glow: each mote brightens with its distance to each beam's axis.
+// Dust glow: each mote brightens as it nears a beam's axis.
 const dustHead = (count) => /* glsl */ `
 #define BEAMS ${count}
 uniform vec3 uBeamFrom[BEAMS];
