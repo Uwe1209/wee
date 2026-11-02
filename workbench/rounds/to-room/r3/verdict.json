@@ -1,0 +1,8 @@
+{
+ "element": "to-room",
+ "round": 3,
+ "score": 7,
+ "gap": "The flare is too weak to carry the cut: at its peak (5.514: mean luma 176, hotspot ~241, almost no pixels above 240) the about wall is still crisp, and one strip step later (5.621) the room is already crisp, so the swap reads as a quick dissolve under mild haze; make the sun hotspot bloom wide and burn to white at its core exactly as the scenes cross, and stretch that crossfade over ~0.15 vh so both scenes are briefly seen through the glare.",
+ "notes": "Mean luma per strip frame 146/156/176/167/138/108/75/75: no neighbour step above 33/255, but the decay is linear (-29, -30, -33) and stops dead by 5.943 (+0.1 after); the left third drops 139 to 76 between 5.729 and 5.836, so ease the tail of the veil. No flat frames (min luma std 35); 5.621 is the haziest (SPEX map nearly washed out) but window, beams and card still read. Room established by 5.729 (window, floor beams, first card), kicker by 5.836, caption by 5.943. The hotspot holds at upper left (x 190-250 px) across the cut, which sells 'on the lens', then drifts right onto the ceiling; on the wall frames it reads more like a soft glare blob on the plaster than a lens flare (one faint horizontal streak, no ghosts). Warm throughout (R-B peaks at 116 at the swap), never a white wipe. No console errors, no failed chapters.",
+ "at": "2026-11-02T13:21:05.655Z"
+}
