@@ -1,6 +1,8 @@
-// The room: dim, warm, sunbeams through a far window, dust in the light.
-// Project cards hang in the air; the camera flies past them, slowing at each,
-// and each photo develops as it comes close.
+// The room: a long, dim gallery the camera walks down. Late sun comes in
+// through a row of windows in the right-hand wall and lands on the floorboards
+// as warm, window-shaped patches; the shafts in between carry glowing dust.
+// Project cards hang down the hall; the camera flies past them, slowing at
+// each, and each photo develops as it comes close.
 import * as THREE from 'three';
 import { TIMELINE as T, clamp01, progress, smooth } from '../motion/timeline.js';
 import { texture } from '../engine/textures.js';
@@ -24,16 +26,21 @@ export const PROJECTS = [
 // (never nearer than ~1.1 while on screen) before the next caption is up.
 const SPACING = 7.4;
 const STAND = 6.5;
-const AXIS = new THREE.Vector3();
-const FACE = new THREE.Vector3();
-const SIDE = new THREE.Vector3();
-const VIEW = new THREE.Vector3();
-const UP = new THREE.Vector3(0, 1, 0);
-const BASIS = new THREE.Matrix4();
 const DWELL = 0.85; // 0 = constant speed; 0.85 = 0.15× speed at each card
-// Camera heading (rad, right of -z) the window and beams were laid out for; the light
-// rig turns by however much further right the camera looks, so they keep their place.
-const RIG_HEADING = Math.atan2(0.2, 6.1);
+const SIZE = new THREE.Vector2();
+
+// The hall, in world units: side walls at x = left and right, floor and ceiling
+// heights, and its two ends (behind the first camera key, far past the last card).
+const HALL = { left: -3.6, right: 4.6, floor: -2.6, ceiling: 5, near: 14, far: -100 };
+// One window per bay in the right-hand wall, halfway between two cards. `gobo` is
+// the part of the gobo texture (px of 1024, y down) the opening maps onto: the
+// pane block and a margin of wall around it.
+const WINDOW = { z: -2 + SPACING / 2, width: 2.6, sill: -1.3, head: 3.3, gobo: [120, 70, 850, 980] };
+// Toward the sun: low on the right and a little ahead, so the beams slant toward
+// the viewer. The light crosses the hall leftward and lands on the floor short of
+// the left wall, so the caption side of the frame stays in shade.
+const SUN = new THREE.Vector3(0.8, 0.75, -0.55).normalize();
+const SUN_LIGHT = new THREE.Color(0xffc28a).multiplyScalar(7);
 
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
@@ -53,25 +60,189 @@ const glowTexture = (width, height, draw) => {
   return tex;
 };
 
-const additive = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false };
+// The same test in JS, without the leaves: is this point in a sunbeam?
+const inBeam = (x, y, z, margin = 0) => {
+  const travel = (HALL.right - x) / SUN.x;
+  const along = z + travel * SUN.z - WINDOW.z;
+  const u = (along - Math.round(along / SPACING) * SPACING) / WINDOW.width + 0.5;
+  const v = (y + travel * SUN.y - WINDOW.sill) / (WINDOW.head - WINDOW.sill);
+  return u > margin && u < 1 - margin && v > margin && v < 1 - margin;
+};
 
-// Dust glow: each mote brightens as it nears a beam's axis.
-const dustHead = (count) => /* glsl */ `
-#define BEAMS ${count}
-uniform vec3 uBeamFrom[BEAMS];
-uniform vec3 uBeamTo[BEAMS];
-uniform float uBeamGain[BEAMS];
+// Sunlight through the windows, shared by every surface, the haze and the dust.
+// The sun ray from a point is followed back to the window wall; the window cells
+// repeat down the hall, every other one mirrored so the leaves don't line up.
+const SUN_GLSL = /* glsl */ `
+uniform sampler2D uGobo;
+uniform vec4 uSun;      // xyz: toward the sun; w: 1 / x
+uniform vec4 uBays;     // window wall x, centre z of one window, bay length, 1 / bay length
+uniform vec4 uOpening;  // 1 / width, sill, head, 1 / (head - sill)
+uniform vec4 uGoboRect; // the opening's corners in the gobo (uv)
+uniform float uSoft;    // penumbra growth per unit the light has travelled
+
+vec2 sunCell(vec3 p, out float travel) {
+  travel = max(uBays.x - p.x, 0.0) * uSun.w;
+  float along = p.z + travel * uSun.z - uBays.y;
+  float cell = floor(along * uBays.w + 0.5);
+  vec2 local = vec2((along - cell * uBays.z) * uOpening.x + 0.5, (p.y + travel * uSun.y - uOpening.y) * uOpening.w);
+  local.x = mod(cell, 2.0) > 0.5 ? 1.0 - local.x : local.x;
+  return local;
+}
+
+float inOpening(vec2 local) {
+  vec2 edge = step(vec2(0.0), local) * step(local, vec2(1.0));
+  return edge.x * edge.y;
+}
+
+// Sun reaching p (0..1) at an explicit blur level: for the haze and the dust.
+float sunAt(vec3 p, float lod) {
+  float travel;
+  vec2 local = sunCell(p, travel);
+  return textureLod(uGobo, mix(uGoboRect.xy, uGoboRect.zw, local), lod + log2(1.0 + travel * uSoft)).r * inOpening(local);
+}
 `;
-const DUST_GLOW = /* glsl */ `
-  vec3 dustAt = (modelMatrix * vec4(position, 1.0)).xyz;
-  float dustGlow = 0.05;
-  for (int i = 0; i < BEAMS; i++) {
-    vec3 axis = uBeamTo[i] - uBeamFrom[i];
-    float along = clamp(dot(dustAt - uBeamFrom[i], axis) / max(dot(axis, axis), 1e-4), 0.0, 1.0);
-    dustGlow += max(0.0, 1.0 - distance(dustAt, uBeamFrom[i] + axis * along) / 2.2) * uBeamGain[i];
+
+// Sunlit haze between the eye and a surface: a jittered march through the slab
+// of air whose sun rays pass the window band (the only air that can be lit).
+const HAZE_GLSL = /* glsl */ `
+uniform vec3 uHaze;      // scattered light per unit of sunlit path
+uniform float uHazeReach;
+#define HAZE_STEPS 24
+
+vec3 sunHaze(vec3 p) {
+  vec3 ray = p - cameraPosition;
+  float dist = length(ray);
+  vec3 dir = ray / max(dist, 1e-4);
+  float slope = uSun.y * uSun.w;
+  float h0 = cameraPosition.y + (uBays.x - cameraPosition.x) * slope;
+  float h1 = dir.y - dir.x * slope;
+  float rate = h1 >= 0.0 ? max(h1, 1e-4) : min(h1, -1e-4);
+  float a = (uOpening.y - h0) / rate;
+  float b = (uOpening.z - h0) / rate;
+  float s0 = max(0.0, min(a, b));
+  float s1 = min(min(dist, uHazeReach), max(a, b));
+  if (s1 <= s0) return vec3(0.0);
+  float stride = (s1 - s0) / float(HAZE_STEPS);
+  float jitter = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+  float sum = 0.0;
+  for (int i = 0; i < HAZE_STEPS; i++) {
+    sum += sunAt(cameraPosition + dir * (s0 + (float(i) + jitter) * stride), 0.5);
   }
-  vColor *= dustGlow;
+  return uHaze * sum * stride;
+}
 `;
+
+// The haze pass: the hall alone, from the room's camera, at half resolution.
+const HAZE_FRAG = /* glsl */ `
+${SUN_GLSL}
+${HAZE_GLSL}
+varying vec3 vWorld;
+void main() {
+  gl_FragColor = vec4(sunHaze(vWorld), 1.0);
+}`;
+
+const SURFACE_VERT = /* glsl */ `
+#include <common>
+#include <fog_pars_vertex>
+varying vec3 vWorld;
+void main() {
+  vec4 world = modelMatrix * vec4(position, 1.0);
+  vWorld = world.xyz;
+  vec4 mvPosition = viewMatrix * world;
+  gl_Position = projectionMatrix * mvPosition;
+  #include <fog_vertex>
+}`;
+
+// Walls, floor and ceiling: texture from world position, a hemisphere fill, warm
+// bounce off the nearest sunlit floor, the sun itself through the windows, the
+// window glass on the window wall, then the haze in front (from the haze pass;
+// cards cover it where they hang in front of a wall).
+const SURFACE_FRAG = /* glsl */ `
+#include <common>
+#include <fog_pars_fragment>
+${SUN_GLSL}
+uniform sampler2D uHazeMap;
+uniform vec2 uScreen;
+uniform sampler2D uMap;
+uniform sampler2D uBump;
+uniform sampler2D uPanes;
+uniform vec3 uTint;
+uniform vec3 uFace;
+uniform vec3 uAxisU;
+uniform vec3 uAxisV;
+uniform vec2 uTile;
+uniform float uBumpScale;
+uniform vec3 uSunLight;
+uniform vec3 uSky;
+uniform vec3 uGround;
+uniform vec3 uBounce;
+uniform vec3 uGlass;
+uniform float uGlassOn;
+varying vec3 vWorld;
+
+// Sun on a surface: the gobo at the screen's own mip level, softer the further
+// the light has come from the window.
+float sunOn(vec3 p) {
+  float travel;
+  vec2 local = sunCell(p, travel);
+  return texture(uGobo, mix(uGoboRect.xy, uGoboRect.zw, local), log2(1.0 + travel * uSoft)).r * inOpening(local);
+}
+
+void main() {
+  vec2 uv = vec2(dot(vWorld, uAxisU), dot(vWorld, uAxisV)) * uTile;
+  vec3 albedo = texture(uMap, uv).rgb * uTint;
+  vec3 bump = texture(uBump, uv).xyz * 2.0 - 1.0;
+  vec3 n = normalize(uFace * bump.z + (uAxisU * bump.x + uAxisV * bump.y) * uBumpScale);
+  float sun = sunOn(vWorld) * max(dot(n, uSun.xyz), 0.0);
+  vec3 pool = vec3(1.7, ${HALL.floor.toFixed(2)} + 0.01, vWorld.z);
+  vec3 off = vWorld - pool;
+  float bounce = sunAt(pool, 5.0) / (1.0 + 0.12 * dot(off, off));
+  vec3 color = albedo * (mix(uGround, uSky, 0.5 + 0.5 * n.y) + uBounce * bounce + uSunLight * sun);
+  if (uGlassOn > 0.5) {
+    float travel;
+    vec2 local = sunCell(vWorld, travel);
+    float pane = texture(uPanes, mix(uGoboRect.xy, uGoboRect.zw, local)).r * inOpening(local);
+    color = mix(color, uGlass * (0.8 + 0.3 * local.y), pane);
+  }
+  color += texture(uHazeMap, gl_FragCoord.xy * uScreen).rgb;
+  gl_FragColor = vec4(color, 1.0);
+  #include <fog_fragment>
+}`;
+
+// Dust hangs in the hall and drifts; a mote glows while it is in a sunbeam.
+const DUST_VERT = /* glsl */ `
+#include <common>
+#include <fog_pars_vertex>
+${SUN_GLSL}
+attribute float aSeed;
+uniform float uTime;
+uniform float uSize;
+uniform float uScale;
+varying float vGlow;
+void main() {
+  vec3 drift = vec3(sin(uTime * 0.11 + aSeed * 23.0), sin(uTime * 0.07 + aSeed * 41.0), sin(uTime * 0.09 + aSeed * 13.0));
+  vec4 world = modelMatrix * vec4(position + drift * 0.1, 1.0);
+  float twinkle = 0.55 + 0.45 * sin(uTime * (0.5 + aSeed) + aSeed * 60.0);
+  vGlow = 0.015 + sunAt(world.xyz, 1.0) * twinkle;
+  vec4 mvPosition = viewMatrix * world;
+  gl_PointSize = min(uSize * (0.6 + 0.8 * fract(aSeed * 7.0)) * uScale / max(-mvPosition.z, 0.1), 14.0);
+  gl_Position = projectionMatrix * mvPosition;
+  #include <fog_vertex>
+}`;
+
+const DUST_FRAG = /* glsl */ `
+#include <common>
+#include <fog_pars_fragment>
+uniform sampler2D uDot;
+uniform vec3 uColor;
+varying float vGlow;
+void main() {
+  float fade = 1.0;
+  #ifdef USE_FOG
+    fade = 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
+  #endif
+  gl_FragColor = vec4(uColor * vGlow * fade * texture2D(uDot, gl_PointCoord).r, 1.0);
+}`;
 
 export class RoomChapter {
   constructor(app) {
@@ -85,99 +256,33 @@ export class RoomChapter {
 
   async build() {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x120c08);
-    scene.fog = new THREE.Fog(0x1a110b, 9, 36);
+    scene.background = new THREE.Color(0x2a1b12);
+    scene.fog = new THREE.Fog(0x2a1b12, 14, 80);
     this.scene = scene;
 
-    const names = ['window-panes', 'tape-cream', 'tape-pink', 'tape-blue', 'tape-yellow', 'badge-top5', ...PROJECTS.map((p) => p.tex)];
+    const names = ['gobo', 'window-panes', 'tape-cream', 'tape-pink', 'tape-blue', 'tape-yellow', 'badge-top5', ...PROJECTS.map((p) => p.tex)];
     const tex = {};
     await Promise.all(names.map(async (name) => { tex[name] = await texture(name); }));
+    // The plaster is shared with the wall (same options, so whichever loads it first
+    // agrees); the floorboards are the room's own.
+    tex.plaster = await texture('plaster', { srgb: true, repeat: [3, 1] });
+    tex['plaster-n'] = await texture('plaster-n', { srgb: false, repeat: [3, 1] });
+    tex.floor = await texture('room-floor', { repeat: [1, 1] });
 
-    // The far window and its beams ride along with the camera as a far backdrop, so the
-    // window holds the gap between the captions and the cards, high above the next cards.
-    // The rig also turns with the camera's heading (see RIG_HEADING).
-    this.light = new THREE.Group();
-    scene.add(this.light);
-    const window = new THREE.Mesh(new THREE.PlaneGeometry(16.5, 16.5), new THREE.MeshBasicMaterial({
-      map: tex['window-panes'], color: new THREE.Color(1, 0.78, 0.52).multiplyScalar(7), fog: false,
-    }));
-    window.position.set(2.6, 20.3, -100);
-    this.light.add(window);
-
-    const beamMap = glowTexture(256, 64, (ctx, w, h) => {
-      const across = ctx.createLinearGradient(0, 0, 0, h);
-      across.addColorStop(0, 'rgba(255,255,255,0)');
-      across.addColorStop(0.5, 'rgba(255,255,255,1)');
-      across.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = across;
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = 'destination-in';
-      const along = ctx.createLinearGradient(0, 0, w, 0);
-      along.addColorStop(0, 'rgba(0,0,0,0)');
-      along.addColorStop(0.15, 'rgba(0,0,0,0.9)');
-      along.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = along;
-      ctx.fillRect(0, 0, w, h);
-    });
-    this.beams = [];
-    // Beams fall from the window toward the viewer and pass below and right of the
-    // camera, so they never cross the caption column.
-    [
-      { from: [1.72, 14.25, -100], to: [2.4, -4.6, -9], width: 3.0, strength: 0.16 },
-      { from: [4.14, 16.45, -100], to: [6.2, -3.6, -14], width: 2.4, strength: 0.12 },
-      { from: [0.4, 17.0, -100], to: [0.9, -4.4, -6], width: 4.0, strength: 0.09 },
-    ].forEach((beam) => {
-      const from = new THREE.Vector3(...beam.from);
-      const to = new THREE.Vector3(...beam.to);
-      const length = from.distanceTo(to);
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(length, beam.width), new THREE.MeshBasicMaterial({
-        map: beamMap, color: new THREE.Color(1, 0.72, 0.42).multiplyScalar(beam.strength * 8), ...additive, side: THREE.DoubleSide,
-      }));
-      mesh.position.copy(from).lerp(to, 0.5);
-      mesh.userData = { from, to, strength: beam.strength };
-      this.light.add(mesh);
-      this.beams.push(mesh);
-    });
-
-    // Dust hangs still in the room along the whole flight; a mote glows while a beam
-    // passes over it (computed per vertex from where the beams are this frame).
-    const rand = random(17);
-    const far = -2 - SPACING * (PROJECTS.length - 1) - 26; // 26 past the last card
-    const count = Math.round(27.4 * (6 - far)); // same density as before (2300 over 84)
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    for (let k = 0; k < count; k += 1) {
-      positions.set([-7 + rand() * 15, -4.5 + rand() * 9, far + rand() * (6 - far)], k * 3);
-      const v = 0.4 + rand() * rand() * 1.8;
-      colors.set([v, v * 0.82, v * 0.6], k * 3);
-    }
-    const dustGeometry = new THREE.BufferGeometry();
-    dustGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    dustGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const dot = glowTexture(64, 64, (ctx) => {
-      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      g.addColorStop(0, 'rgba(255,255,255,1)');
-      g.addColorStop(0.4, 'rgba(255,255,255,0.4)');
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, 64, 64);
-    });
-    const dustMaterial = new THREE.PointsMaterial({ size: 0.05, map: dot, vertexColors: true, sizeAttenuation: true, ...additive });
-    this.beamUniforms = {
-      uBeamFrom: { value: this.beams.map(() => new THREE.Vector3()) },
-      uBeamTo: { value: this.beams.map(() => new THREE.Vector3()) },
-      uBeamGain: { value: this.beams.map((beam) => beam.userData.strength * 12) },
+    const [g0, g1, g2, g3] = WINDOW.gobo.map((px) => px / 1024);
+    this.sun = {
+      uGobo: { value: tex.gobo },
+      uSun: { value: new THREE.Vector4(SUN.x, SUN.y, SUN.z, 1 / SUN.x) },
+      uBays: { value: new THREE.Vector4(HALL.right, WINDOW.z, SPACING, 1 / SPACING) },
+      uOpening: { value: new THREE.Vector4(1 / WINDOW.width, WINDOW.sill, WINDOW.head, 1 / (WINDOW.head - WINDOW.sill)) },
+      uGoboRect: { value: new THREE.Vector4(g0, 1 - g3, g2, 1 - g1) },
+      uSoft: { value: 0.25 },
     };
-    dustMaterial.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, this.beamUniforms);
-      shader.vertexShader = shader.vertexShader
-        .replace('#include <common>', `#include <common>\n${dustHead(this.beams.length)}`)
-        .replace('#include <color_vertex>', `#include <color_vertex>\n${DUST_GLOW}`);
-    };
-    this.dust = new THREE.Points(dustGeometry, dustMaterial);
-    scene.add(this.dust);
+    this.hall(tex);
+    this.dust();
 
-    // Light: warm key from behind the viewer, sky fill, glossy reflections of the window.
+    // Light for the cards: warm key from behind the viewer, sky fill, glossy
+    // reflections of a bright window.
     const key = new THREE.DirectionalLight(0xffc08a, 2.1);
     key.position.set(-4, 6, 8);
     scene.add(key, new THREE.HemisphereLight(0x6c5a7a, 0x20140c, 0.65));
@@ -222,8 +327,159 @@ export class RoomChapter {
     this.lookCurve = new THREE.CatmullRomCurve3(lookKeys, false, 'centripetal');
     this.keyCount = posKeys.length;
 
-    this.camera = new THREE.PerspectiveCamera(36, 1, 0.1, 120);
+    this.camera = new THREE.PerspectiveCamera(36, 1, 0.1, 140);
+    // Compile the haze pass now, not in the first frame that needs it.
+    const { renderer } = this.app;
+    const target = renderer.getRenderTarget();
+    renderer.setRenderTarget(this.haze);
+    const compiled = renderer.compileAsync(this.hazeScene, this.camera);
+    renderer.setRenderTarget(target);
+    await compiled;
     this.ready = true;
+  }
+
+  // Floor, ceiling, both side walls and the two ends, each a single quad shaded
+  // by SURFACE_FRAG. Textures run in world units, so every wall matches. The same
+  // quads, alone in their own scene, draw the haze pass.
+  hall(tex) {
+    const { left, right, floor, ceiling, near, far } = HALL;
+    const width = right - left;
+    const height = ceiling - floor;
+    const length = near - far;
+    const mid = new THREE.Vector3((left + right) / 2, (floor + ceiling) / 2, (near + far) / 2);
+    const flat = new THREE.DataTexture(new Uint8Array([128, 128, 255, 255]), 1, 1);
+    flat.needsUpdate = true;
+    const X = new THREE.Vector3(1, 0, 0);
+    const Y = new THREE.Vector3(0, 1, 0);
+    const Z = new THREE.Vector3(0, 0, 1);
+    const linear = (hex, scale) => new THREE.Color(hex).multiplyScalar(scale);
+    const plaster = { map: tex.plaster, bump: tex['plaster-n'], tile: [1 / 8, 1 / 4.9], tint: linear(0x8a6e5c, 1), bumpScale: 0.8 };
+    const boards = { map: tex.floor, bump: flat, tile: [1 / 2.88, 1 / 5.76], tint: linear(0xffffff, 1), bumpScale: 0 };
+    const surfaces = [
+      { name: 'floor', size: [width, length], at: [mid.x, floor, mid.z], turn: [-Math.PI / 2, 0], face: Y, u: X, v: Z, ...boards },
+      { name: 'ceiling', size: [width, length], at: [mid.x, ceiling, mid.z], turn: [Math.PI / 2, 0], face: Y.clone().negate(), u: X, v: Z, ...plaster, tint: linear(0x6e5848, 1) },
+      { name: 'left', size: [length, height], at: [left, mid.y, mid.z], turn: [0, Math.PI / 2], face: X, u: Z, v: Y, ...plaster },
+      { name: 'right', size: [length, height], at: [right, mid.y, mid.z], turn: [0, -Math.PI / 2], face: X.clone().negate(), u: Z, v: Y, ...plaster, glass: true },
+      { name: 'far', size: [width, height], at: [mid.x, mid.y, far], turn: [0, 0], face: Z, u: X, v: Y, ...plaster },
+      { name: 'near', size: [width, height], at: [mid.x, mid.y, near], turn: [0, Math.PI], face: Z.clone().negate(), u: X, v: Y, ...plaster },
+    ];
+    const sky = new THREE.Color(0xb5c6e4).multiplyScalar(0.55);
+    const ground = new THREE.Color(0x7a5a44).multiplyScalar(0.7);
+    this.haze = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, depthBuffer: false });
+    this.hazeScene = new THREE.Scene();
+    this.hazeScene.background = new THREE.Color(0x000000);
+    this.screen = new THREE.Vector2(1, 1);
+    const hazeMaterial = new THREE.ShaderMaterial({
+      vertexShader: SURFACE_VERT,
+      fragmentShader: HAZE_FRAG,
+      uniforms: {
+        ...this.sun,
+        uHaze: { value: new THREE.Color(0xffc28a).multiplyScalar(0.2) },
+        uHazeReach: { value: 40 },
+      },
+    });
+    this.surfaces = surfaces.map((spec) => {
+      const material = new THREE.ShaderMaterial({
+        vertexShader: SURFACE_VERT,
+        fragmentShader: SURFACE_FRAG,
+        fog: true,
+        uniforms: {
+          ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog),
+          ...this.sun,
+          uHazeMap: { value: this.haze.texture },
+          uScreen: { value: this.screen },
+          uMap: { value: spec.map },
+          uBump: { value: spec.bump },
+          uPanes: { value: tex['window-panes'] },
+          uTint: { value: spec.tint },
+          uFace: { value: spec.face },
+          uAxisU: { value: spec.u },
+          uAxisV: { value: spec.v },
+          uTile: { value: new THREE.Vector2(...spec.tile) },
+          uBumpScale: { value: spec.bumpScale },
+          uSunLight: { value: SUN_LIGHT },
+          uSky: { value: sky },
+          uGround: { value: ground },
+          uBounce: { value: new THREE.Color(0xffc28a).multiplyScalar(0.5) },
+          uGlass: { value: new THREE.Color(1, 0.55, 0.25).multiplyScalar(2.5) },
+          uGlassOn: { value: spec.glass ? 1 : 0 },
+        },
+      });
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(...spec.size), material);
+      mesh.position.set(...spec.at);
+      mesh.rotation.set(spec.turn[0], spec.turn[1], 0);
+      mesh.name = spec.name;
+      this.scene.add(mesh);
+      const veil = new THREE.Mesh(mesh.geometry, hazeMaterial);
+      veil.position.copy(mesh.position);
+      veil.rotation.copy(mesh.rotation);
+      this.hazeScene.add(veil);
+      return mesh;
+    });
+  }
+
+  // Marches the sunlit haze at half resolution before the room is drawn, and
+  // leaves the renderer pointed at the room's own target.
+  hazePass() {
+    const { renderer } = this.app;
+    renderer.getDrawingBufferSize(SIZE);
+    this.screen.set(1 / SIZE.x, 1 / SIZE.y);
+    const width = Math.max(1, Math.round(SIZE.x / 2));
+    const height = Math.max(1, Math.round(SIZE.y / 2));
+    if (this.haze.width !== width || this.haze.height !== height) this.haze.setSize(width, height);
+    const target = renderer.getRenderTarget();
+    renderer.setRenderTarget(this.haze);
+    renderer.render(this.hazeScene, this.camera);
+    renderer.setRenderTarget(target);
+  }
+
+  // Motes fill the hall, most of them where the beams are (elsewhere they are
+  // nearly invisible anyway), and glow while the sun is on them.
+  dust() {
+    const rand = random(17);
+    const count = 16000;
+    const positions = new Float32Array(count * 3);
+    const seeds = new Float32Array(count);
+    for (let k = 0; k < count;) {
+      const x = HALL.left + 0.2 + rand() * (HALL.right - HALL.left - 0.4);
+      const y = HALL.floor + 0.05 + rand() * (HALL.ceiling - HALL.floor - 0.3);
+      const z = HALL.far + 25 + rand() * (HALL.near - HALL.far - 25);
+      if (inBeam(x, y, z, -0.1) || rand() < 0.08) {
+        positions.set([x, y, z], k * 3);
+        seeds[k] = rand();
+        k += 1;
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+    const dot = glowTexture(64, 64, (ctx) => {
+      const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.4, 'rgba(255,255,255,0.4)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+    });
+    this.dustUniforms = {
+      uTime: { value: 0 },
+      uSize: { value: 0.07 },
+      uScale: { value: 540 },
+      uDot: { value: dot },
+      uColor: { value: new THREE.Color(1, 0.72, 0.45).multiplyScalar(3) },
+    };
+    const material = new THREE.ShaderMaterial({
+      vertexShader: DUST_VERT,
+      fragmentShader: DUST_FRAG,
+      fog: true,
+      uniforms: { ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog), ...this.sun, ...this.dustUniforms },
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    this.motes = new THREE.Points(geometry, material);
+    this.motes.frustumCulled = false;
+    this.scene.add(this.motes);
   }
 
   environment() {
@@ -263,11 +519,8 @@ export class RoomChapter {
     const t = clamp01((c + 1) / (this.keyCount - 1));
     this.camera.position.copy(this.posCurve.getPoint(t));
     const look = this.lookCurve.getPoint(t);
-    const heading = Math.atan2(look.x - this.camera.position.x, this.camera.position.z - look.z);
     if (this.camera.aspect < 1) this.camera.position.x += 0.9;
     this.camera.lookAt(look);
-    this.light.position.z = this.camera.position.z;
-    this.light.rotation.y = RIG_HEADING - heading;
 
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
@@ -278,23 +531,9 @@ export class RoomChapter {
     });
     this.focus = this.cards.map((_, j) => 1 - smooth(clamp01((Math.abs(c - j) - 0.16) / 0.3)));
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
-    this.dust.rotation.y = Math.sin(time * 0.05) * 0.02;
-    this.dust.position.y = Math.sin(time * 0.17) * 0.12;
-    // Beams are ribbons along their axis, turned to face the camera (in the light's frame).
-    const turn = this.light.rotation.y;
-    VIEW.subVectors(this.camera.position, this.light.position).applyAxisAngle(UP, -turn);
-    this.beams.forEach((beam, i) => {
-      beam.material.opacity = 0.85 + Math.sin(time * 0.7 + i * 2.1) * 0.15;
-      const { from, to } = beam.userData;
-      AXIS.subVectors(to, from).normalize();
-      FACE.subVectors(VIEW, beam.position).normalize();
-      FACE.addScaledVector(AXIS, -FACE.dot(AXIS)).normalize();
-      SIDE.crossVectors(FACE, AXIS);
-      BASIS.makeBasis(AXIS, SIDE, FACE);
-      beam.quaternion.setFromRotationMatrix(BASIS);
-      this.beamUniforms.uBeamFrom.value[i].copy(from).applyAxisAngle(UP, turn).add(this.light.position);
-      this.beamUniforms.uBeamTo.value[i].copy(to).applyAxisAngle(UP, turn).add(this.light.position);
-    });
+    this.hazePass();
+    this.dustUniforms.uTime.value = time;
+    this.dustUniforms.uScale.value = SIZE.y / 2;
   }
 
   stills(v) {
