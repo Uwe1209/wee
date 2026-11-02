@@ -137,11 +137,11 @@ void main() {
     // window glowing through it.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    float leave = (1.0 - uMix) * (1.0 - uMix) * (1.0 - 0.93 * smoothstep(0.0, 0.3, uMix) * g);
+    float leave = (1.0 - uMix) * (1.0 - uMix) * (1.0 - uMix) * (1.0 - 0.95 * smoothstep(0.0, 0.3, uMix) * g);
     vec3 k = ka * leave + kb * uMix * uMix;
     color = k / max(vec3(1.0) - k, vec3(0.002));
-    // Mid-swap the light fills in for the chapters.
-    float swap = smoothstep(0.0, 0.3, uMix) * (1.0 - smoothstep(0.7, 1.0, uMix));
+    // Light fills in for whatever of the two chapters is missing mid-swap.
+    float fill = max(1.0 - leave - uMix * uMix, 0.0);
     // Flare light scatters inside the lens and is not vignetted, but the scene
     // is: the composite eases its vignette with the glare, so it moves here.
     float wh = uResolution.x / max(uResolution.y, 1.0);
@@ -159,7 +159,7 @@ void main() {
     // light amber instead of cream.
     color *= vec3(1.0) + vec3(0.15, -0.22, -0.5) * g * reach;
     // The room is darker than the wall, so the light carries more of it.
-    float wash = g * ((0.45 + 1.25 * uMix) * reach + 0.5 * swap * (0.4 + 0.6 * reach));
+    float wash = g * ((0.45 + 1.25 * uMix) * reach + 0.7 * fill * (0.4 + 0.6 * reach));
     wash *= 0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0));
     // A small white-gold core in a gold halo.
     float halo = exp(-r * 9.0);
