@@ -34,6 +34,6 @@
   .role h3 { font-size: 7vw; }
   .skills { margin-top: 10px; }
   .skills dl { gap: 4px 10px; }
-  .contact-links a { font-size: 8vw; }
+  .contact-links a { font-size: 6vw; overflow-wrap: anywhere; } /* the full address fits a 390 px screen */
   .footer { font-size: 9px; margin-top: 18px; }
 }
