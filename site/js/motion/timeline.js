@@ -32,7 +32,7 @@ export const TIMELINE = {
   // Fades keyed to scroll: in [from, to], out [from, to].
   reveals: {
     'hello-cue': { out: [0.25, 0.7] },
-    'flash-caption': { in: [2.6, 2.85], out: [3.12, 3.3] },
+    'flash-caption': { in: [2.6, 2.85], out: [3.05, 3.22] }, // gone before the taped state (3.25)
     'projects-head': { in: [5.7, 5.95] },
     'scrap-title': { in: [10.6, 10.85], out: [11.95, 12.18] },
     'scrap-coordinator': { in: [10.8, 11.05], out: [11.97, 12.2] },

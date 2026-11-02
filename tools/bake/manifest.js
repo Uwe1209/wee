@@ -162,16 +162,19 @@ const instant = (p, key, caption, options = {}) => instantPhoto(p[key], { width:
 const riso = (p, key, w, h, options = {}) => cutOut(risograph(p[key], w, h, { cell: 6, inks: [PINK, BLUE], ...options }), { seed: options.seed ?? 9 });
 
 // Window light: two columns of panes, mullions, leaves along one side, softened.
-// `nudge` moves single leaves ({ index: [dx, dy] } px) without reseeding the rest.
-const windowGobo = ({ blur = 9, leaves = 60, nudge = {} } = {}) => {
+// `rows` is each row's pane height (px, top to bottom). `nudge` moves single
+// leaves ({ index: [dx, dy] } px) without reseeding the rest.
+const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240] } = {}) => {
   const canvas = makeCanvas(1024, 1024);
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, 1024, 1024);
   ctx.fillStyle = '#fff';
-  const pane = { x: 170, y: 120, w: 300, h: 240, bar: 30 };
-  for (let row = 0; row < 3; row += 1) {
-    for (let col = 0; col < 2; col += 1) ctx.fillRect(pane.x + col * (pane.w + pane.bar), pane.y + row * (pane.h + pane.bar), pane.w, pane.h);
+  const pane = { x: 170, y: 120, w: 300, bar: 30 };
+  let top = pane.y;
+  for (const h of rows) {
+    for (let col = 0; col < 2; col += 1) ctx.fillRect(pane.x + col * (pane.w + pane.bar), top, pane.w, h);
+    top += h + pane.bar;
   }
   const rand = random(5);
   ctx.fillStyle = '#000';
@@ -415,6 +418,9 @@ export const TEXTURES = {
   'team-instant': { make: (p) => instant(p, 'team', 'outreach crew', { ratio: 0.8, seed: 110 }) },
   'certificate-instant': { make: (p) => instant(p, 'certificate', 'facilitator! 11 april', { ratio: 1.2, pose: { focusY: 0.32 }, seed: 111 }) },
   'coaching-instant': { make: (p) => instant(p, 'coaching', 'warm-ups first', { ratio: 1.3, pose: { focusY: 0.34 }, seed: 112 }) },
+  // The desk's window light: a taller middle pane, so the bar under it falls
+  // below the text column (down in the page's bottom-left corner) for the whole pin.
+  'gobo-desk': { make: () => windowGobo({ rows: [240, 310, 170] }), quality: 0.9 },
 
   // --- contact
   'strip-contact': {
