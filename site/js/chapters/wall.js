@@ -278,6 +278,29 @@ export class WallChapter {
     }
   }
 
+  // Where the flash strip's slot (its rest spot, framed by the corner mounts)
+  // is on screen, so the countdown can wait in it: its centre and width in CSS
+  // pixels and its tilt in radians (clockwise). Read-only: it projects through
+  // the camera as this frame drew it.
+  slot() {
+    const { x, y, z, rot } = this.strip.userData.rest;
+    const { width, height } = this.strip.userData.size;
+    const screen = this.app.renderer.getSize(new THREE.Vector2());
+    const at = (along, up) => {
+      const point = this.wall.localToWorld(new THREE.Vector3(
+        x + along * Math.cos(rot) - up * Math.sin(rot), y + along * Math.sin(rot) + up * Math.cos(rot), z,
+      )).project(this.camera);
+      return { x: ((point.x + 1) / 2) * screen.x, y: ((1 - point.y) / 2) * screen.y };
+    };
+    const [centre, left, right, top, bottom] = [at(0, 0), at(-width / 2, 0), at(width / 2, 0), at(0, height / 2), at(0, -height / 2)];
+    return {
+      x: centre.x,
+      y: centre.y,
+      width: Math.hypot(right.x - left.x, right.y - left.y),
+      tilt: Math.atan2(top.x - bottom.x, bottom.y - top.y),
+    };
+  }
+
   // Stepping the clock in reduced-motion mode never animates: the strip is
   // simply there, developed.
   stills(v) {

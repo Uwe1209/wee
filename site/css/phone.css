@@ -9,9 +9,6 @@
   .chips { left: var(--pad); bottom: calc(var(--vh) * 5); max-width: 88vw; gap: 6px; }
   .chips li { font-size: 10px; padding: 6px 8px; border-radius: 3px; }
   .cue-wrap { display: none; }
-  .countdown { left: 25vw; width: 50vw; top: calc(var(--vh) * 32); height: calc(var(--vh) * 36); }
-  .count { font-size: 48vw; }
-  .count.smile { font-size: 15vw; }
   .flash-caption { right: var(--pad); left: var(--pad); bottom: calc(var(--vh) * 26); max-width: none; font-size: 5.4vw; }
   .block, .sec-scrapbook .screen { padding-left: var(--pad); padding-right: var(--pad); max-width: none !important; }
   .title { font-size: 13vw; }

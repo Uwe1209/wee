@@ -144,7 +144,7 @@ export class App {
     this.v = this.scroll.update(dt) / this.vh;
     uploadOne(this.renderer);
     this.render(this.v);
-    this.dom.update(this.v, this.intro, this.drawn.has('room') ? this.chapters.room : null);
+    this.dom.update(this.v, this.intro, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null);
     this.adapt(dt);
     if (FLAGS.debug) this.debug(dt);
   }
@@ -230,7 +230,7 @@ export class App {
     this.scroll.setTarget(v * this.vh, { instant: true });
     this.v = this.scroll.update(0) / this.vh;
     this.render(this.v);
-    this.dom.update(this.v, 1, this.drawn.has('room') ? this.chapters.room : null);
+    this.dom.update(this.v, 1, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null);
     this.api.info = { state, v: this.v, failed: [...this.failed] };
     this.api.ready = true;
     return this.v;

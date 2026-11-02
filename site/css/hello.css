@@ -29,12 +29,24 @@
 .chips li:nth-child(3n) { rotate: 1.5deg; background: var(--pink); color: var(--ink); }
 .cue-wrap { position: absolute; right: var(--pad); bottom: calc(var(--vh) * 6.5); }
 .cue { font-size: max(11px, 0.72vw); line-height: 1; color: var(--ink-soft); }
-.countdown { position: absolute; left: 64vw; top: calc(var(--vh) * 22); width: 20vw; height: calc(var(--vh) * 48); pointer-events: none; }
-.count {
-  position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden;
-  font: italic 400 22vw/1 var(--serif); color: var(--pink); text-shadow: 0.35vw 0.25vw 0 rgba(0, 120, 191, 0.55);
+/* The countdown waits in the strip's slot. This box is that slot laid out at
+   100 px per wall unit (the strip is 0.98 x 3.23); every frame dom.js centres it
+   on the slot's projection, tilts it with the slot and scales it to the slot's
+   width on screen, phones included. Scoped to the hello section so it outranks
+   the fixed placement phone.css still carries for it. */
+.sec-hello .countdown {
+  position: absolute; left: 0; top: 0; width: 98px; height: 323px; translate: -50% -50%; pointer-events: none;
 }
-.count.smile { font: 600 6.5vw/1 var(--hand); color: var(--ballpoint); text-shadow: none; rotate: -6deg; }
+/* A "2" is half an em of ink, so the widest figure fills about 80% of the
+   slot. Lining figures sit 0.027 em high in a line of 1, so they drop by that. */
+.sec-hello .count {
+  position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden;
+  font: italic 400 160px/1 var(--serif); color: var(--pink); text-shadow: 0.025em 0.018em 0 rgba(0, 120, 191, 0.55);
+  translate: 0 0.027em;
+}
+/* "smile!" is about 2 em of ink and fills the slot's width. Caveat's "!" hangs
+   0.145 em past the word's advance, so the word moves back by that to centre. */
+.sec-hello .count.smile { font: 600 45px/1 var(--hand); color: var(--ballpoint); text-shadow: none; rotate: -6deg; translate: -0.145em 0.02em; }
 /* Written on the plaster under the printed strip, between the ticket and the
    gators photo, one sitting per line. The wall scales with the screen's height,
    so the caption is placed from the centre in vh to stay on that bare patch. */
