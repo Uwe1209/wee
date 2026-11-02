@@ -30,6 +30,20 @@ const mixLook = (a, b, t) => {
 const FALLBACK = new THREE.Color(0xd9c7ad);
 const CROSSFADE = 4;
 
+// Wall to room is light, not a wipe. In fractions of the transition window:
+// the glare builds to its peak, the chapters swap under it, then it decays.
+const LEAK = { peak: 0.4, swap: [0.34, 0.6], decay: 1 };
+const leakGlare = (p) => (p < LEAK.peak ? smooth(p / LEAK.peak) : (1 - smooth((p - LEAK.peak) / (1 - LEAK.peak))) ** LEAK.decay);
+// The glare opens the lens: exposure lifts, bloom and halation spread the
+// energy, and the vignette eases so the corners flare too.
+const glareLook = (look, g) => ({
+  ...look,
+  exposure: look.exposure * (1 + 0.2 * g),
+  bloom: lerp(look.bloom, 0.3, g * g),
+  halation: lerp(look.halation, 0.6, g),
+  vignette: look.vignette * (1 - 0.6 * g),
+});
+
 export class App {
   constructor() {
     this.reduced = FLAGS.reduced || matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -137,7 +151,10 @@ export class App {
   plan(v) {
     const tr = T.transitions;
     if (v < tr.wallToRoom[0]) return { a: 'wall' };
-    if (v < tr.wallToRoom[1]) return { a: 'wall', b: 'room', mix: smooth(progress(v, tr.wallToRoom)), type: 1 };
+    if (v < tr.wallToRoom[1]) {
+      const p = progress(v, tr.wallToRoom);
+      return { a: 'wall', b: 'room', mix: smooth(progress(p, LEAK.swap)), glare: leakGlare(p), type: 1 };
+    }
     if (v < tr.roomToDesk[0]) return { a: 'room' };
     if (v < tr.roomToDesk[1]) return { a: 'room', b: 'desk', mix: easeInOut(progress(v, tr.roomToDesk)), type: 2 };
     if (v < tr.deskToWall[0]) return { a: 'desk' };
@@ -187,8 +204,10 @@ export class App {
     let look = (a ?? this.chapters.wall).look;
     if (plan.b) {
       const b = this.draw(plan.b, v, this.slots[1]);
-      source = this.pipeline.transition(this.slots[0], this.slots[1], plan.mix, this.reduced ? CROSSFADE : plan.type, this.time);
+      const glare = this.reduced ? 0 : plan.glare ?? 0;
+      source = this.pipeline.transition(this.slots[0], this.slots[1], plan.mix, this.reduced ? CROSSFADE : plan.type, this.time, glare);
       look = mixLook(look, (b ?? this.chapters.wall).look, plan.mix);
+      if (glare > 0) look = glareLook(look, glare);
     }
     const flash = flashEnvelope(v) * (this.reduced ? 0.05 : 1);
     this.pipeline.setLook({ ...look, exposure: look.exposure * (1 + 1.5 * flash), flash: flash * T.flash.peak });

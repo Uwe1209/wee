@@ -1,0 +1,21 @@
+{
+ "element": "captions",
+ "round": 1,
+ "url": "http://localhost:8080/workbench/rounds/captions/r1/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/captions/r1/spex.jpg",
+  "workbench/rounds/captions/r1/buildup.jpg",
+  "workbench/rounds/captions/r1/haojia.jpg",
+  "workbench/rounds/captions/r1/aws.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 67215,
+ "at": "2026-11-02T11:04:05.024Z"
+}

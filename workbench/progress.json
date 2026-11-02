@@ -11,6 +11,16 @@
      "at": "2026-11-02T10:12:47.898Z",
      "compare": "rounds/opening/r1/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "opening",
+     "round": 2,
+     "score": 7.5,
+     "gap": "The strip's landing spot is just four hairline pencil corner ticks and a small ochre tape scrap on bare wall, so at a glance (and at thumbnail size) it disappears and the cluster reads as having a hole between the SPEX polaroid and the right column instead of a spot waiting for a photo; make it read at thumbnail size (e.g. bolder photo-corner mounts or a faint ghost outline of the strip, plus a short ballpoint note tying it to the scroll cue).",
+     "notes": "Otherwise very close to the bar: name with riso 'Liew', tagline and chips all sit in sun and are fully legible (the tagline is now entirely in light, better than the bar), five papers plus two stickers right of centre, soft contact shadows and translucent washi read as paper, and 'SCROLL TO TAKE A PHOTO' says what happens next; keep all of that. Secondary: the vertical mullion shadow now covers 'KUCHING' in the top meta row (about 1.7:1 vs 2.6:1 in the bar) and 'SCRAPBOOK N° 12' is lost in the top-right shadow (about 1.2:1), against the art bible's 'text sits in light' rule; the tape scrap at the spot looks like an opaque ochre block rather than translucent cream masking tape with torn ends; the 'URIIS 2026 · top 5' note sits in a shadow band (about 2.2:1, same as the bar). No console errors or failed chapters.",
+     "at": "2026-11-02T11:06:03.296Z",
+     "compare": "rounds/opening/r2/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
@@ -66,5 +76,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T10:51:58.782Z"
+ "updated": "2026-11-02T11:06:03.296Z"
 }
