@@ -37,7 +37,23 @@ const images = Object.fromEntries(await Promise.all(Object.entries({
   kacha: 'projects/kacha-camera.jpg',
   herbarium: 'projects/herbarium.jpg',
   aws: 'projects/aws-architecture.jpg',
+  poster: 'memories/spex-poster.jpg',
+  certificate: 'memories/certificate.jpg',
+  coaching: 'memories/coaching.jpg',
+  gators: 'memories/gators.jpg',
+  stage: 'memories/uriis-stage.jpg',
+  game: 'memories/game.jpg',
+  team: 'memories/outreach-team.jpg',
 }).map(async ([key, file]) => [key, await loadImage(IMG + file)])));
+
+// Four sittings in one strip: the ID photo, SPEX poster day, the outreach
+// certificate, and coaching the warm-up.
+const memoryStrip = () => [
+  { image: images.portrait, zoom: 1.0, focusX: 0.5, focusY: 0.44 },
+  { image: images.poster, zoom: 1.75, focusX: 0.75, focusY: 0.4 },
+  { image: images.certificate, zoom: 1.0, focusX: 0.5, focusY: 0.3 },
+  { image: images.coaching, zoom: 1.0, focusX: 0.5, focusY: 0.31 },
+];
 
 const hdr = (r, g, b, scale) => new THREE.Color(r, g, b).multiplyScalar(scale);
 
@@ -123,10 +139,10 @@ const darkroom = () => {
   const wire = new THREE.CatmullRomCurve3(Array.from({ length: 21 }, (_, k) => along(k / 20)));
   back.add(new THREE.Mesh(new THREE.TubeGeometry(wire, 120, 0.014, 6), new THREE.MeshStandardMaterial({ color: 0x9d968b, roughness: 0.5 })));
   [
-    { image: images.herbarium, t: 0.42, w: 1.9, ratio: 0.6, rot: -0.04 },
-    { image: images.spex, t: 0.6, w: 1.7, ratio: 0.72, rot: 0.035 },
-    { image: images.kacha, t: 0.76, w: 1.35, ratio: 1.0, rot: 0.05 },
-    { image: images.aws, t: 0.9, w: 1.6, ratio: 0.82, rot: -0.03 },
+    { image: images.gators, t: 0.42, w: 1.9, ratio: 0.72, rot: -0.04 },
+    { image: images.stage, t: 0.6, w: 1.8, ratio: 0.64, rot: 0.035 },
+    { image: images.game, t: 0.76, w: 1.6, ratio: 0.7, rot: 0.05 },
+    { image: images.team, t: 0.9, w: 1.5, ratio: 0.9, rot: -0.03 },
   ].forEach((print, k) => {
     const mesh = printMesh(instantPhoto(print.image, { width: 640, ratio: print.ratio, look: 'mono', seed: 30 + k }), print.w, {
       gloss: 0.7, roughness: 0.45, curl: 0.3, cup: 0.12,
@@ -158,7 +174,7 @@ const darkroom = () => {
     { position: [-8, -2, 4], size: [3, 6], color: hdr(1, 0.12, 0.05, 2.2) },
   ]);
   front.environmentIntensity = 0.55;
-  const face = photoStrip(images.portrait, {
+  const face = photoStrip(memoryStrip(), {
     look: 'mono', develop: 0.5, stamp: "'26 11 02", label: 'YOU WEE LIEW  ·  KUCHING  ·  02 11 26',
   });
   const strip = printMesh(face, 1.46, { gloss: 1, roughness: 0.32, curl: 0.16, segments: [8, 64] });
@@ -276,15 +292,15 @@ const goldenHour = () => {
 
   const ink = '#1f2c66';
   const cards = [
-    { image: images.portrait, w: 2.3, x: 0.35, y: 0.5, rot: 0.05, ratio: 1.24, caption: 'me! final year, 2026', pose: { zoom: 1.05, focusY: 0.43 } },
+    { image: images.poster, w: 2.3, x: 0.35, y: 0.5, rot: 0.05, ratio: 1.24, caption: 'SPEX poster day!', pose: { zoom: 1.35, focusX: 0.66, focusY: 0.45 } },
     { strip: true, w: 1.0, x: 2.75, y: 0.05, rot: -0.035 },
-    { image: images.spex, w: 2.65, x: 5.15, y: 1.45, rot: -0.05, ratio: 0.66, caption: 'SPEX: catch it in the animals' },
-    { image: images.kacha, w: 1.9, x: 4.8, y: -1.8, rot: 0.06, ratio: 1.0, caption: 'kacha! my photobooth app' },
-    { image: images.herbarium, w: 2.5, x: 7.75, y: -0.3, rot: 0.035, ratio: 0.6, caption: 'herbarium project' },
+    { image: images.stage, w: 2.65, x: 5.15, y: 1.45, rot: -0.05, ratio: 0.66, caption: 'URIIS 2026, top 5' },
+    { image: images.gators, w: 2.1, x: 4.85, y: -1.8, rot: 0.06, ratio: 0.75, caption: 'gators dc, rawr' },
+    { image: images.game, w: 2.5, x: 7.75, y: -0.3, rot: 0.035, ratio: 0.66, caption: 'game day' },
   ];
   cards.forEach((card, k) => {
     const face = card.strip
-      ? photoStrip(images.portrait, { look: 'color', stamp: "'26 11 02", seed: 8 })
+      ? photoStrip(memoryStrip(), { look: 'color', stamp: "'26 11 02", seed: 8 })
       : instantPhoto(card.image, { width: 860, ratio: card.ratio, caption: card.caption, font: '600 66px Caveat', ink, pose: card.pose, seed: 40 + k });
     const mesh = printMesh(face, card.w, { gloss: 0.35, roughness: 0.55, curl: 0.12, lift: k % 2 ? 0.5 : 0.2 });
     pin(wall, mesh, { x: card.x, y: card.y, z: 0.1, rotate: card.rot });
@@ -365,9 +381,11 @@ const cutAndPaste = () => {
   const blue = { color: '#0078bf', channel: (r, g, b) => 1 - (0.62 * r + 0.3 * g + 0.08 * b), angle: 1.31, offset: [3, 2] };
   const flat = { physical: false, roughness: 0.92, alphaTest: 0.5 };
 
-  const portrait = printMesh(cutOut(risograph(images.portrait, 760, 940, { cell: 7, inks: [pink, blue], focusY: 0.45 }), 760, 940), 2.55, { ...flat, lift: 0.5 });
+  const portrait = printMesh(cutOut(risograph(images.poster, 760, 940, { cell: 7, inks: [pink, blue], zoom: 1.3, focusX: 0.7, focusY: 0.46 }), 760, 940), 2.55, { ...flat, lift: 0.5 });
   pin(page, portrait, { x: 1.75, y: 0.35, z: 0.06, rotate: -0.075 });
-  const strip = printMesh(photoStrip(images.portrait, { look: 'riso', label: 'PHOTOBOOTH · 4 POSES', labelFont: '700 26px "JetBrains Mono"' }), 1.05, { ...flat, curl: 0.15 });
+  const stripFrames = memoryStrip();
+  stripFrames[1] = { image: images.game, zoom: 1.2, focusX: 0.5, focusY: 0.62 };
+  const strip = printMesh(photoStrip(stripFrames, { look: 'riso', label: 'PHOTOBOOTH · 4 POSES', labelFont: '700 26px "JetBrains Mono"' }), 1.05, { ...flat, curl: 0.15 });
   pin(page, strip, { x: 4.35, y: -0.35, z: 0.1, rotate: 0.11 });
   const ticket = printMesh(ticketStub({
     lines: [
@@ -377,7 +395,7 @@ const cutAndPaste = () => {
     ],
   }), 3.1, { ...flat, alphaTest: 0.3 });
   pin(page, ticket, { x: 1.35, y: -2.55, z: 0.05, rotate: 0.04 });
-  const spex = printMesh(cutOut(risograph(images.spex, 900, 640, { cell: 6, inks: [pink, blue] }), 900, 640, { seed: 9 }), 2.15, { ...flat, lift: 0.4 });
+  const spex = printMesh(cutOut(risograph(images.gators, 900, 640, { cell: 6, inks: [pink, blue] }), 900, 640, { seed: 9 }), 2.15, { ...flat, lift: 0.4 });
   pin(page, spex, { x: 5.25, y: 2.25, z: 0.04, rotate: -0.07 });
 
   [

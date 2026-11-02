@@ -32,23 +32,26 @@ export const POSES = [
   { zoom: 1.05, focusX: 0.54, focusY: 0.45, rotate: 0.04 },
 ];
 
-// A four-frame photobooth strip. `look` is mono, color or riso.
-export const photoStrip = (image, {
+// A photobooth strip. `source` is one image (shot four times with POSES) or a
+// list of frames, each { image, zoom, focusX, focusY, rotate }.
+// `look` is mono, color or riso.
+export const photoStrip = (source, {
   look = 'mono', width = 640, poses = POSES, develop = 1, stamp = null, label = '', labelFont = '500 17px "JetBrains Mono"', seed = 4,
   risoInk = '#0078bf',
 } = {}) => {
+  const frames = Array.isArray(source) ? source : poses.map((pose) => ({ image: source, ...pose }));
   const margin = Math.round(width * 0.0625);
   const gap = Math.round(width * 0.053);
   const fw = width - margin * 2;
   const fh = Math.round(fw * 0.86);
   const footer = label ? Math.round(width * 0.17) : margin;
-  const height = margin + poses.length * fh + (poses.length - 1) * gap + footer;
+  const height = margin + frames.length * fh + (frames.length - 1) * gap + footer;
   const canvas = makeCanvas(width, height);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.fillStyle = PAPER[look];
   ctx.fillRect(0, 0, width, height);
 
-  poses.forEach((pose, index) => {
+  frames.forEach(({ image, ...pose }, index) => {
     const x = margin;
     const y = margin + index * (fh + gap);
     if (look === 'riso') {
@@ -70,7 +73,7 @@ export const photoStrip = (image, {
     frameVignette(ctx, x, y, fw, fh, look === 'mono' ? 0.42 : 0.25);
     grain(ctx, x, y, fw, fh, look === 'mono' ? 26 : 12, seed + index);
     dust(ctx, x, y, fw, fh, { count: 18, seed: seed * 7 + index });
-    const isLast = index === poses.length - 1;
+    const isLast = index === frames.length - 1;
     if (isLast && develop < 1) developing(ctx, x, y, fw, fh, develop, seed + 9);
     if (stamp && index === 0) dateStamp(ctx, stamp, x + fw - fh * 0.48, y + fh - fh * 0.15, fh * 0.075);
   });
