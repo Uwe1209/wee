@@ -58,18 +58,23 @@ export const fbm = (x, y, { octaves = 5, seed = 0, lacunarity = 2, gain = 0.5 } 
   return sum / norm;
 };
 
-// object-fit: cover, with zoom, focus point and a small rotation.
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+// object-fit: cover, with zoom, a focus point that lands on the frame centre,
+// and a small rotation. The offset is clamped so the image always covers.
 export const drawCover = (ctx, image, x, y, w, h, { zoom = 1, focusX = 0.5, focusY = 0.5, rotate = 0 } = {}) => {
-  const scale = Math.max(w / image.width, h / image.height) * zoom;
+  const scale = Math.max(w / image.width, h / image.height) * Math.max(1, zoom) * (1 + Math.abs(rotate) * 0.6);
   const dw = image.width * scale;
   const dh = image.height * scale;
+  const left = clamp(-dw * focusX, w / 2 - dw, -w / 2);
+  const top = clamp(-dh * focusY, h / 2 - dh, -h / 2);
   ctx.save();
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
   ctx.translate(x + w / 2, y + h / 2);
   ctx.rotate(rotate);
-  ctx.drawImage(image, -dw * focusX, -dh * focusY, dw, dh);
+  ctx.drawImage(image, left, top, dw, dh);
   ctx.restore();
 };
 

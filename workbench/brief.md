@@ -33,6 +33,21 @@ Read this first if you are picking the project up from disk.
 | Little Lemon | Uwe1209/Little-Lemon-project | Meta Front-End course, HTML and CSS restaurant site |
 | Dodgeball club | resume | Programme Coordinator, Swinburne Sarawak Dodgeball Club ECA at Borneo International School |
 
+## Memories (user's photos, 2026-11-02)
+
+Stored in `site/assets/img/memories/`, resized, metadata stripped. The two school-hall photos are cropped to You Wee so the school students behind him stay off the public site.
+
+| File | What it shows (only what the photo itself establishes) |
+|---|---|
+| `spex-poster.jpg` | You Wee beside the SPEX poster: "AI-Driven Global Wildlife Zoonotic Disease Risk Prediction and Visualization System", Swinburne Sarawak, team of five plus supervisor |
+| `certificate.jpg` | You Wee with a Certificate of Appreciation: facilitator, SSDC Dodgeball Outreach Programme, 11 April 2026, Tunku Putra-HELP School |
+| `coaching.jpg` | You Wee leading a warm-up at an outreach session |
+| `uriis-stage.jpg` | URIIS 2026 (University Research & Innovation Investment Summit, World Trade Centre Kuala Lumpur, 21-23 Sep 2026), Student Biz Innov Challenge, consolation prize line-up |
+| `uriis-pitch.jpg` | A pitch at URIIS 2026. Don't caption who is speaking; the user hasn't said |
+| `gators.jpg` | Gators DC dodgeball team photo |
+| `game.jpg` | Gators DC match, mid-dive |
+| `outreach-team.jpg` | Outreach dodgeball facilitators team photo |
+
 ## Process (from the user's brief)
 
 Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM and WebGL. Chapters render to their own HDR targets; one composite pass. Builder and critic are separate agents; the critic captures from a frozen snapshot and names the single biggest gap. Progress lives in `workbench/`.
