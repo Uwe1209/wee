@@ -102,13 +102,15 @@ void main() {
   gl_FragColor = vec4(front.rgb + back * (1.0 - clamp(front.a, 0.0, 1.0)), 1.0);
 }`;
 
-// Blends two chapter renders. 1: warm light leak sweeping across,
+// Blends two chapter renders. 1: sun glare that floods the lens, swaps the
+// chapters while overexposed and decays (uGlare 0..1 is its envelope),
 // 2: a page sliding up from the bottom, 3: the page sliding back down,
 // 4: plain cross-fade (reduced motion).
 const TRANSITION_FRAG = /* glsl */ `
 uniform sampler2D tA;
 uniform sampler2D tB;
 uniform float uMix;
+uniform float uGlare;
 uniform float uType;
 uniform float uTime;
 uniform vec2 uResolution;
@@ -127,27 +129,32 @@ void main() {
   float aspect = uResolution.y / max(uResolution.x, 1.0);
   if (uType < 1.5) {
     vec3 b = texture2D(tB, uv).rgb;
-    float x = uv.x * 0.85 + (1.0 - uv.y) * 0.25 + (tNoise(uv * vec2(3.0, 5.0) + uTime * 0.05) - 0.5) * 0.18;
-    float front = mix(-0.35, 1.45, uMix);
-    float m = smoothstep(front - 0.22, front + 0.22, x);
-    color = mix(b, a, m);
-    // Amber sun flaring across the lens: a small hot core riding the front in
-    // the upper third, an amber band, a wide orange falloff. Blue stays far
-    // below red and green so the filmic shoulder keeps it orange, not cream.
-    float swell = sin(clamp(uMix, 0.0, 1.0) * 3.14159265);
-    float d = x - front;
-    float band = exp(-d * d / 0.0256);
-    float haze = exp(-d * d / 0.1764);
-    // The core fades near the frame edges, where the vignette greys a hot white.
-    float coreX = (front - 0.08) / 0.85;
-    vec2 core = vec2(uv.x - coreX, (uv.y - 0.68) * aspect);
-    float r2 = dot(core, core);
-    float hot = exp(-r2 / 0.0012) * swell * smoothstep(-0.1, 0.25, coreX) * (1.0 - smoothstep(0.6, 1.05, coreX));
-    float leak = band * mix(0.5, 1.0, exp(-r2 / 0.04)) * swell;
-    // Like light through a warm gel: what sits under the leak loses blue and
-    // green instead of lifting toward white.
-    color *= mix(vec3(1.0), vec3(0.95, 0.56, 0.3), clamp(leak + haze * swell * 0.35, 0.0, 1.0));
-    color += vec3(1.0, 0.31, 0.11) * leak * 1.4 + vec3(1.0, 0.52, 0.2) * hot * 1.5 + vec3(0.5, 0.11, 0.025) * haze * swell * 0.5;
+    // The swap is a dissolve in a compressed range, x / (1 + x), so the room's
+    // HDR window fades in like any other surface instead of punching through.
+    vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
+    vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
+    vec3 k = mix(ka, kb, uMix);
+    color = k / max(vec3(1.0) - k, vec3(0.002));
+    // The sun sits just inside the upper-left corner; distances in frame widths.
+    float g = uGlare;
+    vec2 sun = vec2(0.05, 0.84);
+    vec2 d = vec2(uv.x - sun.x, (uv.y - sun.y) * aspect);
+    float r = length(d);
+    // Flood: the image warms and lifts as if through an amber gel while its own
+    // highlights compress, so neither chapter reads strongly at the peak.
+    float flood = g * (0.5 + 0.8 * exp(-r * 2.2));
+    color = color * (vec3(1.0) + vec3(1.0, 0.62, 0.32) * flood * 1.2) / (vec3(1.0) + color * 0.8 * g);
+    // Veil: amber light over the whole frame, hottest at the sun, a little
+    // uneven like a real leak. Blue stays low so the filmic shoulder keeps it
+    // amber instead of cream.
+    float veil = (0.25 + 0.85 * exp(-r * 2.6)) * (0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0)));
+    float core = exp(-r * r / 0.004);
+    // Lens character: a soft horizontal streak through the sun, and a faint
+    // ghost mirrored through the centre.
+    float streak = exp(-d.y * d.y / 0.00015) * exp(-abs(d.x) * 1.6);
+    float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
+    float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
+    color += g * (vec3(1.0, 0.48, 0.18) * veil * 0.8 + vec3(1.0, 0.54, 0.25) * (core * 5.0 + streak * 1.1) + vec3(0.9, 0.5, 0.3) * ghost * 0.12);
   } else if (uType < 2.5) {
     float edge = uMix;
     if (uv.y < edge) {
@@ -282,7 +289,7 @@ export class Pipeline {
     this.layers = layers;
     this.blend = hdrTarget(4, 4);
     this.transitionPass = new FullscreenPass(fullscreenMaterial(TRANSITION_FRAG, {
-      tA: { value: null }, tB: { value: null }, uMix: { value: 0 }, uType: { value: 1 }, uTime: { value: 0 }, uResolution: { value: new THREE.Vector2() },
+      tA: { value: null }, tB: { value: null }, uMix: { value: 0 }, uGlare: { value: 0 }, uType: { value: 1 }, uTime: { value: 0 }, uResolution: { value: new THREE.Vector2() },
     }));
     this.scene = hdrTarget(4, 4, { samples, depth: true });
     this.back = hdrTarget(4, 4, { samples, depth: true });
@@ -420,11 +427,13 @@ export class Pipeline {
   }
 
   // Blends two chapter targets into the blend target and returns it.
-  transition(a, b, mix, type, time = 0) {
+  // `glare` (0..1) is the light leak's envelope; only type 1 reads it.
+  transition(a, b, mix, type, time = 0, glare = 0) {
     const u = this.transitionPass.material.uniforms;
     u.tA.value = a.texture;
     u.tB.value = b.texture;
     u.uMix.value = mix;
+    u.uGlare.value = glare;
     u.uType.value = type;
     u.uTime.value = time;
     this.transitionPass.render(this.renderer, this.blend);
