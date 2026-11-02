@@ -75,3 +75,30 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 }
 .dir-c .chip:nth-child(3n + 2) { transform: rotate(-2deg); background: #0078bf; }
 .dir-c .chip:nth-child(3n) { transform: rotate(1.5deg); background: #ff48b0; color: #111; }
+
+/* BC — Golden-hour scrapbook (the pick) */
+.dir-bc { color: #2b1b12; }
+.dir-bc .bar { color: rgba(60, 38, 24, 0.66); }
+.dir-bc .name {
+  position: absolute; left: 4.6vw; top: 15vh; white-space: nowrap;
+  font: 400 11.4vw/0.86 'Instrument Serif', serif; letter-spacing: -0.012em; word-spacing: 0.06em; color: #2a1a10;
+}
+.dir-bc .riso { position: relative; display: inline-block; margin-left: 3.6vw; font-style: italic; }
+.dir-bc .riso .ink { display: block; mix-blend-mode: multiply; }
+.dir-bc .riso .pink { color: #ff48b0; }
+.dir-bc .riso .blue { position: absolute; left: 0.45vw; top: 0.3vw; color: #0078bf; }
+.dir-bc .note {
+  position: absolute; left: 6.2vw; top: 57vh; max-width: 24vw; transform: rotate(-2.5deg);
+  font: 600 2.1vw/1.12 'Caveat', cursive; color: #19214f;
+}
+.dir-bc .chips { position: absolute; left: 4.6vw; bottom: 6.5vh; display: flex; gap: 0.6vw; flex-wrap: wrap; max-width: 34vw; }
+.dir-bc .chip {
+  font: 700 0.78vw/1 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.55vw 0.8vw; background: #2a1a10; color: #f6efe2; border-radius: 0.2vw;
+}
+.dir-bc .chip:nth-child(3n + 2) { transform: rotate(-2deg); background: #0078bf; }
+.dir-bc .chip:nth-child(3n) { transform: rotate(1.5deg); background: #ff48b0; color: #2a1a10; }
+.dir-bc .cue {
+  position: absolute; right: 4.2vw; bottom: 6.5vh;
+  font: 500 0.72vw/1 'JetBrains Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(43, 27, 18, 0.7);
+}
