@@ -32,16 +32,16 @@ const CROSSFADE = 4;
 
 // Wall to room is light, not a wipe. In fractions of the transition window:
 // the glare builds to its peak, the chapters swap under it, then it decays.
-const LEAK = { peak: 0.4, swap: [0.34, 0.6], decay: 1 };
+const LEAK = { peak: 0.46, swap: [0.38, 0.56], decay: 1 };
 const leakGlare = (p) => (p < LEAK.peak ? smooth(p / LEAK.peak) : (1 - smooth((p - LEAK.peak) / (1 - LEAK.peak))) ** LEAK.decay);
 // The glare opens the lens: exposure lifts, bloom and halation spread the
 // energy, and the vignette eases so the corners flare too.
 const glareLook = (look, g) => ({
   ...look,
-  exposure: look.exposure * (1 + 0.2 * g),
-  bloom: lerp(look.bloom, 0.3, g * g),
-  halation: lerp(look.halation, 0.6, g),
-  vignette: look.vignette * (1 - 0.6 * g),
+  exposure: look.exposure * (1 + 0.15 * g),
+  bloom: lerp(look.bloom, 0.12, g),
+  halation: lerp(look.halation, 0.5, g),
+  vignette: look.vignette * (1 - 0.85 * g),
 });
 
 export class App {
