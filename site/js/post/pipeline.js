@@ -138,26 +138,30 @@ void main() {
     float g = uGlare;
     // Mid-swap both chapters dip under the light, so neither reads over the other.
     float swap = 4.0 * uMix * (1.0 - uMix);
-    color *= 1.0 - 0.65 * swap * g;
-    // The sun sits inside the upper-left corner; distances in frame widths.
-    // Its light reaches across the frame as the glare builds and draws back
-    // into the sun as it decays, so it reads as a flare, not a fog.
-    vec2 sun = vec2(0.1, 0.8);
+    color *= 1.0 - 0.7 * swap * g;
+    // The light comes from the wall's sun, inside the upper-left corner, and
+    // settles into the room's window as it decays. Distances in frame widths.
+    vec2 sun = mix(vec2(0.1, 0.8), vec2(0.5, 0.86), smoothstep(0.0, 1.0, uMix * (1.0 - g)));
     vec2 d = vec2(uv.x - sun.x, (uv.y - sun.y) * aspect);
     float r = length(d);
-    float reach = exp(-r * mix(6.0, 1.4, g));
-    // Amber gel: reds lift and blues fall, so the filmic shoulder keeps the
-    // light amber instead of cream. HDR highlights are not pushed further.
-    color += min(color, vec3(1.0)) * vec3(0.9, 0.15, -0.4) * g * (0.35 + 0.65 * reach);
-    float veil = g * (1.5 * reach + 0.15 * g + 0.6 * swap * g * (0.5 + reach));
-    veil *= 0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0));
-    float core = 3.0 * exp(-r * r / 0.002);
-    // Lens character: a soft horizontal streak through the sun, and a faint
+    // It reaches across the frame as the glare builds and draws back into the
+    // source as it decays, so it reads as a flare, not a fog.
+    float reach = exp(-r * mix(6.0, 1.3, sqrt(g)));
+    // Amber gel where the light falls: reds lift and blues drop, so the filmic
+    // shoulder keeps it amber instead of cream. HDR highlights are not pushed.
+    color += min(color, vec3(1.0)) * vec3(0.8, 0.12, -0.4) * g * reach;
+    // The room is darker than the wall, so the light carries more of it.
+    float wash = g * (mix(0.75, 1.0, uMix) * reach + 0.08 * g + 0.3 * swap * (0.4 + 0.6 * reach));
+    wash *= 0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0));
+    // A small white-gold core in a gold halo.
+    float halo = exp(-r * 9.0);
+    float core = exp(-r * r / 0.0015);
+    // Lens character: a soft horizontal streak through the source, and a faint
     // ghost mirrored through the centre.
-    float streak = 0.8 * exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.0);
+    float streak = exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.5);
     float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
     float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
-    color += vec3(1.0, 0.45, 0.15) * veil + g * (vec3(1.0, 0.62, 0.32) * (core + streak) + vec3(0.9, 0.5, 0.3) * ghost * 0.1);
+    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.55, 0.22) * (halo * 1.2 + streak * 0.6) + vec3(1.0, 0.8, 0.55) * core * 2.5 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
   } else if (uType < 2.5) {
     float edge = uMix;
     if (uv.y < edge) {

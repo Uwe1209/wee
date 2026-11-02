@@ -41,7 +41,7 @@ const glareLook = (look, g) => ({
   exposure: look.exposure * (1 + 0.15 * g),
   bloom: lerp(look.bloom, 0.12, g),
   halation: lerp(look.halation, 0.5, g),
-  vignette: look.vignette * (1 - 0.85 * g),
+  vignette: look.vignette * (1 - g) ** 2,
 });
 
 export class App {
