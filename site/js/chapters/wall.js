@@ -51,7 +51,7 @@ export class WallChapter {
       'sticker-sparkle', 'sticker-star-pink', 'ticket-admit', 'poster-instant', 'strip-color', 'stage-riso', 'note-uriis',
       'gators-instant', 'portrait-instant', 'card-swinburne', 'card-courses', 'note-looking', 'badge-cgpa', 'strip-contact',
       'note-hello',
-      'gobo-hello', 'spot-ticks', 'tape-masking',
+      'gobo-hello', 'photo-corner', 'note-spot',
     ];
     const tex = {};
     await Promise.all(names.map(async (name) => {
@@ -114,24 +114,55 @@ export class WallChapter {
     wall.add(this.strip);
     this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.5, rot: 0.1 });
 
-    // Its spot waits in the sun: faint pencil ticks and a piece of masking tape,
-    // both inside what the landed strip covers (hover parallax included).
+    // Its spot waits in the sun the way an album page waits for a photo: four
+    // black corner mounts, and a ballpoint note pointing up into the spot. Each
+    // mount sits just above the strip's own curled corner, so when the strip is
+    // pressed home its corners slip under all four and they stay on top.
     const spot = new THREE.Group();
-    spot.position.set(this.strip.userData.rest.x, this.strip.userData.rest.y, 0);
-    spot.rotation.z = this.strip.userData.rest.rot;
+    const stripRest = this.strip.userData.rest;
+    spot.position.set(stripRest.x, stripRest.y, 0);
+    spot.rotation.z = stripRest.rot;
     wall.add(spot);
-    const tickSize = tex['spot-ticks'].userData.size;
-    const ticks = new THREE.Mesh(
-      new THREE.PlaneGeometry(tickSize.w / 360, tickSize.h / 360),
-      new THREE.MeshStandardMaterial({ map: tex['spot-ticks'], roughness: 0.6, transparent: true, depthWrite: false }),
+    const { width: stripW, height: stripH } = this.strip.userData.size;
+    const stripPaper = this.strip.geometry.attributes.position;
+    const cornerHeight = (sx, sy) => {
+      for (let i = 0; i < stripPaper.count; i += 1) {
+        if (Math.abs(stripPaper.getX(i) - (sx * stripW) / 2) < 1e-6 && Math.abs(stripPaper.getY(i) - (sy * stripH) / 2) < 1e-6) return stripPaper.getZ(i);
+      }
+      return 0;
+    };
+    // The corner texture is drawn 0.317 units square (legs 0.27, with a 19/256
+    // pad for its shadow); its right angle sits `inset` from the centre, placed
+    // `slack` outside the strip's corner. The top two stop just short of the
+    // strip's tape.
+    const mountSize = 0.317;
+    const inset = mountSize * (0.5 - 19 / 256);
+    const slack = 0.02;
+    const mountGeometry = new THREE.PlaneGeometry(mountSize, mountSize);
+    const mountMaterial = new THREE.MeshPhysicalMaterial({
+      map: tex['photo-corner'], roughness: 0.5, clearcoat: 0.3, clearcoatRoughness: 0.2, transparent: true, depthWrite: false,
+    });
+    [[-1, 1, 0], [1, 1, -Math.PI / 2], [1, -1, Math.PI], [-1, -1, Math.PI / 2]].forEach(([sx, sy, turn]) => {
+      const mount = place(spot, new THREE.Mesh(mountGeometry, mountMaterial), {
+        x: sx * (stripW / 2 + slack - inset),
+        y: sy * (stripH / 2 + slack - inset),
+        z: stripRest.z + cornerHeight(sx, sy) + 0.007,
+        rot: turn,
+      });
+      mount.receiveShadow = true;
+      mount.userData.group = 'hello';
+      pieces.push(mount);
+    });
+    // Ballpoint on the plaster under the spot (texture at 400 px per unit, laid
+    // out from x -0.02, y -1.38 in the spot's frame).
+    const noteSize = tex['note-spot'].userData.size;
+    this.spotNote = new THREE.Mesh(
+      new THREE.PlaneGeometry(noteSize.w / 400, noteSize.h / 400),
+      new THREE.MeshStandardMaterial({ map: tex['note-spot'], roughness: 0.55, transparent: true, depthWrite: false }),
     );
-    ticks.position.set(0.02, 0, 0.004);
-    ticks.receiveShadow = true;
-    spot.add(ticks);
-    const waiting = place(spot, tape(tex['tape-masking'], 0.42), { x: 0.03, y: 1.4, z: 0.012, rot: 0.14 });
-    waiting.receiveShadow = true;
-    waiting.userData.group = 'hello';
-    pieces.push(waiting);
+    this.spotNote.position.set(-0.02 + noteSize.w / 800, -1.38 - noteSize.h / 800, 0.004);
+    this.spotNote.receiveShadow = true;
+    spot.add(this.spotNote);
 
     // About cluster, further along the wall.
     const portrait = add(card(tex['portrait-instant'], 2.1, { rects: [instantRect(tex['portrait-instant'].userData.size, 1.24)], lift: 0.3 }), { x: 13.2, y: 0.75, rot: -0.04 }, 'about');
@@ -189,6 +220,8 @@ export class WallChapter {
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
     this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : this.tex.gobo;
+    // The note under the spot retires under the same white.
+    this.spotNote.visible = v < T.flash.fire;
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);
     this.sky.color.copy(DAY.sky).lerp(DUSK.sky, dusk);
     this.sky.groundColor.copy(DAY.ground).lerp(DUSK.ground, dusk);

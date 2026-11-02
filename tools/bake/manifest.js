@@ -192,33 +192,97 @@ const windowGobo = ({ blur = 9, leaves = 60, nudge = {} } = {}) => {
   return soft;
 };
 
-// Faint pencil ticks at the corners of a w × h px rectangle, gone over twice,
-// marking where something will be stuck. Transparent around the strokes.
-const cornerTicks = (w, h, { arm = 64, pad = 14, seed = 41 } = {}) => {
-  const canvas = makeCanvas(w + pad * 2, h + pad * 2);
+// Photo-album corner mount: a pocket of glossy black paper whose front is a
+// right triangle, right angle at the top left (the scene turns a copy to each
+// corner). The long edge is the pocket's lip and catches the light; `pad`
+// leaves room for a soft contact shadow.
+const photoCorner = (size = 256, { pad = 19, seed = 43 } = {}) => {
+  const canvas = makeCanvas(size, size);
   const ctx = canvas.getContext('2d');
+  const leg = size - pad * 2;
+  const pocket = () => {
+    ctx.beginPath();
+    ctx.moveTo(pad, pad);
+    ctx.lineTo(pad + leg, pad);
+    ctx.lineTo(pad, pad + leg);
+    ctx.closePath();
+  };
+  ctx.save();
+  ctx.filter = 'blur(8px)';
+  ctx.fillStyle = 'rgba(46, 28, 14, 0.4)';
+  pocket();
+  ctx.fill();
+  ctx.restore();
+  pocket();
+  ctx.fillStyle = '#1b1512';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#1b1512';
+  ctx.fill();
+  ctx.stroke();
+  ctx.save();
+  ctx.clip();
+  const sheen = ctx.createLinearGradient(pad, pad, pad + leg * 0.5, pad + leg * 0.5);
+  sheen.addColorStop(0, 'rgba(255, 238, 218, 0.1)');
+  sheen.addColorStop(0.6, 'rgba(255, 238, 218, 0.01)');
+  sheen.addColorStop(1, 'rgba(0, 0, 0, 0.12)');
+  ctx.fillStyle = sheen;
+  ctx.fillRect(0, 0, size, size);
+  // The lip, wide enough to survive being drawn ~40 px across.
+  ctx.strokeStyle = 'rgba(176, 154, 134, 0.7)';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(pad + leg - 9, pad + 3);
+  ctx.lineTo(pad + 3, pad + leg - 9);
+  ctx.stroke();
+  ctx.restore();
   const rand = random(seed);
-  const wobble = (size) => (rand() - 0.5) * size;
+  const image = ctx.getImageData(0, 0, size, size);
+  for (let i = 0; i < image.data.length; i += 4) {
+    const n = (rand() - 0.5) * 9;
+    image.data[i] += n;
+    image.data[i + 1] += n;
+    image.data[i + 2] += n;
+  }
+  ctx.putImageData(image, 0, 0);
+  return canvas;
+};
+
+// Ballpoint straight onto the plaster, the way you'd write on an album page:
+// handwritten lines (gone over once, `weight` units thicker, so they hold up
+// when the wall is drawn small) and a hand-drawn arrow. Positions are in wall
+// units from the top left, at `scale` px per unit. Transparent around the ink.
+const wallNote = ({ w, h, lines, arrow, scale = 400, size = 0.24, weight = 0.008, ink = INK, seed = 47 }) => {
+  const canvas = makeCanvas(w * scale, h * scale);
+  const ctx = canvas.getContext('2d');
+  const px = ([x, y]) => [x * scale, y * scale];
+  ctx.fillStyle = ink;
+  ctx.strokeStyle = ink;
   ctx.lineCap = 'round';
-  ctx.strokeStyle = 'rgb(58, 54, 52)';
-  [[0, 0], [w, 0], [w, h], [0, h]].forEach(([x, y]) => {
-    const sx = x ? -1 : 1;
-    const sy = y ? -1 : 1;
-    for (let pass = 0; pass < 2; pass += 1) {
-      ctx.globalAlpha = pass ? 0.4 : 0.72;
-      ctx.lineWidth = pass ? 2.6 : 3.6;
-      const over = 4 + rand() * 6;
-      ctx.beginPath();
-      ctx.moveTo(pad + x - sx * over, pad + y + wobble(2));
-      ctx.lineTo(pad + x + sx * arm * (0.85 + rand() * 0.3), pad + y + wobble(3));
-      ctx.moveTo(pad + x + wobble(2), pad + y - sy * over);
-      ctx.lineTo(pad + x + wobble(3), pad + y + sy * arm * 1.3 * (0.85 + rand() * 0.3));
-      ctx.stroke();
-    }
+  ctx.lineJoin = 'round';
+  ctx.font = `600 ${Math.round(size * scale)}px Caveat`;
+  ctx.lineWidth = weight * scale;
+  lines.forEach(({ text, at }) => {
+    ctx.fillText(text, ...px(at));
+    ctx.strokeText(text, ...px(at));
   });
-  // Graphite skips on the plaster's tooth.
+  const { from, bend, to, head = 0.08 } = arrow;
+  ctx.lineWidth = 0.022 * scale;
+  ctx.beginPath();
+  ctx.moveTo(...px(from));
+  ctx.quadraticCurveTo(...px(bend), ...px(to));
+  ctx.stroke();
+  const back = Math.atan2(bend[1] - to[1], bend[0] - to[0]);
+  const barb = (turn) => px([to[0] + Math.cos(back + turn) * head, to[1] + Math.sin(back + turn) * head]);
+  ctx.beginPath();
+  ctx.moveTo(...barb(0.5));
+  ctx.lineTo(...px(to));
+  ctx.lineTo(...barb(-0.45));
+  ctx.stroke();
+  // The ball skips a little on the plaster's tooth.
+  const rand = random(seed);
   const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  for (let i = 3; i < image.data.length; i += 4) image.data[i] *= 0.55 + 0.45 * rand();
+  for (let i = 3; i < image.data.length; i += 4) image.data[i] *= 0.88 + 0.12 * rand();
   ctx.putImageData(image, 0, 0);
   return canvas;
 };
@@ -259,11 +323,19 @@ export const TEXTURES = {
   'stage-riso': { make: (p) => riso(p, 'stage', 900, 600) },
   'note-uriis': { make: () => note('URIIS 2026 · top 5') },
   'gators-instant': { make: (p) => instant(p, 'gators', 'gators dc, rawr', { ratio: 0.75, seed: 44 }) },
-  // The strip's empty spot: pencil ticks at 360 px per wall unit (0.70 × 3.10),
-  // a waiting piece of masking tape, and the window light with the one leaf
-  // that fell across the spot nudged right (used until the flash).
-  'spot-ticks': { make: () => cornerTicks(252, 1116) },
-  'tape-masking': { make: () => tapeCanvas(360, 104, { color: 'rgba(222,197,146,0.86)', seed: 73 }) },
+  // The strip's empty spot: an album corner mount (one per corner), a
+  // ballpoint note under the spot (1.15 × 1.0 wall units, laid out in the
+  // spot's own frame: x from -0.02, y down from -1.38), and the window light
+  // with the one leaf that fell across the spot nudged right (until the flash).
+  'photo-corner': { make: () => photoCorner() },
+  'note-spot': {
+    make: () => wallNote({
+      w: 1.15,
+      h: 1.0,
+      lines: [{ text: 'the photo', at: [0.1, 0.64] }, { text: 'lands here!', at: [0.15, 0.93] }],
+      arrow: { from: [0.27, 0.42], bend: [0.08, 0.33], to: [0.12, 0.05] },
+    }),
+  },
   'gobo-hello': { make: () => windowGobo({ nudge: { 5: [20, 0] } }), quality: 0.9 },
 
   // --- the flash: the fresh strip, black and white
