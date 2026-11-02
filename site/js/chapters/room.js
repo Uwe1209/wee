@@ -50,19 +50,23 @@ const PLANKS = [2.88, 5.76];
 const POOL_X = HALL.right - ((WINDOW.sill + WINDOW.head) / 2 - HALL.floor) * (SUN.x / SUN.y);
 
 // The cards' paper, in card space (z toward the viewer): the right part bows back
-// (`bend` is its slope at the right edge) and the bottom-right corner lifts away
-// further. The bowed side's coat faces back up the hall, toward the windows the
-// camera has just passed, so that is where the glossy reflection lands.
-const CURL = { from: -0.2, bend: 0.2, corner: 0.13 };
+// (`bend` is its slope at the right edge) and the top-right corner lifts away
+// further. The bowed side's coat faces back up the hall and the corner's faces up
+// as well, toward the windows the camera has just passed, so that is where the
+// glossy reflection lands.
+const CURL = { from: -0.2, bend: 0.3, corner: 0.18 };
 const curlZ = (x, y, width, height) => {
   const start = CURL.from * width / 2;
   const bow = Math.max(0, x - start);
-  const corner = Math.max(0, x / (width / 2) - y / (height / 2) - 1);
+  const corner = Math.max(0, x / (width / 2) + y / (height / 2) - 1);
   return (-CURL.bend * bow * bow) / (2 * (width / 2 - start)) - CURL.corner * corner * corner;
 };
 // The sun slants toward the viewer, so a card's shadow (on the floor, in the
 // haze, on the dust) lies at most this far in front of it, never behind it.
 const SHADE_REACH = 3.6;
+// Share of the floor's sky and bounce light that a card can take where it hides
+// a window completely.
+const SKY_SHADE = 0.5;
 
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
@@ -232,6 +236,7 @@ const SURFACE_FRAG = /* glsl */ `
 #include <common>
 #include <fog_pars_fragment>
 ${SUN_GLSL}
+#define SKY_SHADE (${SKY_SHADE.toFixed(3)})
 uniform sampler2D uHazeMap;
 uniform vec2 uScreen;
 uniform sampler2D uMap;
@@ -262,6 +267,32 @@ float sunOn(vec3 p) {
   return texture(uGobo, mix(uGoboRect.xy, uGoboRect.zw, local), log2(1.0 + travel * uSoft)).r * inOpening(local);
 }
 
+// How much of the window at z = wz card k hides from p: the line to the window's
+// middle meets the card's plane, and the edge softens by the window's size seen
+// from there, so the shadow is broad and soft (the window is large and close).
+float windowShade(vec3 p, int k, float wz) {
+  vec3 q = (uCards[k] * vec4(p, 1.0)).xyz;
+  vec3 d = mat3(uCards[k]) * (vec3(uBays.x, 0.5 * (uOpening.y + uOpening.z), wz) - p);
+  if (abs(d.z) < 1e-3) return 0.0;
+  float s = -q.z / d.z;
+  if (s <= 0.0 || s >= 1.0) return 0.0;
+  vec2 soft = s * vec2(0.5 / uOpening.x, 0.5 / uOpening.w) + 0.05;
+  vec2 inside = smoothstep(-soft, soft, uCardHalf[k] - abs(q.xy + s * d.xy));
+  return inside.x * inside.y;
+}
+
+// The room's sky and bounce light the cards keep off the floor. A point between
+// two cards loses part of the window behind the nearer card and part of the window
+// beyond the farther one; the windows level with it, which give it most of its
+// light, stay open.
+float skyShade(vec3 p) {
+  float slot = floor((CARD_Z0 - p.z) / CARD_BAY);
+  float shade = 0.0;
+  if (slot >= 0.0 && slot <= float(CARDS - 1)) shade = windowShade(p, int(slot), CARD_Z0 - (slot - 0.5) * CARD_BAY);
+  if (slot >= -1.0 && slot <= float(CARDS - 2)) shade = max(shade, windowShade(p, int(slot) + 1, CARD_Z0 - (slot + 1.5) * CARD_BAY));
+  return shade;
+}
+
 void main() {
   vec2 uv = vec2(dot(vWorld, uAxisU), dot(vWorld, uAxisV)) * uTile;
   vec3 albedo = texture(uMap, uv).rgb * uTint;
@@ -278,11 +309,15 @@ void main() {
   vec3 bump = texture(uBump, uv).xyz * 2.0 - 1.0;
   vec3 n = normalize(uFace * bump.z + (uAxisU * bump.x + uAxisV * bump.y) * uBumpScale);
   float sun = sunOn(vWorld) * max(dot(n, uSun.xyz), 0.0);
-  if (uShaded > 0.5) sun *= 1.0 - cardShade(vWorld);
+  float room = 1.0;
+  if (uShaded > 0.5) {
+    sun *= 1.0 - cardShade(vWorld);
+    room -= SKY_SHADE * skyShade(vWorld);
+  }
   vec3 pool = vec3(POOL_X, FLOOR + 0.01, vWorld.z);
   vec3 off = vWorld - pool;
   float bounce = sunAt(pool, 5.0) / (1.0 + 0.06 * dot(off, off));
-  vec3 color = albedo * (mix(uGround, uSky, 0.5 + 0.5 * n.y) + uBounce * bounce + uSunLight * sun);
+  vec3 color = albedo * ((mix(uGround, uSky, 0.5 + 0.5 * n.y) + uBounce * bounce) * room + uSunLight * sun);
   if (uGlassOn > 0.5) {
     float travel;
     vec2 local = sunCell(vWorld, travel);
@@ -479,8 +514,8 @@ export class RoomChapter {
       uBays: this.sun.uBays,
       uOpening: this.sun.uOpening,
       uGoboRect: this.sun.uGoboRect,
-      uGlint: { value: new THREE.Color(1, 0.62, 0.36).multiplyScalar(9) },
-      uGlintSpread: { value: new THREE.Vector4(0.012, 0.09, 0.35, HALL.near) },
+      uGlint: { value: new THREE.Color(1, 0.62, 0.36).multiplyScalar(8) },
+      uGlintSpread: { value: new THREE.Vector4(0.03, 0.25, 0.5, HALL.near) },
     };
 
     // The cards: curled sheets, tape and stickers following the curl.

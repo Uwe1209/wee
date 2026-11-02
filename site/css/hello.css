@@ -37,16 +37,26 @@
 .sec-hello .countdown {
   position: absolute; left: 0; top: 0; width: 98px; height: 323px; translate: -50% -50%; pointer-events: none;
 }
-/* A "2" is half an em of ink, so the widest figure fills about 80% of the
-   slot. Lining figures sit 0.027 em high in a line of 1, so they drop by that. */
+/* Every beat fills the frame between the corner mounts. The figures are Archivo
+   Black at its narrowest, squeezed to 0.6 again so that at 82% of the slot's
+   height they still fit its width, blue copy included: a stencilled photobooth
+   countdown. As on the name, the riso pink face has a solid riso blue copy
+   behind it, offset down and right. Each beat's line is centred on the slot (a
+   grid start-aligns a line wider than the slot); the copy widens the ink to the
+   right, so the figure moves back by half its offset. */
 .sec-hello .count {
-  position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden;
-  font: italic 400 160px/1 var(--serif); color: var(--pink); text-shadow: 0.025em 0.018em 0 rgba(0, 120, 191, 0.55);
-  translate: 0 0.027em;
+  position: absolute; left: 50%; top: 50%; translate: calc(-50% - 0.011em) -50%; white-space: nowrap; opacity: 0; visibility: hidden;
+  font: 900 372px/1 'Archivo', var(--sans); font-stretch: 62%; scale: 0.6 1;
+  color: var(--pink); text-shadow: 0.031em 0.0135em 0 var(--blue);
 }
-/* "smile!" is about 2 em of ink and fills the slot's width. Caveat's "!" hangs
-   0.145 em past the word's advance, so the word moves back by that to centre. */
-.sec-hello .count.smile { font: 600 45px/1 var(--hand); color: var(--ballpoint); text-shadow: none; rotate: -6deg; translate: -0.145em 0.02em; }
+/* "smile!" is written up the slot in ballpoint, as long as the figures are tall:
+   0.755 em of ink across the slot and 1.965 em along it. Caveat's "!" hangs
+   0.142 em past the word's advance and the ink sits 0.018 em high; turned, those
+   point up and left, so the word moves down and right by them. */
+.sec-hello .count.smile {
+  font: 600 126px/1 var(--hand); scale: none; rotate: -90deg; translate: calc(-50% + 0.018em) calc(-50% + 0.142em);
+  color: var(--ballpoint); text-shadow: none;
+}
 /* Written on the plaster under the printed strip, between the ticket and the
    gators photo, one sitting per line. The wall scales with the screen's height,
    so the caption is placed from the centre in vh to stay on that bare patch. */
