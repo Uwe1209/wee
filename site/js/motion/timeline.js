@@ -2,43 +2,43 @@
 // is tuned in one place. Chapters and the DOM read from here and nowhere else.
 
 export const TIMELINE = {
-  total: 13.6,
+  total: 14.4,
   softness: 0.07, // a pin corner eases over 2 × softness vh (≥ 0.1 vh)
 
   // Where each DOM section starts and ends.
   sections: {
     hello: [0.0, 3.4],
-    about: [3.4, 5.6],
-    projects: [5.6, 10.6],
-    scrapbook: [10.6, 12.5],
-    contact: [12.5, 13.6],
+    about: [3.4, 6.4],
+    projects: [6.4, 11.4],
+    scrapbook: [11.4, 13.3],
+    contact: [13.3, 14.4],
   },
 
   // While scroll is inside a pin, that section's screen holds still.
   // hello starts already pinned (the pin began before the page did).
   pins: {
     hello: [-0.5, 3.25],
-    projects: [5.95, 10.2],
-    scrapbook: [10.75, 12.15],
+    projects: [6.75, 11.0],
+    scrapbook: [11.55, 12.95],
   },
 
   // Unpinned blocks: the scroll value at which each block's top meets the top of the screen.
   blocks: {
-    'about-intro': 4.2,
-    'about-goal': 4.95,
-    contact: 13.6,
+    'about-intro': 5.74,
+    'about-goal': 6.08,
+    contact: 14.4,
   },
 
   // Fades keyed to scroll: in [from, to], out [from, to].
   reveals: {
     'hello-cue': { out: [0.25, 0.7] },
     'flash-caption': { in: [2.6, 2.85], out: [3.05, 3.22] }, // gone before the taped state (3.25)
-    'projects-head': { in: [5.7, 5.95] },
-    'scrap-title': { in: [10.6, 10.85], out: [11.95, 12.18] },
-    'scrap-coordinator': { in: [10.8, 11.05], out: [11.97, 12.2] },
-    'scrap-facilitator': { in: [11.1, 11.35], out: [11.99, 12.22] },
-    'scrap-skills': { in: [11.4, 11.65], out: [12.01, 12.24] },
-    'contact-body': { in: [12.9, 13.25] },
+    'projects-head': { in: [6.5, 6.75] },
+    'scrap-title': { in: [11.4, 11.65], out: [12.75, 12.98] },
+    'scrap-coordinator': { in: [11.6, 11.85], out: [12.77, 13.0] },
+    'scrap-facilitator': { in: [11.9, 12.15], out: [12.79, 13.02] },
+    'scrap-skills': { in: [12.2, 12.45], out: [12.81, 13.04] },
+    'contact-body': { in: [13.7, 14.05] },
   },
 
   hello: {
@@ -59,26 +59,29 @@ export const TIMELINE = {
   },
 
   about: {
-    dolly: [3.25, 4.4, 5.45], // leave the opening cluster, then drift slowly past the about cluster
+    // Glide past the opening cluster at about the copy's speed (the wall drifts up
+    // with a gentle camera drop), then settle by the about cluster. Lengthened by
+    // 0.8 vh so the copy never sits on a photo and peak wall speed stays ~1.2x the copy's.
+    dolly: [3.25, 5.9, 6.25],
   },
 
   transitions: {
-    wallToRoom: [5.35, 5.95],
-    roomToDesk: [10.1, 10.65],
-    deskToWall: [12.2, 12.7],
+    wallToRoom: [6.15, 6.75],
+    roomToDesk: [10.9, 11.45],
+    deskToWall: [13.0, 13.5],
   },
 
   projects: {
-    flight: [5.8, 10.15],
+    flight: [6.6, 10.95],
   },
 
   scrapbook: {
-    settle: [10.55, 11.6],
+    settle: [11.35, 12.4],
   },
 
   contact: {
-    strip: [12.55, 13.3],
-    dusk: [11.8, 13.6],
+    strip: [13.35, 14.1],
+    dusk: [12.6, 14.4],
   },
 };
 
@@ -89,21 +92,21 @@ export const STATES = {
   flash: 1.83,
   strip: 2.45,
   taped: 3.25,
-  about: 4.5,
-  'to-room': 5.65,
-  spex: 6.15,
-  buildup: 6.6,
-  kacha: 7.05,
-  haojia: 7.55,
-  petaid: 8.0,
-  herbarium: 8.45,
-  aws: 8.95,
-  bar: 9.4,
-  lemon: 9.85,
-  'to-desk': 10.4,
-  scrapbook: 11.7,
-  'to-wall': 12.45,
-  contact: 13.6,
+  about: 5.6,
+  'to-room': 6.45,
+  spex: 6.95,
+  buildup: 7.4,
+  kacha: 7.85,
+  haojia: 8.35,
+  petaid: 8.8,
+  herbarium: 9.25,
+  aws: 9.75,
+  bar: 10.2,
+  lemon: 10.65,
+  'to-desk': 11.2,
+  scrapbook: 12.5,
+  'to-wall': 13.25,
+  contact: 14.4,
 };
 
 export const clamp01 = (x) => Math.min(1, Math.max(0, x));
