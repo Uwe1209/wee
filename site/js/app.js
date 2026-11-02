@@ -31,10 +31,16 @@ const FALLBACK = new THREE.Color(0xd9c7ad);
 const CROSSFADE = 4;
 
 // Wall to room is light, not a wipe. In fractions of the transition window:
-// the glare builds to its peak, the chapters swap under it, then it decays
-// over the rest of the window so the room's darkness arrives as a ramp.
-const LEAK = { peak: 0.32, swap: [0.3, 0.46] };
-const leakGlare = (p) => (p < LEAK.peak ? smooth(p / LEAK.peak) ** 0.6 : (1 - (p - LEAK.peak) / (1 - LEAK.peak)) ** 0.9);
+// the glare builds to its peak exactly as the chapters cross (the swap is
+// centred on the peak, `half` either side, 0.15 vh in all), then decays over
+// the rest of the window and eases out, so the room's darkness arrives as a
+// ramp that settles instead of stopping dead.
+const LEAK = { peak: 0.3, half: 0.125 };
+const leakGlare = (p) => {
+  if (p < LEAK.peak) return smooth(p / LEAK.peak) ** 0.6;
+  const q = (p - LEAK.peak) / (1 - LEAK.peak);
+  return (1 - q) ** 1.75 * (1 + 0.75 * q);
+};
 // The glare opens the lens: exposure lifts, bloom and halation spread its
 // energy, and the vignette eases (the shader vignettes only the scene).
 const glareLook = (look, g) => ({
@@ -154,7 +160,7 @@ export class App {
     if (v < tr.wallToRoom[0]) return { a: 'wall' };
     if (v < tr.wallToRoom[1]) {
       const p = progress(v, tr.wallToRoom);
-      return { a: 'wall', b: 'room', mix: smooth(progress(p, LEAK.swap)), glare: leakGlare(p), type: 1 };
+      return { a: 'wall', b: 'room', mix: smooth(progress(p, [LEAK.peak - LEAK.half, LEAK.peak + LEAK.half])), glare: leakGlare(p), type: 1 };
     }
     if (v < tr.roomToDesk[0]) return { a: 'room' };
     if (v < tr.roomToDesk[1]) return { a: 'room', b: 'desk', mix: easeInOut(progress(v, tr.roomToDesk)), type: 2 };

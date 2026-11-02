@@ -208,6 +208,16 @@
      "at": "2026-11-02T13:26:51.157Z",
      "compare": "rounds/flash/r3/compare.jpg",
      "strip": "rounds/flash/r3/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 4,
+     "score": 7.5,
+     "gap": "The countdown doesn't own the frame: the 3/2/1 numerals are only ~180px tall (about a third of the space between the photo corners, no bigger than the 'Liew' headline) and 'smile!' shrinks to a ~60px ballpoint note, so the build-up to the flash has no punch; scale every beat, smile included, to fill the photo-corner frame (~400px+ tall).",
+     "notes": "(1) The numerals' blue misregistration copy renders as a pale, semi-transparent teal-grey (~#5c9ba5) that reads as a drop shadow, not the solid riso blue (#0078bf) of 'Liew' right beside it. (2) Photo corners: from v2.46 to v3.09 the strip hangs right of and in front of its corners, so dark slivers poke out at its left corners; the tape lands (~3.09) before the strip is seated, then all four corners snap in front of it by 3.25. Seat the strip into the corners as it settles, then tape. (3) The flash near peak (1.83) is a good warm white, not grey (centre 255/252/242, apricot edges), but the DOM headline and skill chips stay readable as ghosts (L190 on 249), so it is not a full white-out; recovery is clean by 2.05. (4) The swing (~+4 deg, then -2.5 deg, settling near -1.5 deg) and the top-to-bottom develop (grey, ghost, full colour, one frame after another) read well; frames go straight to warm colour rather than passing through the art bible's B&W-at-flash look. (5) The 'four sittings' caption is legible but wedged in the gutter between the ticket and the gators polaroid, detached from the strip. (6) The taped state matches the bar's layout and strip content, but the near-black photo corners (~#54290f) are heavier than the bar's tape-only strip, and the cluster sits closer and ~100px further left than the bar. No console errors or failed chapters.",
+     "at": "2026-11-02T13:54:06.162Z",
+     "compare": "rounds/flash/r4/compare.jpg",
+     "strip": "rounds/flash/r4/strip.jpg"
     }
    ],
    "status": "open"
@@ -253,5 +263,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T13:30:26.162Z"
+ "updated": "2026-11-02T13:54:06.166Z"
 }
