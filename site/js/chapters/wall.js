@@ -154,6 +154,9 @@ export class WallChapter {
     const stripSize = tex['strip-color'].userData.size;
     this.strip = card(tex['strip-color'], 0.98, { rects: stripRects(stripSize), lift: 0.5, segments: [6, 48] });
     this.strip.userData.rest = { x: 2.75, y: 0.0, z: 0.1, rot: -0.035 };
+    // Fresh from the booth it is black and white, its frames rising out of a
+    // faint latent image; it warms to colour once it is taped up.
+    this.strip.material.userData.tone.latent.value = 1;
     wall.add(this.strip);
     this.stripTape = tapeTop(this.strip, ink.tape('masking'), { width: 0.74, rot: 0.06, dy: 0.0 });
 
@@ -297,6 +300,7 @@ export class WallChapter {
     });
 
     this.updateStrip(this.strip, v, T.flash);
+    this.strip.material.userData.tone.mono.value = 1 - smooth(progress(v, [T.flash.develop[1], T.flash.tape[1]]));
     const mounts = 1 - smooth(progress(v, [T.flash.develop[1] - 0.25, T.flash.tape[0] + 0.03]));
     this.mountMaterial.opacity = mounts;
     this.mountMaterial.visible = mounts > 0;
@@ -381,6 +385,7 @@ export class WallChapter {
       this.strip.rotation.z = rest.rot;
       this.strip.material.userData.develop.fill(1);
     }
+    this.strip.material.userData.tone.mono.value = 0;
     this.mountMaterial.opacity = done ? 0 : 1;
     this.mountMaterial.visible = !done;
   }
