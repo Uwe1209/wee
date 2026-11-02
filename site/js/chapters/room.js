@@ -245,13 +245,17 @@ export class RoomChapter {
     this.camera.updateProjectionMatrix();
   }
 
-  // Flight parameter c: -1 at the establishing shot, j at card j, n past the last.
+  // Flight parameter c: -1 at the establishing shot, j at card j, n - 0.5 at the end.
+  // The camera slows to 1 - DWELL speed at each card. The first and last half card ease
+  // from and to rest, so the flight neither jumps off the entry nor stops dead.
   flight(v) {
     const n = this.cards.length;
     const u = progress(v, T.projects.flight) * n;
-    const s = u - (DWELL * Math.sin(2 * Math.PI * (u - 0.5))) / (2 * Math.PI);
     const enter = smooth(progress(v, [T.transitions.wallToRoom[0], T.projects.flight[0]]));
-    return v < T.projects.flight[0] ? -1 + 0.5 * enter : s - 0.5;
+    if (v < T.projects.flight[0]) return -1 + 0.5 * enter;
+    if (u < 0.5) return 0.5 * hermite(2 * u, 0, 1 - DWELL) - 0.5;
+    if (u > n - 0.5) return n - 1 + 0.5 * hermite(2 * u - 2 * n + 1, 1 - DWELL, 0);
+    return u - (DWELL * Math.sin(2 * Math.PI * (u - 0.5))) / (2 * Math.PI) - 0.5;
   }
 
   update(v, time) {
@@ -259,9 +263,11 @@ export class RoomChapter {
     const t = clamp01((c + 1) / (this.keyCount - 1));
     this.camera.position.copy(this.posCurve.getPoint(t));
     const look = this.lookCurve.getPoint(t);
+    const heading = Math.atan2(look.x - this.camera.position.x, this.camera.position.z - look.z);
     if (this.camera.aspect < 1) this.camera.position.x += 0.9;
     this.camera.lookAt(look);
     this.light.position.z = this.camera.position.z;
+    this.light.rotation.y = RIG_HEADING - heading;
 
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
@@ -275,7 +281,8 @@ export class RoomChapter {
     this.dust.rotation.y = Math.sin(time * 0.05) * 0.02;
     this.dust.position.y = Math.sin(time * 0.17) * 0.12;
     // Beams are ribbons along their axis, turned to face the camera (in the light's frame).
-    VIEW.subVectors(this.camera.position, this.light.position);
+    const turn = this.light.rotation.y;
+    VIEW.subVectors(this.camera.position, this.light.position).applyAxisAngle(UP, -turn);
     this.beams.forEach((beam, i) => {
       beam.material.opacity = 0.85 + Math.sin(time * 0.7 + i * 2.1) * 0.15;
       const { from, to } = beam.userData;
@@ -285,8 +292,8 @@ export class RoomChapter {
       SIDE.crossVectors(FACE, AXIS);
       BASIS.makeBasis(AXIS, SIDE, FACE);
       beam.quaternion.setFromRotationMatrix(BASIS);
-      this.beamUniforms.uBeamFrom.value[i].addVectors(from, this.light.position);
-      this.beamUniforms.uBeamTo.value[i].addVectors(to, this.light.position);
+      this.beamUniforms.uBeamFrom.value[i].copy(from).applyAxisAngle(UP, turn).add(this.light.position);
+      this.beamUniforms.uBeamTo.value[i].copy(to).applyAxisAngle(UP, turn).add(this.light.position);
     });
   }
 

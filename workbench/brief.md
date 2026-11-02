@@ -25,7 +25,7 @@ Read this first if you are picking the project up from disk.
 | SPEX | Uwe1209/spex002, Uwe1209/SPEX_Disease | FYP, led a team of five. 38 animal diseases, 245 countries, calibrated 12-month risk. FastAPI on Railway, frontend on Vercel, Supabase Postgres, weekly refresh. Stack also includes React, TypeScript, three.js (scroll story) and LightGBM models (spex002 package.json and README). Live: spex-disease.vercel.app |
 | BuildUp | resume | URIIS Student Biz Innov Challenge 2026, Top 5. National AI talent platform concept: skills matching, AI career coach on the Anthropic API, Skills Passport, workforce dashboards |
 | kacha | Uwe1209/kacha | Photobooth web app: choose strip, camera, filters editor, album/memories. React 19, Vite, Supabase, Express. Live: kacha-smoky.vercel.app |
-| HaoJia HR | Uwe1209/HaoJiaHRSystem | HR system for a multi-outlet F&B operator: org + worker directory, RLS roles, work-pass expiry. React, TS, Tailwind, Supabase. (fnb-hr-portal repo is empty, folded in here) |
+| HaoJia HR | Uwe1209/HaoJiaHRSystem | HR system for a multi-outlet F&B operator: org + worker directory, work-pass expiry. In progress: code is React, TypeScript, Vite, Supabase client, React Hook Form, Zod; Tailwind and RLS policies are in the design spec but not in the repo yet, so don't claim them as built. (fnb-hr-portal repo is empty, folded in here) |
 | PetAid | Uwe1209/pet-aids | Pet first-aid web app with owner, vet and admin roles. React, Vite, Express |
 | Herbarium / Plant Biodiversity | Uwe1209/PlantBiodiversityProject | COS30020. PHP site for participants to upload plant photos and data for researchers |
 | Bar | Uwe1209/Bar | COS30043 IDD. Online drinks shop with cart and accounts. Product shots show real beer brands: keep logos off the card |
