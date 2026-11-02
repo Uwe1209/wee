@@ -14,8 +14,8 @@ const RAIL = new Rail([
   { v: 0, pos: [-2.63, 0, 13.36], look: [-0.68, 0, 0.5] },
   { v: T.flash.push[1], pos: [-1.35, 0.12, 11.6], look: [0.75, 0.05, 0.45] },
   { v: T.about.dolly[0], pos: [-1.9, 0.04, 12.7], look: [0.05, 0, 0.5] },
-  { v: T.about.dolly[1], pos: [11.7, -1.5, 12.9], look: [13.7, -1.5, 0.5] },
-  { v: T.about.dolly[2], pos: [12.6, -1.45, 12.4], look: [14.5, -1.5, 0.5] },
+  { v: T.about.dolly[1], pos: [12.15, -1.47, 13.8], look: [14.15, -1.5, 0.5] },
+  { v: T.about.dolly[2], pos: [12.45, -1.45, 13.6], look: [14.35, -1.5, 0.5] },
   { v: T.transitions.deskToWall[0], pos: [25.6, -0.05, 12.8], look: [27.6, 0, 0.5] },
   { v: T.total, pos: [26.3, 0.0, 11.7], look: [28.1, 0, 0.5] },
 ]);
@@ -28,7 +28,7 @@ const DUSK = { sun: new THREE.Color(0xff8f5e), sky: new THREE.Color(0xc4a0c4), g
 // about chapter: with the about window, the copy rises in its tall left pane,
 // the thin mullion falls in the gap between copy and cluster, and the cluster
 // sits in one right-hand pane with a bar just above it and one just below.
-const ABOUT_AIM = [1.6, -1.4];
+const ABOUT_AIM = [1.5, -1.4];
 
 // Cross-fades two baked windows into one target, so the sun's window can
 // change without a visible switch. Only drawn while a fade is under way.
