@@ -133,6 +133,16 @@
      "at": "2026-11-02T11:28:21.113Z",
      "compare": "rounds/scrapbook/r1/compare.jpg",
      "strip": "rounds/scrapbook/r1/strip.jpg"
+    },
+    {
+     "element": "scrapbook",
+     "round": 2,
+     "score": 7,
+     "gap": "While each memory is still dropping, its shadow sits far from it as a separate grey rectangle (at 10.9 a ~430x300 px grey box sits bottom-right with no paper over it; at 10.76 the group riso's shadow sits ~150 px off), so drops read as grey boxes sliding around instead of paper falling: keep the shadow tucked under its piece and make it softer, wider and fainter the higher the piece is.",
+     "notes": "Toolbox sits in the lower-left diagonal window-bar shadow: the pink BACKEND label nearly vanishes and FRONTEND is weak pink-on-peach (move the light, not the copy). Rising page: the deckled edge with a lit rim reads as paper, but it casts no visible shadow on the room or Little Lemon card just above the edge. 'mostly.' is flat pink with no riso-blue misregistered copy like the bar's italic. Blue sparkle sticker is a flat navy shape with no white die-cut border or gloss. A fifth polaroid is cut to a ~90 px sliver at the right edge with a clipped 'wa...' caption. Gym riso print is very dark purple and reads murky. Shadow smudge with no object at the right edge at 10.52. Facilitator meta line wraps to leave 'SCHOOL' alone. Final rest state (11.7) is otherwise close to the bar: riso prints with scissor edges, polaroids, washi, star, window light across the pieces, text in the left 40% and off the photos. capture.json clean (no problems, no failed chapters).",
+     "at": "2026-11-02T12:02:53.334Z",
+     "compare": "rounds/scrapbook/r2/compare.jpg",
+     "strip": "rounds/scrapbook/r2/strip.jpg"
     }
    ],
    "status": "open"
@@ -153,5 +163,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T11:53:46.376Z"
+ "updated": "2026-11-02T12:02:53.335Z"
 }
