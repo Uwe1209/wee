@@ -162,7 +162,8 @@ const instant = (p, key, caption, options = {}) => instantPhoto(p[key], { width:
 const riso = (p, key, w, h, options = {}) => cutOut(risograph(p[key], w, h, { cell: 6, inks: [PINK, BLUE], ...options }), { seed: options.seed ?? 9 });
 
 // Window light: two columns of panes, mullions, leaves along one side, softened.
-const windowGobo = ({ blur = 9, leaves = 60 } = {}) => {
+// `nudge` moves single leaves ({ index: [dx, dy] } px) without reseeding the rest.
+const windowGobo = ({ blur = 9, leaves = 60, nudge = {} } = {}) => {
   const canvas = makeCanvas(1024, 1024);
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
@@ -176,7 +177,8 @@ const windowGobo = ({ blur = 9, leaves = 60 } = {}) => {
   ctx.fillStyle = '#000';
   for (let k = 0; k < leaves; k += 1) {
     ctx.save();
-    ctx.translate(560 + rand() * 520, rand() * 1024);
+    const [nx, ny] = nudge[k] ?? [0, 0];
+    ctx.translate(560 + rand() * 520 + nx, rand() * 1024 + ny);
     ctx.rotate(rand() * Math.PI);
     ctx.beginPath();
     ctx.ellipse(0, 0, 24 + rand() * 34, 8 + rand() * 9, 0, 0, Math.PI * 2);
@@ -188,6 +190,37 @@ const windowGobo = ({ blur = 9, leaves = 60 } = {}) => {
   sctx.filter = `blur(${blur}px)`;
   sctx.drawImage(canvas, 0, 0);
   return soft;
+};
+
+// Faint pencil ticks at the corners of a w × h px rectangle, gone over twice,
+// marking where something will be stuck. Transparent around the strokes.
+const cornerTicks = (w, h, { arm = 64, pad = 14, seed = 41 } = {}) => {
+  const canvas = makeCanvas(w + pad * 2, h + pad * 2);
+  const ctx = canvas.getContext('2d');
+  const rand = random(seed);
+  const wobble = (size) => (rand() - 0.5) * size;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgb(58, 54, 52)';
+  [[0, 0], [w, 0], [w, h], [0, h]].forEach(([x, y]) => {
+    const sx = x ? -1 : 1;
+    const sy = y ? -1 : 1;
+    for (let pass = 0; pass < 2; pass += 1) {
+      ctx.globalAlpha = pass ? 0.4 : 0.72;
+      ctx.lineWidth = pass ? 2.6 : 3.6;
+      const over = 4 + rand() * 6;
+      ctx.beginPath();
+      ctx.moveTo(pad + x - sx * over, pad + y + wobble(2));
+      ctx.lineTo(pad + x + sx * arm * (0.85 + rand() * 0.3), pad + y + wobble(3));
+      ctx.moveTo(pad + x + wobble(2), pad + y - sy * over);
+      ctx.lineTo(pad + x + wobble(3), pad + y + sy * arm * 1.3 * (0.85 + rand() * 0.3));
+      ctx.stroke();
+    }
+  });
+  // Graphite skips on the plaster's tooth.
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  for (let i = 3; i < image.data.length; i += 4) image.data[i] *= 0.55 + 0.45 * rand();
+  ctx.putImageData(image, 0, 0);
+  return canvas;
 };
 
 // name -> { make(photos) -> canvas, type, quality }
@@ -226,6 +259,12 @@ export const TEXTURES = {
   'stage-riso': { make: (p) => riso(p, 'stage', 900, 600) },
   'note-uriis': { make: () => note('URIIS 2026 · top 5') },
   'gators-instant': { make: (p) => instant(p, 'gators', 'gators dc, rawr', { ratio: 0.75, seed: 44 }) },
+  // The strip's empty spot: pencil ticks at 360 px per wall unit (0.70 × 3.10),
+  // a waiting piece of masking tape, and the window light with the one leaf
+  // that fell across the spot nudged right (used until the flash).
+  'spot-ticks': { make: () => cornerTicks(252, 1116) },
+  'tape-masking': { make: () => tapeCanvas(360, 104, { color: 'rgba(222,197,146,0.86)', seed: 73 }) },
+  'gobo-hello': { make: () => windowGobo({ nudge: { 5: [20, 0] } }), quality: 0.9 },
 
   // --- the flash: the fresh strip, black and white
   'strip-mono': { make: (p) => photoStrip(memoryFrames(p), { look: 'mono', stamp: "'26 11 02", label: 'YOU WEE LIEW  ·  KUCHING  ·  02 11 26', seed: 4 }) },
