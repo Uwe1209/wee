@@ -129,29 +129,35 @@ void main() {
   float aspect = uResolution.y / max(uResolution.x, 1.0);
   if (uType < 1.5) {
     vec3 b = texture2D(tB, uv).rgb;
+    float g = uGlare;
     // The swap is a dissolve in a compressed range, x / (1 + x), so the room's
-    // HDR window fades in like any other surface instead of punching through.
+    // HDR window fades in like any other surface. The outgoing chapter leaves
+    // faster than the incoming one arrives, so the two never double-expose.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    vec3 k = mix(ka, kb, uMix);
+    vec3 k = ka * (1.0 - uMix) * (1.0 - uMix) + kb * uMix * uMix;
     color = k / max(vec3(1.0) - k, vec3(0.002));
-    float g = uGlare;
     // Mid-swap both chapters dip under the light, so neither reads over the other.
-    float swap = 4.0 * uMix * (1.0 - uMix);
-    color *= 1.0 - 0.7 * swap * g;
-    // The light comes from the wall's sun, inside the upper-left corner, and
+    float swap = smoothstep(0.0, 0.3, uMix) * (1.0 - smoothstep(0.7, 1.0, uMix));
+    color *= 1.0 - 0.93 * swap * g;
+    // Flare light scatters inside the lens and is not vignetted, but the scene
+    // is: the composite eases its vignette with the glare, so it moves here.
+    float wh = uResolution.x / max(uResolution.y, 1.0);
+    float rim = length((uv - 0.5) * vec2(wh, 1.0)) / (0.5 * sqrt(wh * wh + 1.0));
+    color *= 1.0 - mix(0.6, 0.8, uMix) * g * smoothstep(0.35, 1.0, rim);
+    // The light comes from the wall's sun inside the upper-left corner and
     // settles into the room's window as it decays. Distances in frame widths.
     vec2 sun = mix(vec2(0.1, 0.8), vec2(0.5, 0.86), smoothstep(0.0, 1.0, uMix * (1.0 - g)));
     vec2 d = vec2(uv.x - sun.x, (uv.y - sun.y) * aspect);
     float r = length(d);
-    // It reaches across the frame as the glare builds and draws back into the
-    // source as it decays, so it reads as a flare, not a fog.
-    float reach = exp(-r * mix(6.0, 1.3, sqrt(g)));
-    // Amber gel where the light falls: reds lift and blues drop, so the filmic
-    // shoulder keeps it amber instead of cream. HDR highlights are not pushed.
-    color += min(color, vec3(1.0)) * vec3(0.8, 0.12, -0.4) * g * reach;
+    // It reaches across the frame as it builds and draws back into the source
+    // as it decays, so it reads as a flare, not a fog.
+    float reach = exp(-r * (6.0 - 4.0 * g));
+    // Amber gel: reds lift and blues fall, so the filmic shoulder keeps the
+    // light amber instead of cream.
+    color *= vec3(1.0) + vec3(0.15, -0.22, -0.5) * g * reach;
     // The room is darker than the wall, so the light carries more of it.
-    float wash = g * (mix(0.75, 1.0, uMix) * reach + 0.08 * g + 0.3 * swap * (0.4 + 0.6 * reach));
+    float wash = g * ((0.45 + 1.25 * uMix) * reach + 0.5 * swap * (0.4 + 0.6 * reach));
     wash *= 0.85 + 0.3 * tNoise(uv * vec2(1.6, 2.4) + vec2(uTime * 0.03, 0.0));
     // A small white-gold core in a gold halo.
     float halo = exp(-r * 9.0);
@@ -161,7 +167,7 @@ void main() {
     float streak = exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.5);
     float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
     float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
-    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.55, 0.22) * (halo * 1.2 + streak * 0.6) + vec3(1.0, 0.8, 0.55) * core * 2.5 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
+    color += vec3(1.0, 0.45, 0.15) * wash + g * (vec3(1.0, 0.55, 0.22) * (halo + streak * 0.6) + vec3(1.0, 0.8, 0.55) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
   } else if (uType < 2.5) {
     float edge = uMix;
     if (uv.y < edge) {

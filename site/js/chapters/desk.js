@@ -53,6 +53,8 @@ export class DeskChapter {
     sun.shadow.camera.far = 60;
     sun.shadow.bias = -0.00006;
     sun.shadow.normalBias = 0.012;
+    sun.shadow.radius = 5; // soft edge, like paper an inch from the wall
+    sun.shadow.intensity = 0.62; // shadows the eye barely notices
     scene.add(sun, sun.target, new THREE.HemisphereLight(0xc9d4ea, 0x8a6a50, 1.05));
 
     const items = [
@@ -61,9 +63,9 @@ export class DeskChapter {
       { mesh: card(tex['game-riso'], 2.6, { alphaTest: 0.5, gloss: 0, roughness: 0.92, lift: 0.3 }), at: { x: 2.3, y: -1.5, rot: 0.05 }, tape: ['yellow', 1.05, 0.75, 0.5] },
       { mesh: card(tex['coaching-instant'], 1.7, { rects: [instantRect(tex['coaching-instant'].userData.size, 1.3)], lift: 0.5 }), at: { x: 6.6, y: -0.1, rot: -0.05 }, tape: ['blue', 0, 1.33, -0.1] },
       { mesh: card(tex['team-instant'], 2.05, { rects: [instantRect(tex['team-instant'].userData.size, 0.8)], lift: 0.4 }), at: { x: 5.05, y: -1.75, rot: -0.04 }, tape: ['cream', -0.6, 1.0, -0.2] },
-      { mesh: sticker(tex['sticker-star'], 0.7), at: { x: 3.55, y: 2.55, z: 0.2, rot: 0.2 } },
-      { mesh: sticker(tex['sticker-heart'], 0.6), at: { x: 7.0, y: -2.5, z: 0.2, rot: -0.2 } },
-      { mesh: sticker(tex['sticker-sparkle'], 0.45), at: { x: 0.55, y: -2.75, z: 0.2, rot: 0.15 } },
+      { mesh: sticker(tex['sticker-star'], 0.7), at: { x: 3.55, y: 2.55, z: 0.06, rot: 0.2 } },
+      { mesh: sticker(tex['sticker-heart'], 0.6), at: { x: 7.0, y: -2.5, z: 0.06, rot: -0.2 } },
+      { mesh: sticker(tex['sticker-sparkle'], 0.45), at: { x: 0.55, y: -2.75, z: 0.06, rot: 0.15 } },
     ];
     this.items = items.map(({ mesh, at, tape: tapeSpec }, index) => {
       place(page, mesh, { z: 0.08 + index * 0.012, ...at });
