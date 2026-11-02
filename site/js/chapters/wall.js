@@ -71,8 +71,12 @@ export class WallChapter {
     sun.map = tex.gobo;
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.02;
+    // A tight depth range keeps precision high enough for a small bias, so
+    // paper a few millimetres off the surface still casts a contact shadow.
+    sun.shadow.camera.near = 8;
+    sun.shadow.camera.far = 60;
+    sun.shadow.bias = -0.00006;
+    sun.shadow.normalBias = 0.012;
     wall.add(sun, sun.target);
     const sky = new THREE.HemisphereLight(DAY.sky, DAY.ground, 0.9);
     scene.add(sky);
