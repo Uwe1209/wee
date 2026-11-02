@@ -69,3 +69,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Scrapbook: heavy vertical window-bar shadow cuts the riso print and "outreach crew"; at 11.79 the ticket overlaps a still-grey photo.
 - Flash tape: at 3.0 the tape comes in steeply across the heart sticker before it flattens (reads as a collision); bring it in from straight above the strip's top edge. Countdown "1" fades to pastel pink too early.
 - About: CGPA shows three times (degree line, index card, badge) — cut to one or two in the type pass. "Looking for" note overlaps the coursework card corner. At 6.25 a warm patch blows out behind the copy (leak glare; see the page-veil note above).
+- Hello to about: at 3.75-3.9 the hello chips cross the top of the SPEX polaroid while the wall glides (hello copy timing).

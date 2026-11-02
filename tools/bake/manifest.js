@@ -482,11 +482,10 @@ export const TEXTURES = {
     ], { look: 'color', stamp: "'26 11 02", seed: 9 }),
   },
   'note-hello': { make: () => note('say hi! ↓', { width: 420, font: '600 76px Caveat', seed: 53 }) },
-  // The dusk window: a taller middle row, so one pane holds the call to action
-  // all the way up the screen, and the leaves that would land on the copy, the
-  // note and the heart moved off them (5 into the frame, 35 below the note, 48
-  // past the heart).
-  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], nudge: { 5: [220, 0], 35: [0, 60], 48: [60, 0] } }), quality: 0.9 },
+  // The dusk window, thrown at a grazing angle: the left column is one tall pane
+  // (both bars bridged), widened to the left, so the call to action sits in one
+  // long patch of sun; the right column's bars and leaves rake across the strip.
+  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], bridges: [[0, 0], [0, 1]], open: [[60, 120, 110, 780]] }), quality: 0.9 },
 
   // --- the wall: about
   // The about window: the left column is one tall pane (both its bars gone) so

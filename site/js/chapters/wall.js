@@ -21,9 +21,17 @@ const RAIL = new Rail([
 ]);
 
 const DAY = { sun: new THREE.Color(0xffc28a), sky: new THREE.Color(0xb5c6e4), ground: new THREE.Color(0x7a5a44), sunIntensity: 6.0, sunY: 7 };
-// `aim` re-aims the dusk sun for the contact corner (along the wall, up): the
-// mullions move off the copy column, so the call to action sits in one pane.
-const DUSK = { sun: new THREE.Color(0xff8f5e), sky: new THREE.Color(0xc4a0c4), ground: new THREE.Color(0x5e3f3a), sunIntensity: 4.6, sunY: 3.4, aim: [-2.7, -0.7] };
+// The dusk sun rakes: for the contact corner it swings far back along the wall
+// (`reach`) and in close to it (`z`), with a narrower cone (`angle`), so the
+// window lands as long, stretched patches with cool violet shade between them.
+// `aim` (along the wall, up) puts the call to action in the window's tall left
+// pane and the mullion in the gap before the strip. The light is warm but not
+// orange, so paper in the sun stays near white; `rake` makes up for the low
+// angle of incidence. All of the geometry changes while the wall is off screen.
+const DUSK = {
+  sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x98a0dc), ground: new THREE.Color(0x584a62), skyIntensity: 1.8,
+  sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -0.7], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
+};
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
 // about chapter: with the about window, the copy rises in its tall left pane,
 // the thin mullion falls in the gap between copy and cluster, and the cluster
@@ -276,7 +284,8 @@ export class WallChapter {
     const aboutMap = aboutFade < 1 ? this.aboutWindow.texture : this.tex['gobo-about'];
     const follow = this.lookAt.x * 0.88 + DUSK.aim[0] * corner + ABOUT_AIM[0] * about;
     const lower = ABOUT_AIM[1] * about;
-    this.sun.position.set(follow - 15.6, lerp(DAY.sunY, DUSK.sunY, dusk) + lower, 16.5);
+    this.sun.position.set(follow - lerp(15.6, DUSK.reach, corner), lerp(DAY.sunY, DUSK.sunY, dusk) + lower, lerp(16.5, DUSK.z, corner));
+    this.sun.angle = lerp(0.5, DUSK.angle, corner);
     this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
@@ -286,10 +295,11 @@ export class WallChapter {
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);
     this.sky.color.copy(DAY.sky).lerp(DUSK.sky, dusk);
     this.sky.groundColor.copy(DAY.ground).lerp(DUSK.ground, dusk);
+    this.sky.intensity = lerp(0.9, DUSK.skyIntensity, dusk);
 
     // Load-in: light comes up, paper settles onto the wall.
     const settle = easeOut(clamp01(intro));
-    this.sun.intensity = lerp(DAY.sunIntensity, DUSK.sunIntensity, dusk) * lerp(0.25, 1, settle);
+    this.sun.intensity = lerp(DAY.sunIntensity, DUSK.sunIntensity, dusk) * lerp(1, DUSK.rake, corner) * lerp(0.25, 1, settle);
     this.pieces.forEach((piece, index) => {
       const rest = piece.userData.rest;
       if (piece.userData.group !== 'hello') return;
@@ -308,8 +318,9 @@ export class WallChapter {
 
     // Anticipation: the room dims a touch during the countdown.
     const dim = smooth(progress(v, [T.flash.countdown[0], T.flash.fire])) * (1 - smooth(progress(v, [T.flash.fire, T.flash.fire + 0.05])));
-    this.look.exposure = WALL_LOOK.exposure * (1 - 0.14 * dim) * lerp(0.35, 1, settle) * lerp(1, 0.93, dusk);
-    this.look.gain = [WALL_LOOK.gain[0] + 0.03 * dusk, WALL_LOOK.gain[1] - 0.02 * dusk, WALL_LOOK.gain[2] - 0.03 * dusk];
+    this.look.exposure = WALL_LOOK.exposure * (1 - 0.14 * dim) * lerp(0.35, 1, settle) * lerp(1, 0.94, dusk);
+    // The warmth is in the sun, not the grade: a warm gain would turn paper coral.
+    this.look.gain = [WALL_LOOK.gain[0], WALL_LOOK.gain[1], WALL_LOOK.gain[2] + 0.01 * dusk];
   }
 
   // A strip prints out of the top of the frame, swings, settles, develops,
