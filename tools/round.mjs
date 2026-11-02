@@ -61,7 +61,9 @@ const shoot = async (state, file) => {
 
 const frames = [];
 for (const state of element.states ?? []) {
-  const file = `${dir}/${String(state).replace(/[^\w.-]/g, '_')}.jpg`;
+  const name = String(state).replace(/[^\w.-]/g, '_');
+  // Never let a state's frame collide with the sheets this tool writes.
+  const file = `${dir}/${['strip', 'compare'].includes(name) ? `state-${name}` : name}.jpg`;
   await shoot(state, file);
   frames.push(file);
 }
