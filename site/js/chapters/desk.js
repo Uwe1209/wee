@@ -21,7 +21,7 @@ const backOut = (t) => {
 // settled state, so every piece sits inside the frame whatever the aspect.
 // Wide: the copy owns the left 40%; the memories fill 0.47..0.96 in a loose
 // two-column spread. Narrow: the copy runs full width up top, so the memories
-// gather in the lower part of the frame.
+// gather in the lower part of the frame, above the sheet's bottom edge.
 const SPREAD = {
   wide: {
     'gators-riso': { at: [0.585, 0.29], width: 0.215, rot: -0.05 },
@@ -34,14 +34,14 @@ const SPREAD = {
     'sticker-sparkle': { at: [0.683, 0.445], width: 0.026, rot: 0.15 },
   },
   narrow: {
-    'gators-riso': { at: [0.33, 0.6], width: 0.5, rot: -0.05 },
-    'certificate-instant': { at: [0.77, 0.62], width: 0.34, rot: 0.06 },
-    'team-instant': { at: [0.27, 0.81], width: 0.36, rot: -0.035 },
-    'coaching-instant': { at: [0.62, 0.83], width: 0.27, rot: 0.045 },
-    'ticket-outreach': { at: [0.5, 0.94], width: 0.4, rot: -0.06 },
-    'sticker-star': { at: [0.6, 0.52], width: 0.08, rot: 0.2 },
-    'sticker-heart': { at: [0.9, 0.74], width: 0.07, rot: -0.2 },
-    'sticker-sparkle': { at: [0.86, 0.95], width: 0.06, rot: 0.15 },
+    'gators-riso': { at: [0.32, 0.56], width: 0.48, rot: -0.05 },
+    'certificate-instant': { at: [0.77, 0.58], width: 0.32, rot: 0.06 },
+    'team-instant': { at: [0.27, 0.76], width: 0.34, rot: -0.035 },
+    'coaching-instant': { at: [0.6, 0.77], width: 0.26, rot: 0.045 },
+    'ticket-outreach': { at: [0.75, 0.84], width: 0.36, rot: -0.06 },
+    'sticker-star': { at: [0.6, 0.49], width: 0.08, rot: 0.2 },
+    'sticker-heart': { at: [0.92, 0.68], width: 0.07, rot: -0.2 },
+    'sticker-sparkle': { at: [0.1, 0.86], width: 0.06, rot: 0.15 },
   },
 };
 const SPREAD_STATE = STATES.scrapbook; // the camera pose the spread is solved for
