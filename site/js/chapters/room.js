@@ -3,8 +3,8 @@
 // as warm, window-shaped patches; the shafts in between carry glowing dust.
 // Project cards hang down the hall; the camera flies past them, slowing at
 // each, and each photo develops as it comes close. The cards are curled, glossy
-// prints: their coat reflects the windows, and they block the sun, darkening the
-// beam, the dust and the floor behind them.
+// prints: their coat reflects the windows, and they shade the sunbeams (the lit
+// dust and the floor patches) and some of the windows' light on the floor.
 import * as THREE from 'three';
 import { TIMELINE as T, clamp01, progress, smooth } from '../motion/timeline.js';
 import { texture } from '../engine/textures.js';
@@ -103,6 +103,7 @@ const SUN_GLSL = /* glsl */ `
 #define CARD_Z0 (${cardSpot(0).z.toFixed(3)})
 #define CARD_BAY (${SPACING.toFixed(3)})
 #define SHADE_LEAD (${((SHADE_REACH - 0.5) / 2).toFixed(3)})
+// Width of the soft edge of a card's shadow in the haze.
 #define SHADE_SOFT 0.3
 uniform sampler2D uGobo;
 uniform vec4 uSun;      // xyz: toward the sun; w: 1 / x
@@ -261,9 +262,10 @@ void main() {
 }`;
 
 // Walls, floor and ceiling: texture from world position, a hemisphere fill, warm
-// bounce off the nearest sunlit floor, the sun itself through the windows, the
-// window glass on the window wall, then the haze in front (from the haze pass;
-// cards cover it where they hang in front of a wall).
+// bounce off the nearest sunlit floor, the sun itself through the windows (on the
+// floor, less what the cards shade), the window glass on the window wall, then
+// the haze in front (from the haze pass; cards cover it where they hang in front
+// of a wall).
 const SURFACE_FRAG = /* glsl */ `
 #include <common>
 #include <fog_pars_fragment>
