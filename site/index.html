@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You Wee Liew · Software developer</title>
+<meta name="description" content="Portfolio of You Wee Liew, final-year Computer Science student at Swinburne University of Technology Sarawak, building software from the data through to deployment.">
+<meta name="theme-color" content="#d9c7ad">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='14' y='4' width='36' height='56' rx='3' fill='%23f8f5ee' stroke='%232a1a10' stroke-width='3'/%3E%3Crect x='19' y='9' width='26' height='10' fill='%23ff48b0'/%3E%3Crect x='19' y='22' width='26' height='10' fill='%230078bf'/%3E%3Crect x='19' y='35' width='26' height='10' fill='%23ffc83d'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/instrument-serif-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="css/site.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three/three.module.js" } }</script>
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="scroll-space"></div>
+
+<main id="content">
+
+  <section class="sec sec-hello" data-section="hello" aria-labelledby="name">
+    <div class="screen" data-pin="hello">
+      <p class="bar mono" data-intro="0.55"><span>Memories · 2024 — 2026</span><span>Kuching, Sarawak</span><span>Scrapbook Nº 12</span></p>
+      <h1 id="name" class="name" data-intro="0.08">
+        <span class="first">You Wee</span>
+        <em class="riso"><span class="ink blue" aria-hidden="true">Liew</span><span class="ink pink">Liew</span></em>
+      </h1>
+      <p class="note hand" data-intro="0.3">software developer: I build things from the data all the way to deployment :)</p>
+      <ul class="chips" data-intro="0.45" aria-label="Main tools">
+        <li>React</li><li>TypeScript</li><li>FastAPI</li><li>Supabase</li><li>PostgreSQL</li>
+      </ul>
+      <div class="cue-wrap" data-intro="0.7"><p class="cue mono" data-reveal="hello-cue">Scroll to take a photo ↓</p></div>
+      <div class="countdown" aria-hidden="true">
+        <p class="count" data-count="0">3</p>
+        <p class="count" data-count="1">2</p>
+        <p class="count" data-count="2">1</p>
+        <p class="count smile hand" data-count="3">smile!</p>
+      </div>
+      <p class="flash-caption hand" data-reveal="flash-caption">four sittings, one strip: the ID photo, SPEX poster day, outreach facilitator, warm-up coach</p>
+    </div>
+  </section>
+
+  <section class="sec sec-about" data-section="about" aria-labelledby="about-title">
+    <div class="block" data-block="about-intro">
+      <p class="kicker mono">About</p>
+      <h2 id="about-title" class="title">Hi, I'm <em>You Wee.</em></h2>
+      <p class="lead">I'm a final-year Computer Science student at Swinburne University of Technology Sarawak. I lead teams and build software systems from the data through to deployment.</p>
+    </div>
+    <div class="block" data-block="about-goal">
+      <p class="facts mono">Bachelor of Computer Science<br>2024 — now · year 3, semester 2 · CGPA 3.49</p>
+      <p class="lead">Next, I want a <strong>full-stack developer role</strong>, working across the frontend, the backend and the database.</p>
+    </div>
+  </section>
+
+  <section class="sec sec-projects" data-section="projects" aria-labelledby="projects-title">
+    <div class="screen" data-pin="projects">
+      <header class="projects-head" data-reveal="projects-head">
+        <p class="kicker mono"><span id="projects-title">Things I've built</span> · <span data-project-counter>01 / 09</span></p>
+        <p class="hand">nine memories, developing as you go</p>
+      </header>
+      <ol class="projects">
+        <li class="project" data-project="0">
+          <p class="meta mono">Final year project · 2026 · Team lead</p>
+          <h3>SPEX</h3>
+          <p>Forecasts where 38 animal diseases will turn up over the next 12 months, for 245 countries, so outbreaks get caught in herds and flocks before they reach people. I led the five-person team and owned integration and deployment.</p>
+          <ul class="stack mono"><li>React</li><li>TypeScript</li><li>three.js</li><li>FastAPI</li><li>LightGBM</li><li>Supabase</li><li>Railway</li><li>Vercel</li></ul>
+          <p class="links"><a href="https://spex-disease.vercel.app" target="_blank" rel="noopener">Live site ↗</a><a href="https://github.com/Uwe1209/SPEX_Disease" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="1">
+          <p class="meta mono">URIIS Student Biz Innov Challenge 2026 · Top 5, consolation prize</p>
+          <h3>BuildUp</h3>
+          <p>A national AI talent platform concept for Malaysia's graduate skills mismatch. We prototyped web and mobile apps with skills-based job matching, an AI career coach built on the Anthropic API, a digital Skills Passport and workforce planning dashboards.</p>
+          <ul class="stack mono"><li>Web + mobile prototypes</li><li>Anthropic API</li><li>Pitch</li></ul>
+        </li>
+        <li class="project" data-project="2">
+          <p class="meta mono">Personal project · 2026</p>
+          <h3>kacha</h3>
+          <p>A photobooth in the browser. Choose a strip, take your shots, edit them with filters, and keep every strip in an album of memories. Yes, it's where this site's idea came from.</p>
+          <ul class="stack mono"><li>React 19</li><li>Vite</li><li>Supabase Auth</li><li>Express</li></ul>
+          <p class="links"><a href="https://kacha-smoky.vercel.app" target="_blank" rel="noopener">Live site ↗</a><a href="https://github.com/Uwe1209/kacha" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="3">
+          <p class="meta mono">2026 · Full-stack</p>
+          <h3>HaoJia HR</h3>
+          <p>An HR system for a food and beverage group with several outlets. It replaces the staff spreadsheet with one source of truth: teams, outlets, worker profiles and work-pass expiry warnings, with role-based access enforced in the database.</p>
+          <ul class="stack mono"><li>React</li><li>TypeScript</li><li>Tailwind</li><li>Supabase</li><li>Row-level security</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/HaoJiaHRSystem" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="4">
+          <p class="meta mono">2026 · Full-stack</p>
+          <h3>PetAid</h3>
+          <p>First-aid help for pet emergencies: guides, vet-approved videos and quizzes for dogs, cats, rabbits and more. Vets approve, reject or send back new guidance before owners ever see it.</p>
+          <ul class="stack mono"><li>React</li><li>Vite</li><li>Express</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/pet-aids" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="5">
+          <p class="meta mono">COS30020 · 2025</p>
+          <h3>Herbarium for Plant Biodiversity</h3>
+          <p>A PHP site where participants upload plant photos and records for researchers, with accounts, identification, classification and PDF downloads.</p>
+          <ul class="stack mono"><li>PHP</li><li>MySQL</li><li>HTML</li><li>CSS</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/PlantBiodiversityProject" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="6">
+          <p class="meta mono">COS20019 Cloud Computing Architecture · 2025</p>
+          <h3>Cloud architecture on AWS</h3>
+          <p>An architecture report: diagrams of the AWS services used, the workflow behind each key process, and the reasoning for every design decision.</p>
+          <ul class="stack mono"><li>AWS</li><li>Architecture</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/CloudComputingArchitectureProject" target="_blank" rel="noopener">Report ↗</a></p>
+        </li>
+        <li class="project" data-project="7">
+          <p class="meta mono">COS30043 Interface Design and Development · 2025</p>
+          <h3>Bar</h3>
+          <p>An online drinks shop with product pages, a cart, purchase history and accounts.</p>
+          <ul class="stack mono"><li>Vue 3</li><li>Bootstrap</li><li>JavaScript</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/Bar" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+        <li class="project" data-project="8">
+          <p class="meta mono">Meta Front-End course · 2024</p>
+          <h3>Little Lemon</h3>
+          <p>A restaurant site built with only HTML and CSS. Where it started.</p>
+          <ul class="stack mono"><li>HTML</li><li>CSS</li></ul>
+          <p class="links"><a href="https://github.com/Uwe1209/Little-Lemon-project" target="_blank" rel="noopener">Code ↗</a></p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec sec-scrapbook" data-section="scrapbook" aria-labelledby="scrap-title">
+    <div class="screen" data-pin="scrapbook">
+      <div data-reveal="scrap-title">
+        <p class="kicker mono">Off the keyboard</p>
+        <h2 id="scrap-title" class="title">Dodgeball, <em>mostly.</em></h2>
+      </div>
+      <div class="role" data-reveal="scrap-coordinator">
+        <h3>Programme Coordinator</h3>
+        <p class="meta mono">Swinburne Sarawak Dodgeball Club · ECA at Borneo International School</p>
+        <p>I set up and ran weekly dodgeball sessions for students after getting the school's approval, and built Excel systems from scratch for attendance, coach scheduling and pay, season planning and finance.</p>
+      </div>
+      <div class="role" data-reveal="scrap-facilitator">
+        <h3>Facilitator</h3>
+        <p class="meta mono">SSDC Dodgeball Outreach Programme · 11 April 2026 · Tunku Putra-HELP School</p>
+      </div>
+      <div class="skills" data-reveal="scrap-skills">
+        <p class="kicker mono">Toolbox</p>
+        <dl>
+          <div><dt>Frontend</dt><dd>React, TypeScript, JavaScript, HTML, CSS</dd></div>
+          <div><dt>Backend</dt><dd>Python, FastAPI, REST APIs</dd></div>
+          <div><dt>Data</dt><dd>PostgreSQL, Supabase, SQL, Firebase, Docker</dd></div>
+          <div><dt>Ship</dt><dd>Git, GitHub, Vercel, Railway, Figma, Photoshop</dd></div>
+          <div><dt>Also</dt><dd>Java, C, C++, C#</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-contact" data-section="contact" aria-labelledby="contact-title">
+    <div class="block" data-block="contact">
+      <div data-reveal="contact-body">
+        <p class="kicker mono">The last strip</p>
+        <h2 id="contact-title" class="title">Let's make the <em>next memory.</em></h2>
+        <p class="lead">I'm looking for a full-stack developer role. Say hi:</p>
+        <p class="contact-links">
+          <a href="mailto:liewyouwee123@gmail.com">liewyouwee123@gmail.com</a>
+          <a href="https://github.com/Uwe1209" target="_blank" rel="noopener">github.com/Uwe1209 ↗</a>
+        </p>
+        <p class="footer mono">Built from scratch with three.js · every photo is my own · © 2026 You Wee Liew</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

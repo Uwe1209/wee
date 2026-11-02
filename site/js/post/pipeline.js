@@ -102,6 +102,60 @@ void main() {
   gl_FragColor = vec4(front.rgb + back * (1.0 - clamp(front.a, 0.0, 1.0)), 1.0);
 }`;
 
+// Blends two chapter renders. 1: warm light leak sweeping across,
+// 2: a page sliding up from the bottom, 3: the page sliding back down,
+// 4: plain cross-fade (reduced motion).
+const TRANSITION_FRAG = /* glsl */ `
+uniform sampler2D tA;
+uniform sampler2D tB;
+uniform float uMix;
+uniform float uType;
+uniform float uTime;
+uniform vec2 uResolution;
+varying vec2 vUv;
+float tHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float tNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(tHash(i), tHash(i + vec2(1.0, 0.0)), f.x), mix(tHash(i + vec2(0.0, 1.0)), tHash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+void main() {
+  vec2 uv = vUv;
+  vec3 a = texture2D(tA, uv).rgb;
+  vec3 color = a;
+  float aspect = uResolution.y / max(uResolution.x, 1.0);
+  if (uType < 1.5) {
+    vec3 b = texture2D(tB, uv).rgb;
+    float x = uv.x * 0.85 + (1.0 - uv.y) * 0.25 + (tNoise(uv * vec2(3.0, 5.0) + uTime * 0.05) - 0.5) * 0.18;
+    float front = mix(-0.35, 1.45, uMix);
+    float m = smoothstep(front - 0.22, front + 0.22, x);
+    color = mix(b, a, m);
+    float band = exp(-pow((x - front) / 0.16, 2.0));
+    float swell = sin(clamp(uMix, 0.0, 1.0) * 3.14159265);
+    color += vec3(1.0, 0.6, 0.3) * band * swell * 3.0 + vec3(1.0, 0.75, 0.5) * swell * 0.3;
+  } else if (uType < 2.5) {
+    float edge = uMix;
+    if (uv.y < edge) {
+      color = texture2D(tB, vec2(uv.x, uv.y + 1.0 - edge)).rgb;
+    } else {
+      float d = (uv.y - edge) * aspect;
+      color = a * (1.0 - 0.5 * exp(-d * 40.0) * step(0.0005, edge));
+    }
+  } else if (uType < 3.5) {
+    float edge = 1.0 - uMix;
+    if (uv.y < edge) {
+      color = texture2D(tA, vec2(uv.x, uv.y + uMix)).rgb;
+    } else {
+      float d = (uv.y - edge) * aspect;
+      color = texture2D(tB, uv).rgb * (1.0 - 0.5 * exp(-d * 40.0) * step(0.0005, uMix));
+    }
+  } else {
+    color = mix(a, texture2D(tB, uv).rgb, uMix);
+  }
+  gl_FragColor = vec4(color, 1.0);
+}`;
+
 const COMPOSITE_FRAG = /* glsl */ `
 uniform sampler2D tScene;
 uniform sampler2D tBloom;
@@ -207,10 +261,15 @@ export const DEFAULT_LOOK = {
 };
 
 export class Pipeline {
-  constructor(renderer, { bloomLevels = 6, samples = 4 } = {}) {
+  constructor(renderer, { bloomLevels = 6, samples = 4, layers = true } = {}) {
     this.renderer = renderer;
     this.bloomLevels = bloomLevels;
     this.samples = samples;
+    this.layers = layers;
+    this.blend = hdrTarget(4, 4);
+    this.transitionPass = new FullscreenPass(fullscreenMaterial(TRANSITION_FRAG, {
+      tA: { value: null }, tB: { value: null }, uMix: { value: 0 }, uType: { value: 1 }, uTime: { value: 0 }, uResolution: { value: new THREE.Vector2() },
+    }));
     this.scene = hdrTarget(4, 4, { samples, depth: true });
     this.back = hdrTarget(4, 4, { samples, depth: true });
     this.merged = hdrTarget(4, 4);
@@ -264,9 +323,13 @@ export class Pipeline {
   setSize(width, height) {
     this.width = width;
     this.height = height;
-    this.scene.setSize(width, height);
-    this.back.setSize(width, height);
-    this.merged.setSize(width, height);
+    if (this.layers) {
+      this.scene.setSize(width, height);
+      this.back.setSize(width, height);
+      this.merged.setSize(width, height);
+    }
+    this.blend.setSize(width, height);
+    this.transitionPass.material.uniforms.uResolution.value.set(width, height);
     const rebuild = (list, count, divisor) => {
       list.forEach((target) => target.dispose());
       list.length = 0;
@@ -342,10 +405,23 @@ export class Pipeline {
     return input.texture;
   }
 
+  // Blends two chapter targets into the blend target and returns it.
+  transition(a, b, mix, type, time = 0) {
+    const u = this.transitionPass.material.uniforms;
+    u.tA.value = a.texture;
+    u.tB.value = b.texture;
+    u.uMix.value = mix;
+    u.uType.value = type;
+    u.uTime.value = time;
+    this.transitionPass.render(this.renderer, this.blend);
+    return this.blend;
+  }
+
+  // `source` is the HDR target to finish (defaults to the scene layer).
   // `back` is an optional blurred background texture that shows wherever the
   // foreground layer was left transparent.
-  present({ time = 0, back = null } = {}) {
-    let source = this.scene;
+  present({ time = 0, back = null, source: given = null } = {}) {
+    let source = given ?? this.scene;
     if (back) {
       const mu = this.mergePass.material.uniforms;
       mu.tFront.value = this.scene.texture;
