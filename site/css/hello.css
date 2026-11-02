@@ -1,0 +1,41 @@
+/* ---- hello: the wall, the name, the flash ---- */
+.bar {
+  position: absolute; top: calc(var(--vh) * 3.6); left: var(--pad); right: var(--pad);
+  display: flex; justify-content: space-between; gap: 2vw;
+  font-size: max(11px, 0.72vw); line-height: 1; color: rgba(60, 38, 24, 0.66);
+}
+.name {
+  position: absolute; left: 4.6vw; top: calc(var(--vh) * 15);
+  font: 400 11.4vw/0.86 var(--serif); letter-spacing: -0.012em; white-space: nowrap; color: var(--ink);
+}
+.name .first { display: block; }
+.riso { position: relative; display: inline-block; margin-left: 3.6vw; font-style: italic; }
+.riso .ink { display: block; mix-blend-mode: multiply; }
+.riso .pink { color: var(--pink); }
+.riso .blue { position: absolute; left: 0.45vw; top: 0.3vw; color: var(--blue); }
+.note {
+  position: absolute; left: 6.2vw; top: calc(var(--vh) * 57); max-width: 24vw; rotate: -2.5deg;
+  font-size: 2.1vw; line-height: 1.12; color: #19214f;
+}
+.chips {
+  position: absolute; left: 4.6vw; bottom: calc(var(--vh) * 6.5); max-width: 34vw;
+  display: flex; flex-wrap: wrap; gap: 0.6vw; list-style: none;
+}
+.chips li {
+  font: 700 max(10px, 0.78vw)/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.55vw 0.8vw; background: var(--ink); color: #f6efe2; border-radius: 0.2vw;
+}
+.chips li:nth-child(3n + 2) { rotate: -2deg; background: var(--blue); }
+.chips li:nth-child(3n) { rotate: 1.5deg; background: var(--pink); color: var(--ink); }
+.cue-wrap { position: absolute; right: var(--pad); bottom: calc(var(--vh) * 6.5); }
+.cue { font-size: max(11px, 0.72vw); line-height: 1; color: var(--ink-soft); }
+.countdown { position: absolute; left: 64vw; top: calc(var(--vh) * 22); width: 20vw; height: calc(var(--vh) * 48); pointer-events: none; }
+.count {
+  position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; visibility: hidden;
+  font: italic 400 22vw/1 var(--serif); color: var(--pink); text-shadow: 0.35vw 0.25vw 0 rgba(0, 120, 191, 0.55);
+}
+.count.smile { font: 600 6.5vw/1 var(--hand); color: var(--ballpoint); text-shadow: none; rotate: -6deg; }
+.flash-caption {
+  position: absolute; right: 4.6vw; bottom: calc(var(--vh) * 14); max-width: 20vw; rotate: -2deg;
+  font-size: 1.55vw; line-height: 1.15; color: #19214f; text-align: right;
+}

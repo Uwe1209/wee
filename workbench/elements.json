@@ -1,0 +1,185 @@
+{
+ "bar": "workbench/art-bible/art-bible-frame.png",
+ "target": 8,
+ "scale": "1-10 against the bar. 8 = meets it, 9-10 = beats it, 6-7 = close with visible flaws, 4-5 = clearly below, 1-3 = broken.",
+ "elements": [
+  {
+   "id": "opening",
+   "name": "Opening wall",
+   "track": "wall",
+   "states": ["hello"],
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/wall.js: opening cluster and the intro load-in only", "site/css/hello.css", "site/index.html: the hello section only", "tools/bake/manifest.js: textures used only by the opening"],
+   "criteria": [
+    "Reads at a glance as the art bible: golden-hour plaster wall, taped memories, the name with riso 'Liew'",
+    "Name, note and chips sit in sunlight, fully legible, nothing clipped at 1920x1080",
+    "Memories cluster right of centre, at most five papers plus three stickers in view",
+    "The empty spot where the strip will land is visible and inviting, and the scroll cue says what happens next",
+    "Paper looks like paper: soft contact shadows, slight curl, tape translucent"
+   ]
+  },
+  {
+   "id": "flash",
+   "name": "The flash: countdown, flash, strip prints and develops, tape",
+   "track": "wall",
+   "states": ["countdown", "flash", "strip", "taped"],
+   "strip": { "from": 1.0, "to": 3.3, "count": 12 },
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/wall.js: updateStrip and the flash-related camera keys", "site/js/dom.js: countdown only", "site/js/motion/timeline.js: the flash block only", "site/css/hello.css: .countdown, .count, .flash-caption", "site/js/post/pipeline.js: the flash term in the composite shader only"],
+   "criteria": [
+    "The moment people would screen-record: 3, 2, 1, smile, then a flash that whites out with bloom, then a fresh strip slides in and develops frame by frame",
+    "Countdown numerals are big, legible, on-brand (riso pink with blue misregistration) and land where the strip will appear",
+    "The flash is HDR white with a warm bloom and recovers smoothly; no grey, flat-looking flash",
+    "The strip swings and settles like paper, frames develop top to bottom one after another, tape lands with a small press",
+    "The last frame (taped) matches the art bible composition"
+   ]
+  },
+  {
+   "id": "about",
+   "name": "About: along the wall",
+   "track": "wall",
+   "states": [3.9, 4.45, 5.2],
+   "strip": { "from": 3.25, "to": 5.45, "count": 8 },
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/wall.js: about cluster and the about rail keys", "site/css/about.css", "site/index.html: the about section only", "site/js/motion/timeline.js: blocks about-intro and about-goal, about.dolly"],
+   "criteria": [
+    "About copy is legible and sits in light, never on top of a photo",
+    "The camera leaves the opening cluster and arrives at the about cluster without whipping (screen speed similar to the text's scroll speed)",
+    "The about cluster (portrait, Swinburne index card, CGPA badge, coursework card, 'looking for' note) is composed like the art bible",
+    "Text and wall feel like one move, not two unrelated motions"
+   ]
+  },
+  {
+   "id": "to-room",
+   "name": "Transition: wall to room (light leak)",
+   "track": "post",
+   "states": [5.5, 5.65, 5.85],
+   "strip": { "from": 5.3, "to": 6.05, "count": 8 },
+   "bar": ["art-bible"],
+   "owns": ["site/js/post/pipeline.js: TRANSITION_FRAG type 1 only", "site/js/motion/timeline.js: transitions.wallToRoom only", "site/js/app.js: plan() mix easing for wallToRoom only"],
+   "criteria": [
+    "Feels like warm sunlight flaring across a lens, not a white wipe",
+    "No frame is a flat white or flat beige screen; something always reads",
+    "The room is established by the end: window, beams, first card visible",
+    "Exposure ramps smoothly; no step changes between neighbouring strip frames"
+   ]
+  },
+  {
+   "id": "flight",
+   "name": "Project flight: the room",
+   "track": "room",
+   "states": ["spex", "kacha", "herbarium", "lemon"],
+   "strip": { "from": 5.8, "to": 10.15, "count": 12 },
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/room.js", "tools/bake/manifest.js: project card textures (card-*) only"],
+   "criteria": [
+    "Carries the golden-hour mood into a dim room: warm beams, dust, a bright far window",
+    "Each card is framed right of centre, fully in frame, big enough to read the screenshot, never overlapping the caption column (left 40%)",
+    "Cards read as real photos on paper (develop effect, tape, gloss), with depth between near and far cards",
+    "The window and beams never sit behind caption text",
+    "Camera flight slows at each card and never whips"
+   ]
+  },
+  {
+   "id": "captions",
+   "name": "Project captions",
+   "track": "room",
+   "states": ["spex", "buildup", "haojia", "aws"],
+   "bar": ["art-bible"],
+   "owns": ["site/css/projects.css", "site/index.html: the projects section only", "site/js/dom.js: project caption and counter code only"],
+   "criteria": [
+    "Clear hierarchy: meta line, serif title, body, stack chips, links, in the art bible's type system",
+    "Body text contrast at least 4.5:1 against what is behind it",
+    "Exactly one project caption visible at a time; the counter matches the card in view",
+    "Captions never overlap a card"
+   ]
+  },
+  {
+   "id": "scrapbook",
+   "name": "Scrapbook desk and the room-to-desk page",
+   "track": "desk",
+   "states": [10.35, 10.9, 11.7],
+   "strip": { "from": 10.05, "to": 11.7, "count": 8 },
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/desk.js", "site/css/scrapbook.css", "site/index.html: the scrapbook section only", "site/js/post/pipeline.js: TRANSITION_FRAG type 2 only", "site/js/motion/timeline.js: scrapbook, pins.scrapbook, transitions.roomToDesk, scrap-* reveals"],
+   "criteria": [
+    "The page sliding up reads as paper (edge, shadow), not a hard wipe",
+    "Memories drop onto the page one by one and land like paper, with the same window light as the wall",
+    "Text column legible, in light, never over a photo; at most five photos plus stickers",
+    "Feels like the art bible's scrapbook side: riso prints, tape, stickers"
+   ]
+  },
+  {
+   "id": "contact",
+   "name": "Contact: the wall at dusk",
+   "track": "wall",
+   "states": ["to-wall", 13.2, "contact"],
+   "bar": ["art-bible"],
+   "owns": ["site/js/chapters/wall.js: contact corner, dusk light and the contact rail keys", "site/css/contact.css", "site/index.html: the contact section only", "site/js/post/pipeline.js: TRANSITION_FRAG type 3 only", "site/js/motion/timeline.js: contact, transitions.deskToWall, blocks.contact"],
+   "criteria": [
+    "Dusk is clearly later in the same day as the opening: same wall, lower warmer light",
+    "Email and GitHub are the clearest things on screen and obviously clickable",
+    "The last strip and 'say hi' note frame the call to action without crowding it",
+    "Ends the story: it feels like the last page, not a footer"
+   ]
+  },
+  {
+   "id": "type",
+   "name": "Chrome and type across the page",
+   "track": "global",
+   "states": ["hello", 4.45, "spex", "scrapbook", "contact"],
+   "bar": ["art-bible"],
+   "owns": ["site/css/base.css", "site/assets/fonts (no new families)"],
+   "criteria": [
+    "One type system everywhere: Instrument Serif display, Caveat notes, JetBrains Mono labels, Inter Tight body",
+    "Consistent margins, kicker style and spacing rhythm across chapters",
+    "Focus styles visible, links obviously links",
+    "No orphaned one-word lines in headings at 1920x1080"
+   ]
+  },
+  {
+   "id": "look",
+   "name": "Light and grain (post) across chapters",
+   "track": "post",
+   "states": ["hello", "taped", "kacha", "scrapbook", "contact"],
+   "bar": ["art-bible"],
+   "owns": ["site/js/post/pipeline.js: composite shader and bloom only", "WALL_LOOK in wall.js, ROOM_LOOK in room.js, DESK_LOOK in desk.js"],
+   "criteria": [
+    "One continuous grade: warm highlights, cool-ish shadows, never orange-soaked; skin tones in photos stay natural",
+    "Bloom and halation only on true highlights (window, flash), no haze over the whole frame",
+    "Grain visible but fine; no banding in gradients (dither works)",
+    "Blacks in the room are deep but not crushed"
+   ]
+  },
+  {
+   "id": "phone",
+   "name": "Phone layout",
+   "track": "global",
+   "viewport": [390, 844, 2],
+   "states": ["hello", "taped", 4.45, "spex", "scrapbook", "contact"],
+   "bar": ["art-bible"],
+   "owns": ["site/css/phone.css", "the `aspect < 1` branches in wall.js, room.js and desk.js"],
+   "criteria": [
+    "Every screen is composed for a phone, not a squeezed desktop: name, memories and words each get their own zone",
+    "Body text at least 16px equivalent, nothing clipped, no horizontal scroll",
+    "Photos stay large enough to recognise people",
+    "Captions sit on readable backings without hiding the card"
+   ]
+  },
+  {
+   "id": "reduced",
+   "name": "Reduced motion",
+   "track": "global",
+   "query": "reduced",
+   "states": ["hello", "flash", "spex", "scrapbook", "contact"],
+   "bar": ["art-bible"],
+   "owns": ["the reduced-motion branches in app.js, dom.js and each chapter's stills()"],
+   "criteria": [
+    "No camera flights, no flash bloom, no swinging paper: each chapter is a composed still",
+    "Every piece of content is still reachable and legible",
+    "Transitions are plain cross-fades",
+    "Stills look as good as the animated version's best frame"
+   ]
+  }
+ ]
+}
