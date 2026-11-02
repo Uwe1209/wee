@@ -61,6 +61,13 @@ export class App {
       setScroll: (vh) => this.setScroll(vh),
       rails: () => this.chapters.wall.report?.(),
       failed: () => [...this.failed],
+      // Film recorder: start the motion clock over (intro plays from frame one).
+      restart: () => {
+        this.time = 0;
+        this.last = null;
+        this.scroll.setTarget(0, { instant: true });
+      },
+      scroll: () => ({ v: this.v, target: this.scroll.target / this.vh }),
     };
   }
 

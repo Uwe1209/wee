@@ -4,3 +4,4 @@ workbench/film/*.png
 workbench/**/frames/
 *.log
 workbench/rounds/*/r*/snapshot/
+__pycache__/
