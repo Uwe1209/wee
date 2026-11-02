@@ -378,6 +378,9 @@ export const TEXTURES = {
 
   // --- tape and stickers
   'tape-cream': { make: () => tapeCanvas(360, 104, { color: 'rgba(233,221,190,0.82)', seed: 71 }) },
+  // Kraft masking tape for the flash strip: warmer and darker than the cream, so
+  // it reads against the strip's white border and the sunlit wall (the bar's tape).
+  'tape-masking': { make: () => tapeCanvas(360, 104, { color: 'rgba(204,166,112,0.8)', seed: 73 }) },
   'tape-pink': { make: () => tapeCanvas(360, 104, { color: 'rgba(255,120,190,0.8)', stripes: 'rgba(255,255,255,0.55)', seed: 11 }) },
   'tape-blue': { make: () => tapeCanvas(360, 104, { color: 'rgba(120,180,240,0.8)', stripes: 'rgba(255,255,255,0.45)', seed: 12 }) },
   'tape-yellow': { make: () => tapeCanvas(360, 104, { color: 'rgba(255,214,90,0.82)', seed: 13 }) },
