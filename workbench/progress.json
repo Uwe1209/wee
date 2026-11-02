@@ -198,6 +198,16 @@
      "at": "2026-11-02T12:49:19.881Z",
      "compare": "rounds/flash/r2/compare.jpg",
      "strip": "rounds/flash/r2/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 3,
+     "score": 6.5,
+     "gap": "The countdown misses its mark: the 3 and 1 are centred about 100px right of the viewfinder brackets, so they straddle the right bracket and clip the URIIS photo and its label, and 'smile!' is written across 'URIIS 2026 · top 5'; centre all three inside the brackets where the strip lands.",
+     "notes": "Numerals are big and on-brand (riso pink, blue offset). Flash peak (1.83) is bright and warm, not grey, but only the centre clips to white (~3% of pixels >=240 on all channels; corners stay peach ~249,220,178), and the DOM name, note and chips ghost through at ~1.5:1 while the photos vanish (1.14:1), so it reads as a cream fade over the page more than an HDR blowout; fully recovered by 2.05. Strip drops in blank from above the viewport, leans ~3 deg at 2.26 and sits at ~1.5 deg from 2.46: a slide with one lean, no visible swing or overshoot. Developing is the strongest part: frames fill top to bottom one after another (2.46 to 2.88), orange date imprint on frame one. From 2.46 to 3.09 the bracket triangles sit behind the strip and poke out as dark slivers on its left edge, then jump on top as photo corners by 3.25; masking tape appears between 2.88 and 3.09 with no visible press. Caption 'four sittings...' is legible ballpoint Caveat but squeezed into a ~25px gap between the ticket and the gators polaroid. Taped frame matches the bar composition closely. No console errors or failed chapters.",
+     "at": "2026-11-02T13:26:51.157Z",
+     "compare": "rounds/flash/r3/compare.jpg",
+     "strip": "rounds/flash/r3/strip.jpg"
     }
    ],
    "status": "open"
@@ -233,5 +243,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-02T13:25:37.965Z"
+ "updated": "2026-11-02T13:26:51.158Z"
 }

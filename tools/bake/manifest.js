@@ -131,8 +131,11 @@ const badge = (big, small, { size = 420, ink = '#ff48b0', paper = '#fff3f9', big
   return canvas;
 };
 
-// A project card made of type alone, for projects with no screenshot yet.
-const typeCard = (title, lines, { width = 900, ratio = 0.62, ink = '#0078bf', accent = '#ff48b0', seed = 91 } = {}) => {
+// A project card made of type alone, for projects with no screenshot yet:
+// a riso-printed title card on instant-photo stock, with a handwritten lip.
+const typeCard = (title, lines, {
+  width = 900, ratio = 0.62, ink = '#0078bf', accent = '#ff48b0', caption = '', seed = 91,
+} = {}) => {
   const side = Math.round(width * 0.06);
   const top = Math.round(width * 0.07);
   const bottom = Math.round(width * 0.25);
@@ -146,15 +149,41 @@ const typeCard = (title, lines, { width = 900, ratio = 0.62, ink = '#0078bf', ac
   ictx.fillStyle = '#f6f1e6';
   ictx.fillRect(0, 0, inner.width, inner.height);
   ictx.globalCompositeOperation = 'multiply';
+  // The accent band sits below the last line of text, never under it.
+  const textBottom = 232 + (lines.length - 1) * 56 + 22;
+  const bandTop = Math.max(textBottom + 34, Math.round(inner.height * 0.74));
   ictx.fillStyle = accent;
-  ictx.fillRect(0, inner.height * 0.62, inner.width, inner.height * 0.38);
+  ictx.fillRect(0, bandTop, inner.width, inner.height - bandTop);
+  const rand = random(seed);
   ictx.fillStyle = ink;
+  for (let y = bandTop + 8; y < inner.height; y += 9) {
+    for (let x = 6 + ((y / 9) % 2) * 4.5; x < inner.width; x += 9) {
+      ictx.beginPath();
+      ictx.arc(x, y, 1.1 + rand() * 0.6, 0, Math.PI * 2);
+      ictx.fill();
+    }
+  }
+  // Title with a little misregistration, the way the opening's "Liew" sits.
   ictx.font = '800 108px "Bricolage Grotesque"';
+  ictx.fillStyle = accent;
+  ictx.fillText(title, 50, 154);
+  ictx.fillStyle = ink;
   ictx.fillText(title, 46, 150);
   ictx.font = '600 40px "JetBrains Mono"';
   lines.forEach((line, i) => ictx.fillText(line.toUpperCase(), 50, 232 + i * 56));
   ictx.globalCompositeOperation = 'source-over';
   ctx.drawImage(inner, side, top);
+  if (caption) {
+    ctx.save();
+    ctx.translate(width / 2, top + ih + bottom * 0.52);
+    ctx.rotate((rand() - 0.5) * 0.04);
+    ctx.fillStyle = INK;
+    ctx.font = CAPTION;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(caption, 0, 0);
+    ctx.restore();
+  }
   return canvas;
 };
 
@@ -403,10 +432,10 @@ export const TEXTURES = {
   // --- projects
   'card-spex': { make: (p) => instant(p, 'spexMap', 'SPEX: catch it in the animals', { ratio: 0.7, seed: 101 }) },
   'card-buildup': { make: (p) => instant(p, 'pitch', 'BuildUp at URIIS 2026', { ratio: 0.66, pose: { zoom: 1.15, focusX: 0.52, focusY: 0.42 }, seed: 102 }) },
-  'card-kacha': { make: (p) => instant(p, 'kacha', 'kacha! a photobooth', { ratio: 1.0, seed: 103 }) },
-  'card-haojia': { make: () => typeCard('HaoJia HR', ['teams · outlets · workers', 'work-pass expiry alerts', 'phase one, in progress'], { seed: 104 }) },
-  'card-petaid': { make: () => typeCard('PetAid', ['first aid for pets', 'owners · vets · admins', 'react + express'], { ink: '#ff48b0', accent: '#0078bf', seed: 105 }) },
-  'card-herbarium': { make: (p) => instant(p, 'herbarium', 'herbarium project', { ratio: 0.6, seed: 106 }) },
+  'card-kacha': { make: (p) => instant(p, 'kacha', 'kacha! a photobooth', { ratio: 1.0, pose: { zoom: 1.9 }, seed: 103 }) },
+  'card-haojia': { make: () => typeCard('HaoJia HR', ['teams · outlets · workers', 'work-pass expiry alerts', 'phase one, in progress'], { caption: 'haojia hr, still building', seed: 104 }) },
+  'card-petaid': { make: () => typeCard('PetAid', ['first aid for pets', 'owners · vets · admins', 'react + express'], { ink: '#ff48b0', accent: '#0078bf', caption: 'petaid', seed: 105 }) },
+  'card-herbarium': { make: (p) => instant(p, 'herbarium', 'herbarium project', { ratio: 0.6, pose: { focusX: 0 }, seed: 106 }) },
   'card-aws': { make: (p) => instant(p, 'aws', 'AWS, drawn properly', { ratio: 0.8, seed: 107 }) },
   'card-bar': { make: (p) => instant(p, 'bar', 'Bar: drinks shop', { ratio: 0.62, seed: 108 }) },
   'card-lemon': { make: (p) => instant(p, 'lemon', 'little lemon', { ratio: 0.62, seed: 109 }) },
