@@ -131,15 +131,17 @@ void main() {
     vec3 b = texture2D(tB, uv).rgb;
     float g = uGlare;
     // The swap is a dissolve in a compressed range, x / (1 + x), so the room's
-    // HDR window fades in like any other surface. The outgoing chapter leaves
-    // faster than the incoming one arrives, so the two never double-expose.
+    // HDR window fades in like any other surface. The wall dips under the
+    // light as the swap starts and leaves faster than the room arrives, so the
+    // two never double-expose; the room then rises out of the light, its
+    // window glowing through it.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    vec3 k = ka * (1.0 - uMix) * (1.0 - uMix) + kb * uMix * uMix;
+    float leave = (1.0 - uMix) * (1.0 - uMix) * (1.0 - 0.93 * smoothstep(0.0, 0.3, uMix) * g);
+    vec3 k = ka * leave + kb * uMix * uMix;
     color = k / max(vec3(1.0) - k, vec3(0.002));
-    // Mid-swap both chapters dip under the light, so neither reads over the other.
+    // Mid-swap the light fills in for the chapters.
     float swap = smoothstep(0.0, 0.3, uMix) * (1.0 - smoothstep(0.7, 1.0, uMix));
-    color *= 1.0 - 0.93 * swap * g;
     // Flare light scatters inside the lens and is not vignetted, but the scene
     // is: the composite eases its vignette with the glare, so it moves here.
     float wh = uResolution.x / max(uResolution.y, 1.0);
