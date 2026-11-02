@@ -64,3 +64,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 ## Smoothing-pass notes (seams between elements)
 
 - The light leak (6.15-6.75) burns the 3D scene to white, but the about copy is page text and stays crisp over the burn. Drive the flash's page veil from the leak's glare too (lower peak), so page text washes with the scene.
+- Phone, scrapbook: phone text boxes cover most of the screen so memories sit behind them; the paper stops short of top and bottom, leaving dark bands (for the phone element).
