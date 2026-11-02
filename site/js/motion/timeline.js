@@ -63,9 +63,10 @@ export const TIMELINE = {
     // with a gentle camera drop), then settle by the about cluster. Lengthened by
     // 0.8 vh so the copy never sits on a photo and peak wall speed stays ~1.2x the copy's.
     dolly: [3.25, 5.9, 6.25],
-    // The sun swings right and down onto the copy column: in by the time the
-    // copy rises into view, out once the light leak has hidden the wall.
-    light: { in: [4.3, 5.0], out: [6.42, 6.75] },
+    // The sun swings right and down onto the copy column and the about window
+    // fades in over the day's: in by the time the copy rises into view, out
+    // once the light leak has hidden the wall.
+    light: { in: [4.3, 5.0], fade: [4.3, 4.9], out: [6.42, 6.75] },
   },
 
   transitions: {

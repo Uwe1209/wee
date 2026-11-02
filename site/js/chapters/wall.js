@@ -25,9 +25,39 @@ const DAY = { sun: new THREE.Color(0xffc28a), sky: new THREE.Color(0xb5c6e4), gr
 // mullions move off the copy column, so the call to action sits in one pane.
 const DUSK = { sun: new THREE.Color(0xff8f5e), sky: new THREE.Color(0xc4a0c4), ground: new THREE.Color(0x5e3f3a), sunIntensity: 4.6, sunY: 3.4, aim: [-2.7, -0.7] };
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
-// about copy: the mullion falls just right of the copy column and the bar
-// under the tall left pane falls below the screen, so every line rises in sun.
-const ABOUT_AIM = [1.9, -3.9];
+// about chapter: with the about window, the copy rises in its tall left pane,
+// the thin mullion falls in the gap between copy and cluster, and the cluster
+// sits in one right-hand pane with a bar just above it and one just below.
+const ABOUT_AIM = [1.6, -1.4];
+
+// Cross-fades two baked windows into one target, so the sun's window can
+// change without a visible switch. Only drawn while a fade is under way.
+const windowBlend = (from, to) => {
+  const target = new THREE.WebGLRenderTarget(1024, 1024, { type: THREE.HalfFloatType, depthBuffer: false });
+  const material = new THREE.ShaderMaterial({
+    uniforms: { uFrom: { value: from }, uTo: { value: to }, uMix: { value: 0 } },
+    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: 'uniform sampler2D uFrom; uniform sampler2D uTo; uniform float uMix; varying vec2 vUv;'
+      + ' void main() { gl_FragColor = vec4(mix(texture2D(uFrom, vUv).rgb, texture2D(uTo, vUv).rgb, uMix), 1.0); }',
+    depthTest: false,
+    depthWrite: false,
+  });
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+  quad.frustumCulled = false;
+  const scene = new THREE.Scene();
+  scene.add(quad);
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  return {
+    texture: target.texture,
+    draw(renderer, mix) {
+      material.uniforms.uMix.value = mix;
+      const previous = renderer.getRenderTarget();
+      renderer.setRenderTarget(target);
+      renderer.render(scene, camera);
+      renderer.setRenderTarget(previous);
+    },
+  };
+};
 
 export const WALL_LOOK = {
   bloom: 0.05, halation: 0.16, exposure: 1.06, saturation: 0.98, contrast: 1.04,
@@ -90,6 +120,7 @@ export class WallChapter {
     scene.add(sky);
     this.sun = sun;
     this.sky = sky;
+    this.aboutWindow = windowBlend(tex.gobo, tex['gobo-about']);
 
     const ink = { tape: (name) => tex[`tape-${name}`] };
     const pieces = [];
@@ -231,16 +262,19 @@ export class WallChapter {
     // wall is off screen (projects to scrapbook), so the light never jumps.
     const dusk = smooth(progress(v, T.contact.dusk));
     const corner = smooth(progress(v, [T.transitions.wallToRoom[1], T.transitions.deskToWall[0]]));
-    // The about aim is exactly zero outside its window; it eases in while the
-    // tall pane's missing bar is off screen and out after the leak hides the wall.
+    // The about aim is exactly zero outside its window; it eases in, with the
+    // about window fading in over the day's, and out after the leak hides the wall.
     const about = smooth(progress(v, T.about.light.in)) * (1 - smooth(progress(v, T.about.light.out)));
+    const aboutFade = smooth(progress(v, T.about.light.fade));
+    if (about > 0 && aboutFade < 1) this.aboutWindow.draw(this.app.renderer, aboutFade);
+    const aboutMap = aboutFade < 1 ? this.aboutWindow.texture : this.tex['gobo-about'];
     const follow = this.lookAt.x * 0.88 + DUSK.aim[0] * corner + ABOUT_AIM[0] * about;
     const lower = ABOUT_AIM[1] * about;
     this.sun.position.set(follow - 15.6, lerp(DAY.sunY, DUSK.sunY, dusk) + lower, 16.5);
     this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
-    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? this.tex['gobo-about'] : this.tex.gobo;
+    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? aboutMap : this.tex.gobo;
     // The note under the spot retires under the same white.
     this.spotNote.visible = v < T.flash.fire;
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);
