@@ -100,7 +100,22 @@
    ],
    "status": "done",
    "final": "Met the bar at 8 in round 2. Polished after: BuildUp meta fits one line, text-wrap: pretty on captions."
+  },
+  "scrapbook": {
+   "rounds": [
+    {
+     "element": "scrapbook",
+     "round": 1,
+     "score": 6,
+     "gap": "The page rising over the projects room reads as a hard wipe: its top edge is a dead-level, ruler-straight cut across the full width that slices straight through the Little Lemon polaroid and its caption, with no shadow cast on the room above, no lit paper lip and no tilt, curl or torn edge.",
+     "notes": "1) While pieces drop (10.75-11.25) their shadows are hard-edged near-black slabs offset about 300 px, darker and greyer than the window-bar shadows on the same page (approx rgb 72,62,58 vs 98,80,72), so they read as grey duplicate cards and a second grey star; they should be softer and lighter the higher the piece is. 2) At 11.7 a fifth photo hangs off the right frame edge (about 95 px visible, caption cut to 'wa'), which reads as a layout mistake. 3) The lower toolbox rows sit in the diagonal window shadow, and the pink mono labels are low contrast on the tan page; BACKEND is nearly invisible. 4) The italic 'mostly.' is flat riso pink with no riso-blue misregistered copy, which the art-bible display spec calls for. 5) The riso prints, especially the dodgeball action shot, are muddy dark purple and the subject barely reads, unlike the bar's crisp pink/blue halftone; the blue sparkle's white die-cut border is barely visible. Strengths: the settled page is close to the bar, with one-by-one drops, polaroids that develop, washi and masking tape, a star sticker, warm window light matching the wall and copy in the left 40%. No console errors and no failed chapters.",
+     "at": "2026-11-02T11:28:21.113Z",
+     "compare": "rounds/scrapbook/r1/compare.jpg",
+     "strip": "rounds/scrapbook/r1/strip.jpg"
+    }
+   ],
+   "status": "open"
   }
  },
- "updated": "2026-11-02T11:19:30.722Z"
+ "updated": "2026-11-02T11:28:21.136Z"
 }
