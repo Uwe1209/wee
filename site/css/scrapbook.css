@@ -1,0 +1,13 @@
+/* ---- scrapbook: the desk ---- */
+.sec-scrapbook .screen { padding: calc(var(--vh) * 11) var(--pad) 0; }
+.sec-scrapbook .title { font-size: 5.4vw; }
+.role { margin-top: 2.2vw; max-width: 34vw; }
+.role h3 { font: 400 2.5vw/1 var(--serif); }
+.role .meta { font-size: max(11px, 0.68vw); line-height: 1.5; letter-spacing: 0.12em; color: var(--blue); margin: 0.6vw 0; }
+.role p:not(.meta) { font: 400 max(15px, 1.05vw)/1.5 var(--sans); }
+.skills { margin-top: 2.4vw; max-width: 36vw; }
+.skills .kicker { margin-bottom: 0.8vw; }
+.skills dl { display: grid; grid-template-columns: auto 1fr; gap: 0.45vw 1.2vw; }
+.skills dl div { display: contents; }
+.skills dt { font: 700 max(10px, 0.68vw)/1.6 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--pink); }
+.skills dd { font: 400 max(14px, 1vw)/1.5 var(--sans); }

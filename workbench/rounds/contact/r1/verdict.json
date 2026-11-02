@@ -1,0 +1,8 @@
+{
+ "element": "contact",
+ "round": 1,
+ "score": 5.5,
+ "gap": "The window's vertical mullion shadow falls straight down the copy column (about x 150-330 at 1920 wide), so 'youwee' in the email, 'b.com/U' in the GitHub link, the body line, the THE LAST STRIP kicker and the footer drop to about 1.2:1 contrast; move the light/gobo so the whole CTA block sits in sun.",
+ "notes": "In Instrument Serif the digit 1 looks identical to l, so the links read 'liewyouweel23@gmail.com' and 'Uwel209'; set the address and handle in a face with a distinct 1 (JetBrains Mono or Inter Tight). The ~110px headline still outranks the ~64px links, so they are not the clearest thing on screen. Dusk grade is flat and orange-soaked: highlights top out near luma 150 (opening ~200), lit wall ~#dc784c, shade is warm brown not cool, there is no bright low raking band of sun, and faces in the strip go brick red. A soft dark leaf blob lies across strip frames 1-2 like a smudge. The 'say hi!' note sits ~700px right of the links and its arrow points down at empty wall, so strip and note don't frame the CTA; point it at the links. to-wall (13.25): the page leaves as a dead-straight horizontal split with no paper edge, thickness, curl or shadow, so it reads as a wipe. 'next memory.' has no riso-blue misregistration copy, unlike 'Liew'. A faint vertical plaster seam runs through the headline and links (x~580). At 14.0 the 4th strip frame is a flat grey slab and the body/email sit in the bottom-left shadow. No console errors, no failed chapters.",
+ "at": "2026-11-02T13:24:48.545Z"
+}

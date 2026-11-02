@@ -1,0 +1,3 @@
+/* ---- about: along the wall ---- */
+.sec-about .block { max-width: 48vw; }
+.facts { font-size: max(12px, 0.85vw); line-height: 1.75; letter-spacing: 0.08em; color: #3c2a1e; }

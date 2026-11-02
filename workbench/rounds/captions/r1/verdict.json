@@ -1,0 +1,8 @@
+{
+ "element": "captions",
+ "round": 1,
+ "score": 7,
+ "gap": "The stack chips are flat, untilted ghost tags with a faint grey hairline border instead of the art bible's label-maker chips (solid riso-blue / riso-pink / paper-cream tape, mono text, small random tilt, like the bar's REACT-TYPESCRIPT row), so the caption block reads as a generic dark-mode portfolio rather than the scrapbook.",
+ "notes": "Functional criteria pass: body Inter Tight ~22px at ~12.5:1 against the room (meta ~11.9:1, counter ~8.6:1, chip text ~15:1); exactly one caption per frame, no ghosting under a levels stretch; counter matches the card (01 SPEX, 02 BuildUp, 04 HaoJia HR, 07 AWS); every caption stays inside the left 37vw and >=198px clear of the nearest card; no console errors or failed chapters. Secondary: (1) BuildUp's meta line wraps and strands PRIZE alone on line two, crowding the title; balance the wrap or tighten it to one line. (2) On this near-black room an ink chip would vanish, so use riso blue, riso pink or paper-cream (ink text) fills. (3) Titles are plain cream serif with no art-bible accent (no riso-pink italic word or blue offset); apart from the pink link underlines and the Caveat subtitle, nothing in the block says scrapbook.",
+ "at": "2026-11-02T11:07:35.729Z"
+}

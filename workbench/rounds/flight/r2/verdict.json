@@ -1,0 +1,8 @@
+{
+ "element": "flight",
+ "round": 2,
+ "score": 6,
+ "gap": "At card rests the card just flown past hangs in front of the lens as a huge blank cream slab over the right 20-35% of the frame, cutting the current card in half (Bar at v9.36, HaoJia at v7.38, Herbarium state), and SPEX (state) and BuildUp bleed off the right edge, so most cards are not fully in frame while their caption is showing.",
+ "notes": "Mood is right: dim room, warm volumetric beams, dust specks, leafy bright window with halo; caption column is clean, legible and stays in the left 40%; the window and beams never sit behind text; Kacha, AWS and Little Lemon rests are framed well; tape and the develop effect (blank far cards) read; no console errors. Secondary: (1) the room is a black void: the window floats with no wall or floor around it and the beams land on nothing, so the lower-left half of every frame is flat brown-black; a faintly lit wall/floor pool would carry the golden-hour warmth. (2) PetAid and HaoJia typographic cards: the third text line (REACT + EXPRESS, ROW-LEVEL SE...) collides with the top edge of the blue/pink block and reads as a layout bug; they also lack the photo border and lip the other cards have. (3) Kacha's image is a small camera icon on an empty beige field and reads as a placeholder, not a screenshot. (4) The far-card stack is wedged tight against the left edge of the main card and mostly hidden behind it, so depth reads as clutter rather than a receding room. (5) The rail grazes each card after its rest (PetAid overflows the right half at v8.17), which is what creates the foreground slabs; speed itself cannot be judged from the 0.4 vh strip spacing.",
+ "at": "2026-11-02T10:51:03.567Z"
+}

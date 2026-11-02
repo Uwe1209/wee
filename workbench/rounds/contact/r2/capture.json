@@ -1,0 +1,20 @@
+{
+ "element": "contact",
+ "round": 2,
+ "url": "http://localhost:8080/workbench/rounds/contact/r2/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/contact/r2/to-wall.jpg",
+  "workbench/rounds/contact/r2/14.jpg",
+  "workbench/rounds/contact/r2/contact.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 117401,
+ "at": "2026-11-02T14:08:16.658Z"
+}

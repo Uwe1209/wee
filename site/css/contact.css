@@ -1,0 +1,6 @@
+/* ---- contact: the wall at dusk ---- */
+.sec-contact .block { padding-top: calc(var(--vh) * 18); max-width: 52vw; }
+.contact-links { margin-top: 2vw; display: flex; flex-direction: column; gap: 0.6vw; align-items: flex-start; }
+/* Inter Tight: the serif's 1 reads as an l, and these must be typed correctly. */
+.contact-links a { font: 500 2.5vw/1.2 var(--sans); letter-spacing: -0.01em; font-variant-numeric: lining-nums; }
+.footer { margin-top: 4vw; font-size: max(10px, 0.66vw); color: var(--ink-soft); letter-spacing: 0.12em; }
