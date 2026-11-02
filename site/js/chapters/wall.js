@@ -51,6 +51,7 @@ export class WallChapter {
       'sticker-sparkle', 'sticker-star-pink', 'ticket-admit', 'poster-instant', 'strip-color', 'stage-riso', 'note-uriis',
       'gators-instant', 'portrait-instant', 'card-swinburne', 'card-courses', 'note-looking', 'badge-cgpa', 'strip-contact',
       'note-hello',
+      'gobo-hello', 'spot-ticks', 'tape-masking',
     ];
     const tex = {};
     await Promise.all(names.map(async (name) => {
@@ -113,6 +114,25 @@ export class WallChapter {
     wall.add(this.strip);
     this.stripTape = tapeTop(this.strip, ink.tape('cream'), { width: 0.5, rot: 0.1 });
 
+    // Its spot waits in the sun: faint pencil ticks and a piece of masking tape,
+    // both inside what the landed strip covers (hover parallax included).
+    const spot = new THREE.Group();
+    spot.position.set(this.strip.userData.rest.x, this.strip.userData.rest.y, 0);
+    spot.rotation.z = this.strip.userData.rest.rot;
+    wall.add(spot);
+    const tickSize = tex['spot-ticks'].userData.size;
+    const ticks = new THREE.Mesh(
+      new THREE.PlaneGeometry(tickSize.w / 360, tickSize.h / 360),
+      new THREE.MeshStandardMaterial({ map: tex['spot-ticks'], roughness: 0.6, transparent: true, depthWrite: false }),
+    );
+    ticks.position.set(0.02, 0, 0.004);
+    ticks.receiveShadow = true;
+    spot.add(ticks);
+    const waiting = place(spot, tape(tex['tape-masking'], 0.42), { x: 0.03, y: 1.4, z: 0.012, rot: 0.14 });
+    waiting.receiveShadow = true;
+    waiting.userData.group = 'hello';
+    pieces.push(waiting);
+
     // About cluster, further along the wall.
     const portrait = add(card(tex['portrait-instant'], 2.1, { rects: [instantRect(tex['portrait-instant'].userData.size, 1.24)], lift: 0.3 }), { x: 13.2, y: 0.75, rot: -0.04 }, 'about');
     tapeTop(portrait, ink.tape('cream'), { width: 0.55, rot: 0.06 });
@@ -166,6 +186,9 @@ export class WallChapter {
     const follow = this.lookAt.x * 0.88;
     this.sun.position.set(follow - 15.6, lerp(DAY.sunY, DUSK.sunY, dusk), 16.5);
     this.sun.target.position.set(follow + 0.4, 0.2, 0);
+    // Until the flash, one leaf of the window is nudged off the strip's spot so
+    // it waits in clean sun; the swap back happens under the flash's white.
+    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : this.tex.gobo;
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);
     this.sky.color.copy(DAY.sky).lerp(DUSK.sky, dusk);
     this.sky.groundColor.copy(DAY.ground).lerp(DUSK.ground, dusk);
