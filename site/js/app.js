@@ -31,17 +31,18 @@ const FALLBACK = new THREE.Color(0xd9c7ad);
 const CROSSFADE = 4;
 
 // Wall to room is light, not a wipe. In fractions of the transition window:
-// the glare builds to its peak, the chapters swap under it, then it decays.
-const LEAK = { peak: 0.46, swap: [0.38, 0.56], decay: 1 };
-const leakGlare = (p) => (p < LEAK.peak ? smooth(p / LEAK.peak) : (1 - smooth((p - LEAK.peak) / (1 - LEAK.peak))) ** LEAK.decay);
-// The glare opens the lens: exposure lifts, bloom and halation spread the
-// energy, and the vignette eases so the corners flare too.
+// the glare builds to its peak, the chapters swap under it, then it decays
+// over the rest of the window so the room's darkness arrives as a ramp.
+const LEAK = { peak: 0.32, swap: [0.3, 0.46] };
+const leakGlare = (p) => (p < LEAK.peak ? smooth(p / LEAK.peak) ** 0.6 : (1 - (p - LEAK.peak) / (1 - LEAK.peak)) ** 0.9);
+// The glare opens the lens: exposure lifts, bloom and halation spread its
+// energy, and the vignette eases (the shader vignettes only the scene).
 const glareLook = (look, g) => ({
   ...look,
-  exposure: look.exposure * (1 + 0.15 * g),
+  exposure: look.exposure * (1 + 0.06 * g),
   bloom: lerp(look.bloom, 0.12, g),
-  halation: lerp(look.halation, 0.5, g),
-  vignette: look.vignette * (1 - g) ** 2,
+  halation: lerp(look.halation, 0.35, g),
+  vignette: look.vignette * (1 - g),
 });
 
 export class App {
@@ -51,7 +52,7 @@ export class App {
       canvas: document.getElementById('gl'), antialias: false, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: FLAGS.capture,
     });
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap; // filtered by each light's shadow.radius
     this.renderer.setClearColor(FALLBACK, 1);
     this.pipeline = new Pipeline(this.renderer, { bloomLevels: 6, layers: false });
     this.slots = [0, 1].map(() => new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4, depthBuffer: true }));

@@ -77,6 +77,8 @@ export class WallChapter {
     sun.shadow.camera.far = 60;
     sun.shadow.bias = -0.00006;
     sun.shadow.normalBias = 0.012;
+    sun.shadow.radius = 5; // soft edge, like paper an inch from the wall
+    sun.shadow.intensity = 0.62; // shadows the eye barely notices
     wall.add(sun, sun.target);
     const sky = new THREE.HemisphereLight(DAY.sky, DAY.ground, 0.9);
     scene.add(sky);
@@ -107,9 +109,9 @@ export class WallChapter {
     const gators = add(card(tex['gators-instant'], 2.05, { rects: [instantRect(tex['gators-instant'].userData.size, 0.75)], lift: 0.5 }), { x: 4.85, y: -1.85, rot: 0.06 });
     tapeTop(gators, ink.tape('blue'), { width: 0.6, rot: -0.08 });
     add(card(tex['ticket-admit'], 2.5, { alphaTest: 0.3, gloss: 0, roughness: 0.9, lift: 0.3, curl: 0.04 }), { x: 1.35, y: -2.5, z: 0.12, rot: 0.035 });
-    add(sticker(tex['sticker-star'], 0.62), { x: 1.5, y: 1.95, z: 0.2, rot: 0.22 });
-    add(sticker(tex['sticker-heart'], 0.5), { x: 3.5, y: 1.85, z: 0.2, rot: -0.2 });
-    add(sticker(tex['sticker-sparkle'], 0.42), { x: 6.4, y: -0.7, z: 0.2, rot: 0.1 });
+    add(sticker(tex['sticker-star'], 0.62), { x: 1.5, y: 1.95, z: 0.16, rot: 0.22 }); // overlaps the poster's corner
+    add(sticker(tex['sticker-heart'], 0.5), { x: 3.5, y: 1.85, z: 0.06, rot: -0.2 });
+    add(sticker(tex['sticker-sparkle'], 0.42), { x: 6.4, y: -0.7, z: 0.06, rot: 0.1 });
 
     // The strip the flash prints. It develops frame by frame.
     const stripSize = tex['strip-color'].userData.size;
@@ -173,12 +175,12 @@ export class WallChapter {
     tapeTop(portrait, ink.tape('cream'), { width: 0.55, rot: 0.06 });
     const school = add(card(tex['card-swinburne'], 2.9, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 16.0, y: 1.55, rot: 0.02 }, 'about');
     tapeTop(school, ink.tape('yellow'), { width: 0.55, x: -1.1, rot: -0.3 });
-    add(sticker(tex['badge-cgpa'], 1.1), { x: 18.1, y: 0.45, z: 0.22, rot: 0.08 }, 'about');
+    add(sticker(tex['badge-cgpa'], 1.1), { x: 18.1, y: 0.45, z: 0.07, rot: 0.08 }, 'about');
     const courses = add(card(tex['card-courses'], 2.8, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.4 }), { x: 16.1, y: -1.15, rot: -0.03 }, 'about');
     tapeTop(courses, ink.tape('pink'), { width: 0.6, x: 1.0, rot: 0.25 });
     add(card(tex['note-looking'], 2.4, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.04, lift: 0.3 }), { x: 13.5, y: -1.95, z: 0.13, rot: 0.03 }, 'about');
-    add(sticker(tex['sticker-star-pink'], 0.5), { x: 18.6, y: -1.7, z: 0.2, rot: -0.3 }, 'about');
-    add(sticker(tex['sticker-sparkle'], 0.38), { x: 12.1, y: 2.35, z: 0.2, rot: 0.2 }, 'about');
+    add(sticker(tex['sticker-star-pink'], 0.5), { x: 18.6, y: -1.7, z: 0.06, rot: -0.3 }, 'about');
+    add(sticker(tex['sticker-sparkle'], 0.38), { x: 12.1, y: 2.35, z: 0.16, rot: 0.2 }, 'about'); // touches the portrait's corner
 
     // Contact corner, at the far end, lit at dusk.
     this.contactStrip = card(tex['strip-contact'], 0.98, { rects: stripRects(tex['strip-contact'].userData.size), lift: 0.4, segments: [6, 48] });
@@ -186,8 +188,8 @@ export class WallChapter {
     wall.add(this.contactStrip);
     tapeTop(this.contactStrip, ink.tape('pink'), { width: 0.5, rot: -0.12 });
     add(card(tex['note-hello'], 1.5, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.03, lift: 0.3 }), { x: 31.0, y: -1.7, z: 0.14, rot: -0.06 }, 'contact');
-    add(sticker(tex['sticker-heart'], 0.55), { x: 30.5, y: 1.95, z: 0.2, rot: 0.18 }, 'contact');
-    add(sticker(tex['sticker-star'], 0.48), { x: 28.4, y: -2.2, z: 0.2, rot: -0.2 }, 'contact');
+    add(sticker(tex['sticker-heart'], 0.55), { x: 30.5, y: 1.95, z: 0.06, rot: 0.18 }, 'contact');
+    add(sticker(tex['sticker-star'], 0.48), { x: 28.4, y: -2.2, z: 0.06, rot: -0.2 }, 'contact');
 
     this.pieces = pieces;
     this.camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
