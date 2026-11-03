@@ -553,10 +553,20 @@
      "at": "2026-11-03T05:20:33.321Z",
      "compare": "rounds/look/r2/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "look",
+     "round": 3,
+     "score": 7,
+     "gap": "The grade does not hold across chapters: in contact (and the top of scrapbook) the window shadows turn grey-violet (about rgb 71,59,71) instead of the warm umber shade the wall uses in hello/taped and the bar (about 66,48,39 / #6b4a3a), so the last chapter reads as a different, colder film.",
+     "notes": "Hello/taped are close to the bar: warm lit plaster, brown shadows, fine grain, no banding seen, photos' skin natural. Kacha room: blacks deep but not crushed and the sun shafts and floor pools read well, but a milky veil sits over the right third of the kacha card near the window (halation spilling onto mid-tones rather than true highlights). Scrapbook wall is slightly greyer/flatter than the opening wall; lit plaster in contact and scrapbook leans pinker peach than the bar's #ece0cd->#f3c99a. Capture: 5 frames, no failed chapters, no console problems.",
+     "at": "2026-11-03T05:36:47.706Z",
+     "compare": "rounds/look/r3/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T05:28:04.891Z"
+ "updated": "2026-11-03T05:36:47.706Z"
 }
