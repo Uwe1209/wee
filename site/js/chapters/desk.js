@@ -253,6 +253,11 @@ export class DeskChapter {
       this.sheet.material.map.wrapS = this.sheet.material.map.wrapT = THREE.MirroredRepeatWrapping;
       this.sheet.material.map.needsUpdate = true;
     } else if (aspect >= 1) this.sheet.geometry = this.sheetShapes.wide;
+    // On a phone the window slides left and down so the memories' band sits in
+    // a clear pane rather than under a bar (the copy is on opaque paper).
+    const [sx, sy] = aspect < 1 ? [-1, -2.5] : [0, 0];
+    this.sun.position.set(-15 + sx, 4 + sy, 13);
+    this.sun.target.position.set(2 + sx, sy, 0);
     this.layout();
   }
 
