@@ -32,6 +32,12 @@ const DUSK = {
   sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x98a0dc), ground: new THREE.Color(0x584a62), skyIntensity: 1.8,
   sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -1.0], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
 };
+// Where the contact note rests on wide and narrow screens; on a phone it is
+// drawn larger so its handwriting stays readable at the wider lens.
+const CONTACT_NOTE = {
+  wide: { x: 26.85, y: -0.75, z: 0.14, rot: 0.05, scale: 1.1 },
+  narrow: { x: 32.2, y: -1.3, z: 0.14, rot: 0.05, scale: 1.6 },
+};
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
 // about chapter: with the about window, the copy rises in its tall left pane,
 // the thin mullion falls in the gap between copy and cluster, and the cluster
@@ -240,7 +246,10 @@ export class WallChapter {
     this.contactStrip.userData.rest = { x: 29.6, y: 0.1, z: 0.1, rot: 0.04 };
     wall.add(this.contactStrip);
     tapeTop(this.contactStrip, ink.tape('pink'), { width: 0.5, rot: -0.12 });
-    add(card(tex['note-hello'], 1.5, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.03, lift: 0.3 }), { x: 31.0, y: -1.7, z: 0.14, rot: -0.06 }, 'contact');
+    // The note sits between the strip and the links, its arrow at the email; on
+    // a phone the copy card covers that spot, so it moves under the card (resize).
+    this.contactNote = card(tex['note-hello'], 1.35, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.03, lift: 0.3 });
+    add(this.contactNote, CONTACT_NOTE.wide, 'contact');
     add(sticker(tex['sticker-heart'], 0.55), { x: 30.5, y: 1.95, z: 0.06, rot: 0.18 }, 'contact');
     add(sticker(tex['sticker-star'], 0.48), { x: 28.4, y: -2.2, z: 0.06, rot: -0.2 }, 'contact');
 
@@ -258,6 +267,11 @@ export class WallChapter {
     // Keep the wall composition on narrow screens: widen the lens a little.
     this.camera.fov = aspect < 1 ? 46 : 30;
     this.camera.updateProjectionMatrix();
+    if (this.contactNote) {
+      const rest = aspect < 1 ? CONTACT_NOTE.narrow : CONTACT_NOTE.wide;
+      place(this.wall, this.contactNote, rest);
+      this.contactNote.scale.setScalar(rest.scale);
+    }
   }
 
   update(v, time, intro) {
