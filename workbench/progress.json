@@ -410,10 +410,21 @@
      "at": "2026-11-03T00:12:20.278Z",
      "compare": "rounds/contact/r4/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "contact",
+     "round": 5,
+     "score": 8,
+     "gap": "The pink italic 'next memory.' has no riso-blue misregistered copy behind it (the bar's 'Liew' does, offset 0.45vw/0.3vw, multiply), so the closing headline reads flatter and less printed than the opening.",
+     "notes": "Final frame meets the bar: email and GitHub are the largest, clearest elements with pink underlines and an arrow; say-hi note points at them without crowding; strip, heart and star frame the right side; dusk reads as the same wall later, with lower purple-blue leaf shadows. Mid-scroll (14): the strip's drop shadow is a hard, flat grey slab offset ~150px to the right, reading as a separate card rather than a shadow; it tightens by the final frame but is still slightly slab-like. The plaster panel seam runs vertically just right of the heading. Left half of the wall is evenly lit with no gobo, a touch flat next to the bar. No console errors or failed chapters.",
+     "at": "2026-11-03T00:20:06.184Z",
+     "compare": "rounds/contact/r5/compare.jpg",
+     "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Met the bar at 8 in round 5. For the type pass: riso-blue offset on the italic \"next memory.\". For smoothing: strip drop shadow reads as a solid grey slab mid-scroll; plaster seam beside the heading."
   }
  },
- "updated": "2026-11-03T00:12:20.279Z"
+ "updated": "2026-11-03T00:20:17.271Z"
 }
