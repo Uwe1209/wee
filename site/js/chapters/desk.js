@@ -21,7 +21,7 @@ const backOut = (t) => {
 // settled state, so every piece sits inside the frame whatever the aspect.
 // Wide: the copy owns the left 40%; the memories fill 0.47..0.96 in a loose
 // two-column spread. Narrow: the copy runs full width up top, so the memories
-// gather in the lower part of the frame, above the sheet's bottom edge.
+// gather in the lower part of the frame.
 const SPREAD = {
   wide: {
     'gators-riso': { at: [0.585, 0.29], width: 0.215, rot: -0.05 },
@@ -171,6 +171,17 @@ export class DeskChapter {
     const sheet = new THREE.Mesh(new THREE.PlaneGeometry(18, (18 * 1260) / 2048), new THREE.MeshStandardMaterial({ map: tex.paper, roughness: 0.95 }));
     sheet.receiveShadow = true;
     page.add(sheet);
+    // Narrow screens see past the sheet's edges, so they get a larger sheet at the
+    // same texel scale, wrapped mirrored. It is flipped left to right so the
+    // texture's clean edge (dot grid in phase) is the mirror line in view.
+    const wide = new THREE.PlaneGeometry(30, 24);
+    const uv = wide.attributes.uv;
+    for (let i = 0; i < uv.count; i += 1) {
+      uv.setXY(i, (9 - (uv.getX(i) * 30 - 13)) / 18, (uv.getY(i) * 24 - 12 + 5.537) / 11.074);
+    }
+    wide.translate(2, 0, 0);
+    this.sheetShapes = { wide: sheet.geometry, narrow: wide };
+    this.sheet = sheet;
     this.page = page;
 
     const sun = new THREE.SpotLight(0xffc28a, 5.2, 0, 0.55, 0.25, 0);
@@ -237,6 +248,11 @@ export class DeskChapter {
     this.camera.aspect = aspect;
     this.camera.fov = aspect < 1 ? 44 : 26;
     this.camera.updateProjectionMatrix();
+    if (aspect < 1 && this.sheet.geometry !== this.sheetShapes.narrow) {
+      this.sheet.geometry = this.sheetShapes.narrow;
+      this.sheet.material.map.wrapS = this.sheet.material.map.wrapT = THREE.MirroredRepeatWrapping;
+      this.sheet.material.map.needsUpdate = true;
+    } else if (aspect >= 1) this.sheet.geometry = this.sheetShapes.wide;
     this.layout();
   }
 
