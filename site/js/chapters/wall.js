@@ -91,8 +91,9 @@ const ABOUT_AIM = [1.5, -1.4];
 // in the gap between the copy and the memories, not across a face.
 // In the opening (`day`) the phone's window is also thrown larger (the sun
 // `back` times as far off the wall), so one pane holds the name, the memories
-// and the tagline, with bars only across the top chrome and the chips.
-const NARROW_AIM = { day: [-2.2, 0.4], back: 1.6, about: [0, 2.1], dusk: [0, -1.5] };
+// and the tagline; its frame only shades the top-right chrome and the corner
+// below the chips.
+const NARROW_AIM = { day: [-2.4, 0.4], back: 1.8, about: [0, 2.1], dusk: [0, -1.5] };
 const WIDE_AIM = { day: [0, 0], back: 1, about: [0, 0], dusk: [0, 0] };
 
 // Cross-fades two baked windows into one target, so the sun's window can
