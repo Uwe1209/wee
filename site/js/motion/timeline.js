@@ -99,7 +99,7 @@ export const STATES = {
   flash: 1.83,
   strip: 2.45,
   taped: 3.25,
-  about: 5.6,
+  about: 5.4,
   'to-room': 6.45,
   spex: 6.95,
   buildup: 7.4,
