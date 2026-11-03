@@ -4,6 +4,12 @@
 //   node tools/film.mjs --out workbench/film/full.mp4 --w 1920 --h 1080 --dpr 1
 //   node tools/film.mjs --out /tmp/fast.mp4 --w 960 --h 540            # fast low-res pass
 //   node tools/film.mjs --out /tmp/smoke.mp4 --w 480 --h 270 --limit 30  # smoke test (first 30 frames)
+//   node tools/film.mjs --out /tmp/range.mp4 --w 960 --h 540 --from 900 --to 1100  # frames [900, 1100) of the full plan
+//
+// A range jumps to the plan's value --pre frames (default 90) before --from and
+// plays those frames unrecorded, so the damped scroll arrives at --from moving
+// exactly as it does in the full film. The .json log keeps the full-plan frame
+// number as `g` next to the film-local `f`.
 //
 // Playwright's fake clock is paused once the page is ready, so time only moves
 // when we say: exactly one 16 ms animation frame per video frame. Scroll is fed
@@ -71,13 +77,25 @@ await page.clock.pauseAt(new Date('2026-11-02T17:10:00+08:00'));
 const total = await page.evaluate(() => window.__app.layout.total);
 await page.evaluate(() => window.__app.restart());
 
-const schedule = args.limit ? plan(total).slice(Number(args.from ?? 0), Number(args.from ?? 0) + Number(args.limit)) : plan(total);
+const fullPlan = plan(total);
+const from = Number(args.from ?? 0);
+const to = args.to !== undefined ? Number(args.to) : args.limit ? from + Number(args.limit) : fullPlan.length;
+const schedule = fullPlan.slice(from, to);
+if (from > 0) {
+  const pre = Math.min(from, Number(args.pre ?? 90));
+  await page.evaluate((v) => window.__app.goto(v), fullPlan[from - pre]);
+  for (let f = from - pre; f < from; f += 1) {
+    await page.evaluate((v) => window.__app.setScroll(v), fullPlan[f]);
+    await page.clock.runFor(FRAME_MS);
+  }
+  console.log(`film: pre-rolled ${pre} frames from v ${fullPlan[from - pre].toFixed(3)}`);
+}
 console.log(`film: ${schedule.length} frames (${(schedule.length / FPS).toFixed(1)} s) at ${width * dpr}x${height * dpr}`);
 const ffmpeg = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'png', '-i', '-',
   '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
 
 const log = [];
-let last = -1;
+let last = from > 0 ? fullPlan[from - 1] : -1;
 const started = Date.now();
 for (let f = 0; f < schedule.length; f += 1) {
   const target = schedule[f];
@@ -90,7 +108,7 @@ for (let f = 0; f < schedule.length; f += 1) {
   const png = await page.screenshot({ type: 'png' });
   if (!ffmpeg.stdin.write(png)) await new Promise((resolve) => ffmpeg.stdin.once('drain', resolve));
   const state = await page.evaluate(() => window.__app.scroll());
-  log.push({ f, target: +target.toFixed(4), v: +state.v.toFixed(4) });
+  log.push({ f, g: f + from, target: +target.toFixed(4), v: +state.v.toFixed(4) });
   if (f % 120 === 0) {
     const rate = (f + 1) / ((Date.now() - started) / 1000);
     console.log(`frame ${f}/${schedule.length}  v ${state.v.toFixed(2)}  ${rate.toFixed(2)} fps  eta ${((schedule.length - f) / rate / 60).toFixed(1)} min`);
@@ -99,5 +117,5 @@ for (let f = 0; f < schedule.length; f += 1) {
 ffmpeg.stdin.end();
 await new Promise((resolve) => ffmpeg.on('close', resolve));
 writeFileSync(out.replace(/\.mp4$/, '.json'), `${JSON.stringify({ width, height, dpr, fps: FPS, frameMs: FRAME_MS, frames: log, problems }, null, 0)}\n`);
-console.log(`wrote ${out} in ${((Date.now() - started) / 60000).toFixed(1)} min${problems.length ? `, ${problems.length} page errors` : ''}`);
+console.log(`wrote ${out} in ${((Date.now() - started) / 60000).toFixed(1)} min (${((Date.now() - started) / schedule.length).toFixed(0)} ms/frame)${problems.length ? `, ${problems.length} page errors` : ''}`);
 await browser.close();
