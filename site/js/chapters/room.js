@@ -30,6 +30,13 @@ const SPACING = 7.4;
 const STAND = 6.5;
 const DWELL = 0.85; // 0 = constant speed; 0.85 = 0.15× speed at each card
 const SIZE = new THREE.Vector2();
+// Phones: the info card owns the lower half of the screen, so at each stop the
+// camera turns to put the card itself (caption lip included) centred across
+// the frame and in its upper half (about y 0.18-0.53), with a wider lens so it
+// fits whole. Constant offsets: the flight keeps its shape and its pace.
+// A filed card also lifts and slides further (`file`), since the turned lens
+// would otherwise catch its blank back in the top-right corner as it leaves.
+const NARROW = { fov: 66, step: 0.9, aim: [1.45, -1.08], file: { lift: 1.6, slide: 1.6 } };
 
 // The hall, in world units: side walls at x = left and right, floor and ceiling
 // heights, and its two ends (behind the first camera key, far past the last card).
@@ -865,7 +872,7 @@ export class RoomChapter {
 
   resize(aspect) {
     this.camera.aspect = aspect;
-    this.camera.fov = aspect < 1 ? 58 : 36;
+    this.camera.fov = aspect < 1 ? NARROW.fov : 36;
     this.camera.updateProjectionMatrix();
   }
 
@@ -887,7 +894,11 @@ export class RoomChapter {
     const t = clamp01((c + 1) / (this.keyCount - 1));
     this.camera.position.copy(this.posCurve.getPoint(t));
     const look = this.lookCurve.getPoint(t);
-    if (this.camera.aspect < 1) this.camera.position.x += 0.9;
+    if (this.camera.aspect < 1) {
+      this.camera.position.x += NARROW.step;
+      look.x += NARROW.aim[0];
+      look.y += NARROW.aim[1];
+    }
     this.camera.lookAt(look);
 
     const { uCards, uCardSun } = this.sun;
@@ -896,6 +907,11 @@ export class RoomChapter {
       mesh.position.set(home.x, home.y + Math.sin(time * 0.6 + j) * 0.05, home.z);
       mesh.rotation.set(0, mesh.userData.yaw, mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012);
       if (j < this.cards.length - 1) fileAway(mesh, c - j);
+      if (j < this.cards.length - 1 && this.camera.aspect < 1) {
+        const drift = smooth(clamp01((c - j - FILE.driftFrom) / FILE.driftSpan));
+        mesh.position.x += drift * NARROW.file.slide;
+        mesh.position.y += drift * NARROW.file.lift;
+      }
       mesh.updateMatrixWorld();
       uCards.value[j].copy(mesh.matrixWorld).invert();
       uCardSun.value[j].copy(SUN).transformDirection(uCards.value[j]);
