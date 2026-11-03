@@ -70,7 +70,7 @@ const SKY_SHADE = 0.5;
 
 export const ROOM_LOOK = {
   bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 0.9, contrast: 1.05,
-  lift: [0.022, 0.029, 0.036], gain: [1.0, 0.99, 0.97], grain: 0.055, vignette: 0.45,
+  lift: [0.028, 0.027, 0.032], gain: [1.0, 0.99, 0.97], grain: 0.055, vignette: 0.45,
 };
 
 // A card's caption (0..1) at flight offset d = c - j. It comes up on the way in,
@@ -103,6 +103,15 @@ const fileAway = (mesh, d) => {
   mesh.position.y += drift * FILE.lift;
   mesh.position.z += (Math.sin(yaw) - Math.sin(rest)) * half - turn * FILE.recede;
 };
+
+// Prints further down the hall are already part-way developed (the image starts
+// to come through from the top), so the queue reads as real photos waiting; each
+// finishes developing as the camera comes up to it.
+// The undeveloped tint is shown at the lit brightness but in its own colour (the
+// photo-neutral step), so it carries the warmth of the lit paper itself: the paper
+// border's hue, a little greyer.
+const DEVELOP_BASE = 0.4;
+const UNDEVELOPED = new THREE.Color(0.72, 0.52, 0.36);
 
 const cardSpot = (index) => new THREE.Vector3(1.6 + (index % 2 ? 0.08 : -0.08), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
 
@@ -594,6 +603,11 @@ export class RoomChapter {
       mesh.geometry.dispose();
       mesh.geometry = curledSheet(size.width, size.height);
       coat(mesh.material, glint);
+      // Undeveloped prints down the hall: warm photo paper with a faint latent image,
+      // not flat grey (which reads lavender against the warm room).
+      const { tone, haze } = mesh.material.userData;
+      if (tone) tone.latent.value = 1;
+      if (haze) haze.copy(UNDEVELOPED);
       this.sun.uCardHalf.value[index].set(size.width / 2, size.height / 2);
       const spot = cardSpot(index);
       mesh.position.copy(spot);
@@ -839,7 +853,7 @@ export class RoomChapter {
       uCards.value[j].copy(mesh.matrixWorld).invert();
       uCardSun.value[j].copy(SUN).transformDirection(uCards.value[j]);
       const develop = mesh.material.userData.develop;
-      if (develop) develop[0] = smooth(progress(c, [j - 0.95, j - 0.3]));
+      if (develop) develop[0] = DEVELOP_BASE + (1 - DEVELOP_BASE) * smooth(progress(c, [j - 0.95, j - 0.3]));
     });
     this.focus = this.cards.map((_, j) => focusOn(c - j));
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
