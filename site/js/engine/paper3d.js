@@ -28,6 +28,11 @@ const DEVELOP_HEAD = /* glsl */ `
 uniform vec4 uRects[DEV_COUNT];
 uniform float uDevelop[DEV_COUNT];
 uniform vec3 uHaze;
+uniform float uMono;   // 0 colour, 1 black and white (the orange date imprint keeps its colour)
+uniform float uLatent; // 0 flat haze, 1 a faint latent image in the undeveloped haze
+uniform float uNeutral; // photo areas only: 0 lit like the paper, 1 the print's own colours at the lit brightness
+uniform float uPhotoGain;
+float devPhotoMask = 0.0;
 float devHash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 float devNoise(vec2 p) {
   vec2 i = floor(p);
@@ -40,6 +45,7 @@ const DEVELOP_MAP = /* glsl */ `
 #ifdef USE_MAP
   vec4 sampledDiffuseColor = texture2D( map, vMapUv );
   float developed = 1.0;
+  float inPhoto = 0.0;
   for (int i = 0; i < DEV_COUNT; i++) {
     vec4 r = uRects[i];
     vec2 size = max(r.zw - r.xy, vec2(1e-4));
@@ -48,10 +54,30 @@ const DEVELOP_MAP = /* glsl */ `
     float wave = devNoise(local * vec2(3.0, 4.0) + float(i) * 7.0) * 0.35;
     float reveal = clamp(uDevelop[i] * 1.8 - (1.0 - local.y) * 0.45 - wave, 0.0, 1.0);
     developed = mix(developed, reveal * reveal * (3.0 - 2.0 * reveal), inside);
+    inPhoto = max(inPhoto, inside);
   }
-  sampledDiffuseColor.rgb = mix(uHaze, sampledDiffuseColor.rgb, developed);
+  devPhotoMask = inPhoto;
+  vec3 photo = sampledDiffuseColor.rgb;
+  float photoLuma = dot(photo, vec3(0.2126, 0.7152, 0.0722));
+  float imprint = smoothstep(0.55, 0.75, photo.r - photo.b) * smoothstep(0.7, 0.9, photo.r);
+  photo = mix(photo, vec3(photoLuma), uMono * inPhoto * (1.0 - imprint));
+  vec3 haze = mix(uHaze, uHaze * (0.8 + 0.4 * photoLuma), uLatent);
+  sampledDiffuseColor.rgb = mix(haze, photo, developed);
   diffuseColor *= sampledDiffuseColor;
 #endif`;
+
+// Warm sun on an already warm photo compounds: skin goes terracotta and white
+// shirts amber while the paper round them stays cream. In the photo area the
+// lit brightness is kept, but its colour is pulled back toward the print's own.
+const PHOTO_NEUTRAL = /* glsl */ `
+{
+  float litLuma = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
+  vec3 own = diffuseColor.rgb + 0.02;
+  vec3 neutralLit = own * (litLuma / dot(own, vec3(0.2126, 0.7152, 0.0722)));
+  float k = uNeutral * devPhotoMask;
+  outgoingLight = mix(outgoingLight, neutralLit, k) * mix(1.0, uPhotoGain, devPhotoMask);
+}
+#include <opaque_fragment>`;
 
 // A print whose photo area(s) can be undeveloped (0) to developed (1).
 export const printMaterial = (map, rects = [], { gloss = 0.35, roughness = 0.55, alphaTest = 0, transparent = false } = {}) => {
@@ -65,14 +91,20 @@ export const printMaterial = (map, rects = [], { gloss = 0.35, roughness = 0.55,
     uRects: { value: rects.map((r) => new THREE.Vector4(...r)) },
     uDevelop: { value: develop },
     uHaze: { value: new THREE.Color(0.66, 0.65, 0.62) },
+    uMono: { value: 0 },
+    uLatent: { value: 0 },
+    uNeutral: { value: 0.85 },
+    uPhotoGain: { value: 1.35 },
   };
   material.userData.develop = develop;
   material.userData.haze = uniforms.uHaze.value;
+  material.userData.tone = { mono: uniforms.uMono, latent: uniforms.uLatent, neutral: uniforms.uNeutral, gain: uniforms.uPhotoGain };
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\n#define DEV_COUNT ${count}\n${DEVELOP_HEAD}`)
-      .replace('#include <map_fragment>', DEVELOP_MAP);
+      .replace('#include <map_fragment>', DEVELOP_MAP)
+      .replace('#include <opaque_fragment>', PHOTO_NEUTRAL);
   };
   material.customProgramCacheKey = () => `develop-${count}`;
   return material;

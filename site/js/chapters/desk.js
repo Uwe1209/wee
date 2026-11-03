@@ -1,7 +1,7 @@
 // The scrapbook: a dot-grid page on the desk, the same window light falling
 // across it. Dodgeball memories get slapped onto the page as you scroll.
 import * as THREE from 'three';
-import { TIMELINE as T, clamp01, lerp, progress, smooth } from '../motion/timeline.js';
+import { STATES, TIMELINE as T, clamp01, lerp, progress, smooth } from '../motion/timeline.js';
 import { texture } from '../engine/textures.js';
 import { card, instantRect, place, sticker, tape } from '../engine/paper3d.js';
 
@@ -14,6 +14,41 @@ const backOut = (t) => {
   const c = 1.4;
   return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2;
 };
+
+// The settled page, designed as a spread in screen space: each piece's centre
+// [u, v] (0..1 from the top-left of the frame), its width as a share of the
+// frame's width, and its tilt. Placement is solved through the camera at the
+// settled state, so every piece sits inside the frame whatever the aspect.
+// Wide: the copy owns the left 40%; the memories fill 0.47..0.96 in a loose
+// two-column spread. Narrow: the copy runs full width up top, so the memories
+// gather in the lower part of the frame, above the sheet's bottom edge.
+const SPREAD = {
+  wide: {
+    'gators-riso': { at: [0.585, 0.29], width: 0.215, rot: -0.05 },
+    'certificate-instant': { at: [0.805, 0.33], width: 0.15, rot: 0.06 },
+    'team-instant': { at: [0.565, 0.7], width: 0.15, rot: -0.035 },
+    'coaching-instant': { at: [0.735, 0.7], width: 0.125, rot: 0.045 },
+    'ticket-outreach': { at: [0.862, 0.795], width: 0.165, rot: -0.09 },
+    'sticker-star': { at: [0.737, 0.16], width: 0.036, rot: 0.2 },
+    'sticker-heart': { at: [0.884, 0.47], width: 0.03, rot: -0.2 },
+    'sticker-sparkle': { at: [0.683, 0.445], width: 0.026, rot: 0.15 },
+  },
+  narrow: {
+    'gators-riso': { at: [0.32, 0.56], width: 0.48, rot: -0.05 },
+    'certificate-instant': { at: [0.77, 0.58], width: 0.32, rot: 0.06 },
+    'team-instant': { at: [0.27, 0.76], width: 0.34, rot: -0.035 },
+    'coaching-instant': { at: [0.6, 0.77], width: 0.26, rot: 0.045 },
+    'ticket-outreach': { at: [0.75, 0.84], width: 0.36, rot: -0.06 },
+    'sticker-star': { at: [0.6, 0.49], width: 0.08, rot: 0.2 },
+    'sticker-heart': { at: [0.92, 0.68], width: 0.07, rot: -0.2 },
+    'sticker-sparkle': { at: [0.1, 0.86], width: 0.06, rot: 0.15 },
+  },
+};
+const SPREAD_STATE = STATES.scrapbook; // the camera pose the spread is solved for
+
+// A memory falls toward the page along the line of sight, so it lands where it
+// was seen in the air; it starts this share of the way to the eye.
+const DROP = { rise: 0.16, slide: 0.35 };
 
 // The sun is low, so a memory still in the air would throw its real shadow far
 // across the page. While it drops it casts none; a soft shadow rides under it
@@ -125,7 +160,7 @@ export class DeskChapter {
     scene.background = new THREE.Color(0x4a3526);
     this.scene = scene;
     const names = [
-      'paper', 'gobo-desk', 'gators-riso', 'game-riso', 'team-instant', 'certificate-instant', 'coaching-instant',
+      'paper', 'gobo-desk', 'gators-riso', 'team-instant', 'certificate-instant', 'coaching-instant', 'ticket-outreach',
       'tape-cream', 'tape-pink', 'tape-blue', 'tape-yellow', 'sticker-star', 'sticker-heart', 'sticker-sparkle',
     ];
     const tex = {};
@@ -155,21 +190,24 @@ export class DeskChapter {
     sun.shadow.normalBias = 0.012;
     sun.shadow.radius = 5; // soft edge, like paper an inch from the wall
     sun.shadow.intensity = 0.62; // shadows the eye barely notices
-    scene.add(sun, sun.target, new THREE.HemisphereLight(0xc9d4ea, 0x8a6a50, 1.05));
+    scene.add(sun, sun.target, new THREE.HemisphereLight(0xb8b6b8, 0x7a5644, 1.0));
     this.sun = sun;
 
+    // In drop order: the riso and the hero polaroid first, the ticket and the stickers last.
     const items = [
-      { mesh: card(tex['gators-riso'], 2.6, { alphaTest: 0.5, gloss: 0, roughness: 0.92, lift: 0.4 }), at: { x: 1.9, y: 1.25, rot: -0.06 }, tape: ['pink', -0.95, 0.9, -0.6] },
-      { mesh: card(tex['certificate-instant'], 1.85, { rects: [instantRect(tex['certificate-instant'].userData.size, 1.2)], lift: 0.4 }), at: { x: 4.75, y: 1.5, rot: 0.07 }, tape: ['cream', 0, 1.3, 0.05] },
-      { mesh: card(tex['game-riso'], 2.6, { alphaTest: 0.5, gloss: 0, roughness: 0.92, lift: 0.3 }), at: { x: 2.3, y: -1.5, rot: 0.05 }, tape: ['yellow', 1.05, 0.75, 0.5] },
-      { mesh: card(tex['coaching-instant'], 1.7, { rects: [instantRect(tex['coaching-instant'].userData.size, 1.3)], lift: 0.5 }), at: { x: 6.6, y: -0.1, rot: -0.05 }, tape: ['blue', 0, 1.33, -0.1] },
-      { mesh: card(tex['team-instant'], 2.05, { rects: [instantRect(tex['team-instant'].userData.size, 0.8)], lift: 0.4 }), at: { x: 5.05, y: -1.75, rot: -0.04 }, tape: ['cream', -0.6, 1.0, -0.2] },
-      { mesh: sticker(tex['sticker-star'], 0.7), at: { x: 3.55, y: 2.55, z: 0.06, rot: 0.2 } },
-      { mesh: sticker(tex['sticker-heart'], 0.6), at: { x: 7.0, y: -2.5, z: 0.06, rot: -0.2 } },
-      { mesh: sticker(tex['sticker-sparkle'], 0.45), at: { x: 0.55, y: -2.75, z: 0.06, rot: 0.15 } },
+      { name: 'gators-riso', mesh: card(tex['gators-riso'], 2.6, { alphaTest: 0.5, gloss: 0, roughness: 0.92, lift: 0.4 }), tape: ['pink', -0.95, 0.9, -0.6] },
+      { name: 'certificate-instant', mesh: card(tex['certificate-instant'], 1.85, { rects: [instantRect(tex['certificate-instant'].userData.size, 1.2)], lift: 0.4 }), tape: ['cream', 0, 1.3, 0.05] },
+      { name: 'team-instant', mesh: card(tex['team-instant'], 2.05, { rects: [instantRect(tex['team-instant'].userData.size, 0.8)], lift: 0.4 }), tape: ['yellow', -0.6, 1.0, -0.35] },
+      { name: 'coaching-instant', mesh: card(tex['coaching-instant'], 1.7, { rects: [instantRect(tex['coaching-instant'].userData.size, 1.3)], lift: 0.5 }), tape: ['blue', 0, 1.33, -0.1] },
+      { name: 'ticket-outreach', mesh: card(tex['ticket-outreach'], 2.2, { gloss: 0, roughness: 0.9, lift: 0.25 }), tape: ['cream', 1.0, 0.3, 1.2] },
+      { name: 'sticker-star', mesh: sticker(tex['sticker-star'], 0.7), z: 0.06 },
+      { name: 'sticker-heart', mesh: sticker(tex['sticker-heart'], 0.6), z: 0.06 },
+      { name: 'sticker-sparkle', mesh: sticker(tex['sticker-sparkle'], 0.45), z: 0.06 },
     ];
-    this.items = items.map(({ mesh, at, tape: tapeSpec }, index) => {
-      place(page, mesh, { z: 0.08 + index * 0.012, ...at });
+    this.items = items.map(({ name, mesh, z, tape: tapeSpec }, index) => {
+      place(page, mesh, { z: (z ?? 0.08) + index * 0.012 });
+      mesh.userData.spread = name;
+      mesh.userData.width = mesh.userData.size.width;
       if (tapeSpec) {
         const [color, x, y, rot] = tapeSpec;
         const strip = tape(tex[`tape-${color}`], 0.62);
@@ -199,13 +237,43 @@ export class DeskChapter {
     this.camera.aspect = aspect;
     this.camera.fov = aspect < 1 ? 44 : 26;
     this.camera.updateProjectionMatrix();
+    this.layout();
   }
 
-  update(v) {
+  pose(v) {
     const drift = smooth(progress(v, [T.sections.scrapbook[0] - 0.4, T.sections.scrapbook[1]]));
     const narrow = this.camera.aspect < 1 ? 3.2 : 0;
     this.camera.position.set(lerp(0, 0.6, drift) + narrow, lerp(-2.6, -2.1, drift), lerp(15.4, 14.6, drift) + narrow);
     this.camera.lookAt(lerp(0, 0.5, drift) + narrow, 0.15, 0);
+    this.camera.updateMatrixWorld();
+  }
+
+  // Where the line of sight through screen point [u, v] meets the plane at height z.
+  onPage(u, v, z) {
+    const eye = this.camera.position;
+    const ray = new THREE.Vector3(u * 2 - 1, 1 - v * 2, 0.5).unproject(this.camera).sub(eye);
+    return eye.clone().addScaledVector(ray, (z - eye.z) / ray.z);
+  }
+
+  // Solves the spread for the camera at the settled state: rest spots and sizes.
+  layout() {
+    if (!this.items) return;
+    const spread = this.camera.aspect < 1 ? SPREAD.narrow : SPREAD.wide;
+    this.pose(SPREAD_STATE);
+    this.items.forEach((mesh) => {
+      const { at: [u, v], width, rot } = spread[mesh.userData.spread];
+      const z = mesh.userData.rest.z;
+      const centre = this.onPage(u, v, z);
+      const span = this.onPage(u + width / 2, v, z).x - this.onPage(u - width / 2, v, z).x;
+      mesh.scale.setScalar(span / mesh.userData.width);
+      mesh.userData.size = { width: span, height: (span * mesh.userData.size.height) / mesh.userData.size.width };
+      Object.assign(mesh.userData.rest, { x: centre.x, y: centre.y, rot });
+    });
+  }
+
+  update(v) {
+    this.pose(v);
+    const eye = this.camera.position;
 
     // Each memory drops onto the page in turn and lands with a small bounce.
     const [start, end] = T.scrapbook.settle;
@@ -215,7 +283,8 @@ export class DeskChapter {
       const t = clamp01((v - (start + index * step)) / (step * 3));
       const land = backOut(t);
       mesh.visible = t > 0;
-      mesh.position.set(rest.x, rest.y + (1 - land) * 0.6, rest.z + (1 - smooth(t)) * 2.4);
+      const rise = DROP.rise * (1 - smooth(t));
+      mesh.position.set(lerp(rest.x, eye.x, rise), lerp(rest.y, eye.y, rise) + (1 - land) * DROP.slide, lerp(rest.z, eye.z, rise));
       mesh.rotation.z = rest.rot + (1 - land) * mesh.userData.spinIn;
       const develop = mesh.material.userData.develop;
       if (develop) develop[0] = smooth(clamp01(t * 1.6 - 0.4));

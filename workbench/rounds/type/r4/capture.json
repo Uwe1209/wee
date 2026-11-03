@@ -1,0 +1,22 @@
+{
+ "element": "type",
+ "round": 4,
+ "url": "http://localhost:8080/workbench/rounds/type/r4/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/type/r4/hello.jpg",
+  "workbench/rounds/type/r4/about.jpg",
+  "workbench/rounds/type/r4/spex.jpg",
+  "workbench/rounds/type/r4/scrapbook.jpg",
+  "workbench/rounds/type/r4/contact.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 178824,
+ "at": "2026-11-03T05:05:03.430Z"
+}
