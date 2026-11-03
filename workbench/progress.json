@@ -77,6 +77,16 @@
      "at": "2026-11-02T13:25:37.964Z",
      "compare": "rounds/flight/r4/compare.jpg",
      "strip": "rounds/flight/r4/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 5,
+     "score": 7,
+     "gap": "On the approach to PetAid (v~8.97) the camera pushes so close that the card fills the right half and is cut off at the right edge and bottom while its caption is already on screen; the dolly into each card should stop at the pinned framing instead of overshooting into a crop (Little Lemon does the same at v10.95).",
+     "notes": "Mood is strong: warm raking beams, window-gobo pools on the floor, dust, bright far window, and the window never sits behind captions. Pinned framings (spex, kacha, herbarium, lemon) are right of centre, fully in frame and clear of the left 40%. Kacha's photo area is a washed-out flat grey-beige with only a logo, so it reads as a blank print rather than a screenshot; the HaoJia and PetAid cards are type-only with no screenshot. Gloss sheen is a soft streak but the develop/curl reads weakly. Near-to-far depth in the queue of cards behind is good. Caption fades at v8.58 leave the copy dim while the card is already mid-frame.",
+     "at": "2026-11-03T00:36:15.208Z",
+     "compare": "rounds/flight/r5/compare.jpg",
+     "strip": "rounds/flight/r5/strip.jpg"
     }
    ],
    "status": "open"
@@ -452,5 +462,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T00:35:27.760Z"
+ "updated": "2026-11-03T00:36:15.208Z"
 }
