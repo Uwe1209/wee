@@ -1,0 +1,8 @@
+{
+ "element": "phone",
+ "round": 6,
+ "score": 7.5,
+ "gap": "On the about screen the bottom third (portrait, degree note, 3.49 badge, coursework list) sits under a dark window-bar shadow and the coursework and degree notes render at roughly 5-7px, unreadable on a phone and repeating the card above; enlarge or cut those notes and move the light so that zone is lit.",
+ "notes": "hello/taped: the MEMORIES 2024-2026 label is lost in the dark top vignette, the hello photos are small (about 110pt wide, so faces are tiny), and the gap where the photo will land plus the four corner marks leave a large empty middle. about: the mono meta line wraps to an orphan '3.49'. scrapbook: the card is tall and dense but readable. The halftone group photo is very contrasty, so faces are hard to make out. spex and contact are well composed, with readable backings, body text at 16px or more and no clipping. No console errors.",
+ "at": "2026-11-03T14:50:34.721Z"
+}

@@ -1,0 +1,23 @@
+{
+ "element": "phone",
+ "round": 6,
+ "url": "http://localhost:8080/workbench/rounds/phone/r6/snapshot/index.html?capture&dpr=2",
+ "viewport": [
+  390,
+  844,
+  2
+ ],
+ "frames": [
+  "workbench/rounds/phone/r6/hello.jpg",
+  "workbench/rounds/phone/r6/taped.jpg",
+  "workbench/rounds/phone/r6/about.jpg",
+  "workbench/rounds/phone/r6/spex.jpg",
+  "workbench/rounds/phone/r6/scrapbook.jpg",
+  "workbench/rounds/phone/r6/contact.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 66605,
+ "at": "2026-11-03T14:50:15.434Z"
+}
