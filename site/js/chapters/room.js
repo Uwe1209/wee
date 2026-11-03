@@ -453,6 +453,10 @@ void main() {
 // wall shows), blurred by the coat's spread, which grows with the distance. So the
 // reflection sits where the real windows would, slides as the camera passes and
 // stretches over the bowed paper. A sharp coat plus a broad, weaker sheen.
+// Share of the gloss (window glint and clearcoat) left on a card's photo area;
+// the border and the bottom lip keep all of it.
+const PHOTO_GLINT = 0.1;
+
 const GLINT_GLSL = /* glsl */ `
 uniform sampler2D uPanes;
 uniform vec4 uBays;
@@ -489,7 +493,11 @@ const GLINT_MAIN = /* glsl */ `
   vec3 mirror = reflect(eye, coatNormal);
   float fresnel = 0.04 + 0.96 * pow(1.0 - saturate(dot(coatNormal, -eye)), 5.0);
   float seen = windowSeen(vRoomWorld, mirror, uGlintSpread.x) + uGlintSpread.z * windowSeen(vRoomWorld, mirror, uGlintSpread.y);
-  outgoingLight += uGlint * fresnel * seen;
+  float onPhoto = 0.0;
+  #ifdef DEV_COUNT
+    onPhoto = devPhotoMask;
+  #endif
+  outgoingLight += uGlint * fresnel * seen * mix(1.0, PHOTO_GLINT, onPhoto);
 }
 `;
 
@@ -505,7 +513,9 @@ const coat = (material, uniforms) => {
       .replace('#include <common>', '#include <common>\nvarying vec3 vRoomWorld;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvRoomWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\n${GLINT_GLSL}`)
+      .replace('#include <common>', `#include <common>\n#define PHOTO_GLINT ${PHOTO_GLINT.toFixed(3)}\n${GLINT_GLSL}`)
+      // The screenshot itself stays crisp: the coat's sheen lives on the paper.
+      .replace('#include <lights_physical_fragment>', '#include <lights_physical_fragment>\n#ifdef DEV_COUNT\nmaterial.clearcoat *= mix(1.0, PHOTO_GLINT, devPhotoMask);\n#endif')
       .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`)
       // The back of a print is plain paper, not the photo seen through it.
       .replace('#include <color_fragment>', '#include <color_fragment>\nif (!gl_FrontFacing) diffuseColor.rgb = vec3(0.94, 0.91, 0.85);');
