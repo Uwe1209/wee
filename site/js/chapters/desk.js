@@ -190,7 +190,7 @@ export class DeskChapter {
     sun.shadow.normalBias = 0.012;
     sun.shadow.radius = 5; // soft edge, like paper an inch from the wall
     sun.shadow.intensity = 0.62; // shadows the eye barely notices
-    scene.add(sun, sun.target, new THREE.HemisphereLight(0xc9d4ea, 0x8a6a50, 1.05));
+    scene.add(sun, sun.target, new THREE.HemisphereLight(0xb8b6b8, 0x7a5644, 1.0));
     this.sun = sun;
 
     // In drop order: the riso and the hero polaroid first, the ticket and the stickers last.

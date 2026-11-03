@@ -23,13 +23,13 @@ const RAIL = new Rail([
 const DAY = { sun: new THREE.Color(0xffc28a), sky: new THREE.Color(0xb5c6e4), ground: new THREE.Color(0x7a5a44), sunIntensity: 6.0, sunY: 7 };
 // The dusk sun rakes: for the contact corner it swings far back along the wall
 // (`reach`) and in close to it (`z`), with a narrower cone (`angle`), so the
-// window lands as long, stretched patches with cool violet shade between them.
+// window lands as long, stretched patches with dusky umber-mauve shade between them.
 // `aim` (along the wall, up) puts the call to action in the window's tall left
 // pane and the mullion in the gap before the strip. The light is warm but not
 // orange, so paper in the sun stays near white; `rake` makes up for the low
 // angle of incidence. All of the geometry changes while the wall is off screen.
 const DUSK = {
-  sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x98a0dc), ground: new THREE.Color(0x584a62), skyIntensity: 1.8,
+  sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x898fab), ground: new THREE.Color(0x5c4e5a), skyIntensity: 1.8,
   sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -1.0], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
 };
 // Where the contact note rests on wide and narrow screens; on a phone it is
