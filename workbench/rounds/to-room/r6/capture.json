@@ -1,0 +1,29 @@
+{
+ "element": "to-room",
+ "round": 6,
+ "url": "http://localhost:8080/workbench/rounds/to-room/r6/snapshot/index.html?capture&dpr=1",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/to-room/r6/6.3.jpg",
+  "workbench/rounds/to-room/r6/6.45.jpg",
+  "workbench/rounds/to-room/r6/6.65.jpg"
+ ],
+ "strip": [
+  "workbench/rounds/to-room/r6/strip-00-v6.1.jpg",
+  "workbench/rounds/to-room/r6/strip-01-v6.207.jpg",
+  "workbench/rounds/to-room/r6/strip-02-v6.314.jpg",
+  "workbench/rounds/to-room/r6/strip-03-v6.421.jpg",
+  "workbench/rounds/to-room/r6/strip-04-v6.529.jpg",
+  "workbench/rounds/to-room/r6/strip-05-v6.636.jpg",
+  "workbench/rounds/to-room/r6/strip-06-v6.743.jpg",
+  "workbench/rounds/to-room/r6/strip-07-v6.85.jpg"
+ ],
+ "failed": [],
+ "problems": [],
+ "ms": 678473,
+ "at": "2026-11-03T05:01:14.986Z"
+}
