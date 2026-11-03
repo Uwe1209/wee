@@ -69,8 +69,8 @@ const SHADE_REACH = 3.6;
 const SKY_SHADE = 0.5;
 
 export const ROOM_LOOK = {
-  bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
-  lift: [0.02, 0.012, 0.008], gain: [1.03, 0.99, 0.94], grain: 0.055, vignette: 0.45,
+  bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 0.9, contrast: 1.05,
+  lift: [0.022, 0.029, 0.036], gain: [1.0, 0.99, 0.97], grain: 0.055, vignette: 0.45,
 };
 
 // A card's caption (0..1) at flight offset d = c - j. It comes up on the way in,
