@@ -34,13 +34,32 @@ const DUSK = {
 };
 // Where the contact note rests (wide screens; phones use NARROW below).
 const CONTACT_NOTE = { x: 27.18, y: -0.75, z: 0.14, rot: 0.05 };
-// Phones: the copy sits on paper in the upper part of the frame, so the about
-// and contact memories are laid out again in the band below it. Like the desk's
+// Phones: the memories are laid out again in their own zone of the frame (the
+// opening between the name and the tagline; about and contact in the band
+// below the copy). Like the desk's
 // spread, each piece is designed in screen space at its chapter's state ([u, v]
 // centre from the top-left, width as a share of the frame's width, tilt, height
 // off the wall) and solved through the narrow camera on resize. Keys are
 // group:texture; null takes the piece off a phone's wall.
 const NARROW = [
+  {
+    // The opening, solved at the end of the flash push (the closest the phone
+    // camera gets before taped; it holds its x until taped, see pose()). Name
+    // above ~0.22, tagline below ~0.73: the memories ring the strip's spot,
+    // every card inside the frame.
+    v: T.flash.push[1],
+    spread: {
+      'flash:strip-color': { at: [0.5, 0.455], width: 0.25, rot: -0.035, z: 0.1 },
+      'hello:poster-instant': { at: [0.19, 0.37], width: 0.32, rot: 0.045, z: 0.1 },
+      'hello:stage-riso': { at: [0.81, 0.33], width: 0.32, rot: -0.05, z: 0.1 },
+      'hello:note-uriis': { at: [0.8, 0.43], width: 0.27, rot: 0.05, z: 0.14 },
+      'hello:gators-instant': { at: [0.81, 0.585], width: 0.29, rot: 0.06, z: 0.1 },
+      'hello:ticket-admit': { at: [0.2, 0.6], width: 0.33, rot: 0.035, z: 0.12 },
+      'hello:sticker-star': { at: [0.32, 0.27], width: 0.1, rot: 0.22, z: 0.16 },
+      'hello:sticker-heart': { at: [0.645, 0.255], width: 0.08, rot: -0.2, z: 0.06 },
+      'hello:sticker-sparkle': { at: [0.94, 0.48], width: 0.06, rot: 0.1, z: 0.06 },
+    },
+  },
   {
     v: STATES.about, // copy down to ~0.62
     spread: {
@@ -205,6 +224,7 @@ export class WallChapter {
     const stripSize = tex['strip-color'].userData.size;
     this.strip = card(tex['strip-color'], 0.98, { rects: stripRects(stripSize), lift: 0.5, segments: [6, 48] });
     this.strip.userData.rest = { x: 2.75, y: 0.0, z: 0.1, rot: -0.035 };
+    this.strip.userData.group = 'flash';
     // Fresh from the booth it is black and white, its frames rising out of a
     // faint latent image; it warms to colour once it is taped up.
     this.strip.material.userData.tone.latent.value = 1;
@@ -216,6 +236,7 @@ export class WallChapter {
     // mount sits just above the strip's own curled corner, so when the strip is
     // pressed home its corners slip under all four and they stay on top.
     const spot = new THREE.Group();
+    this.spot = spot;
     const stripRest = this.strip.userData.rest;
     spot.position.set(stripRest.x, stripRest.y, 0);
     spot.rotation.z = stripRest.rot;
@@ -309,17 +330,23 @@ export class WallChapter {
     this.layout(aspect < 1);
   }
 
-  // About and contact pieces: back at their wide rests, then (phones) solved
-  // from NARROW through the camera at each spread's state.
+  // Every piece back at its wide rest, then (phones) solved from NARROW
+  // through the camera at each spread's state. The strip's spot (corner mounts,
+  // ballpoint note) follows the strip.
   layout(narrow) {
     const names = new Map(Object.entries(this.tex).map(([name, map]) => [map, name]));
-    const pieces = [...this.pieces, this.contactStrip].filter((mesh) => mesh.userData.group !== 'hello');
+    const pieces = [...this.pieces, this.contactStrip, this.strip];
     const rest = (mesh, at, scale, visible) => {
       mesh.userData.rest = { ...at };
       mesh.position.set(at.x, at.y, at.z);
       mesh.rotation.z = at.rot;
       mesh.scale.setScalar(scale);
       mesh.visible = visible;
+      if (mesh === this.strip) {
+        this.spot.position.set(at.x, at.y, 0);
+        this.spot.rotation.z = at.rot;
+        this.spot.scale.setScalar(scale);
+      }
     };
     pieces.forEach((mesh) => {
       mesh.userData.wide ??= { ...mesh.userData.rest };
@@ -357,6 +384,14 @@ export class WallChapter {
     RAIL.sample(v, this.pos, this.lookAt);
     // Portrait screens frame the memories, not the empty wall left of them.
     if (this.camera.aspect < 1) {
+      // Until taped the phone camera only pushes in and out: it holds taped's
+      // x (the key there is at rest, so the hand-over is smooth), so the
+      // opening cluster stays framed while the flash pushes in.
+      if (v < T.about.dolly[0]) {
+        const taped = RAIL.keys[2];
+        this.pos.x = taped.pos.x;
+        this.lookAt.x = taped.look.x;
+      }
       this.pos.x += 3.4;
       this.lookAt.x += 3.4;
       this.pos.z += 2.5;
@@ -473,6 +508,7 @@ export class WallChapter {
   slot() {
     const { x, y, z, rot } = this.strip.userData.rest;
     const { width, height } = this.strip.userData.size;
+    const scale = this.strip.scale.x; // phones lay the strip out larger
     const screen = this.app.renderer.getSize(new THREE.Vector2());
     const at = (along, up) => {
       const point = this.wall.localToWorld(new THREE.Vector3(
@@ -480,7 +516,7 @@ export class WallChapter {
       )).project(this.camera);
       return { x: ((point.x + 1) / 2) * screen.x, y: ((1 - point.y) / 2) * screen.y };
     };
-    const [centre, left, right, top, bottom] = [at(0, 0), at(-width / 2, 0), at(width / 2, 0), at(0, height / 2), at(0, -height / 2)];
+    const [centre, left, right, top, bottom] = [at(0, 0), at((-width * scale) / 2, 0), at((width * scale) / 2, 0), at(0, (height * scale) / 2), at(0, (-height * scale) / 2)];
     return {
       x: centre.x,
       y: centre.y,
