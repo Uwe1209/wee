@@ -96,3 +96,5 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Phone r5: top vignette hides "MEMORIES · 2024 — 2026" and the top-right label; about has an empty shadowed strip above the cards and the portrait/notes sit in window shadow; contact has a hard dark band over the top 40%.
 - Phone r6: hello photos small (~110pt wide); scrapbook riso group photo too contrasty on phone (faces hard to read).
 - Phone r7: taped strip crowds the ADMIT ONE ticket and URIIS photo; corner brackets read as stray triangles; about/contact have a dark shadow band across the middle.
+- Short screens (priority, all modes): at 960x540 the scrapbook Toolbox SHIP and ALSO rows sit below the fold for the whole pin and fade out at 12.8; fit the pinned scrapbook screen to short viewports (scale type or two columns by height).
+- Reduced: dust drifts in the room still (freeze it); flash pulse could be lower; "smile!" shows at 1.7 and the hello cue promises a photo; project captions swap instantly mid photo crossfade (swap at the midpoint).

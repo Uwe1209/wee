@@ -96,7 +96,8 @@ const ABOUT_AIM = [1.5, -1.4];
 // and the tagline; its frame only shades the top-right chrome and the corner
 // below the chips. The about window is thrown larger too (`aboutBack`) and
 // raised, so its bar falls in the gap above the portrait, not across it.
-const NARROW_AIM = { day: [-2.4, 0.4], back: 1.8, about: [0, 5.1], aboutBack: 1.8, dusk: [0, -1.5] };
+const NARROW_AIM = { day: [-2.4, 0.4], back: 1, about: [0, 5.1], aboutBack: 1.8, dusk: [0, -1.5] };
+const NARROW_VIGNETTE = 0.1;
 const WIDE_AIM = { day: [0, 0], back: 1, about: [0, 0], aboutBack: 1, dusk: [0, 0] };
 
 // Cross-fades two baked windows into one target, so the sun's window can
@@ -156,7 +157,7 @@ export class WallChapter {
       'sticker-sparkle', 'sticker-star-pink', 'ticket-admit', 'poster-instant', 'strip-color', 'stage-riso', 'note-uriis',
       'gators-instant', 'portrait-instant', 'card-swinburne', 'card-courses', 'note-looking', 'badge-cgpa', 'strip-contact',
       'note-hello',
-      'gobo-hello', 'photo-corner', 'note-spot', 'gobo-dusk', 'gobo-about',
+      'gobo-hello', 'photo-corner', 'note-spot', 'gobo-dusk', 'gobo-about', 'gobo-hello-phone',
     ];
     const tex = {};
     await Promise.all(names.map(async (name) => {
@@ -198,6 +199,9 @@ export class WallChapter {
     this.sun = sun;
     this.sky = sky;
     this.aboutWindow = windowBlend(tex.gobo, tex['gobo-about']);
+    // Phones open on their own window (drawn for the phone frame), so the about
+    // window fades in from that one.
+    this.aboutWindowPhone = windowBlend(tex['gobo-hello-phone'], tex['gobo-about']);
 
     const ink = { tape: (name) => tex[`tape-${name}`] };
     const pieces = [];
@@ -419,8 +423,10 @@ export class WallChapter {
     // about window fading in over the day's, and out after the leak hides the wall.
     const about = smooth(progress(v, T.about.light.in)) * (1 - smooth(progress(v, T.about.light.out)));
     const aboutFade = smooth(progress(v, T.about.light.fade));
-    if (about > 0 && aboutFade < 1) this.aboutWindow.draw(this.app.renderer, aboutFade);
-    const aboutMap = aboutFade < 1 ? this.aboutWindow.texture : this.tex['gobo-about'];
+    const narrow = this.camera.aspect < 1;
+    const aboutWindow = narrow ? this.aboutWindowPhone : this.aboutWindow;
+    if (about > 0 && aboutFade < 1) aboutWindow.draw(this.app.renderer, aboutFade);
+    const aboutMap = aboutFade < 1 ? aboutWindow.texture : this.tex['gobo-about'];
     const nudge = this.camera.aspect < 1 ? NARROW_AIM : WIDE_AIM;
     const day = (1 - about) * (1 - corner);
     const follow = this.lookAt.x * 0.88 + (DUSK.aim[0] + nudge.dusk[0]) * corner + (ABOUT_AIM[0] + nudge.about[0]) * about + nudge.day[0] * day;
@@ -434,7 +440,8 @@ export class WallChapter {
     }
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
-    this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? aboutMap : this.tex.gobo;
+    const dayMap = narrow ? this.tex['gobo-hello-phone'] : v < T.flash.fire ? this.tex['gobo-hello'] : this.tex.gobo;
+    this.sun.map = corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? aboutMap : dayMap;
     // The note under the spot retires under the same white.
     this.spotNote.visible = v < T.flash.fire;
     this.sun.color.copy(DAY.sun).lerp(DUSK.sun, dusk);
@@ -469,6 +476,9 @@ export class WallChapter {
 
     // Anticipation: the room dims a touch during the countdown.
     const dim = smooth(progress(v, [T.flash.countdown[0], T.flash.fire])) * (1 - smooth(progress(v, [T.flash.fire, T.flash.fire + 0.05])));
+    // Phones: a lighter vignette, so the label row and the chips at the frame's
+    // edges stay in the light.
+    this.look.vignette = narrow ? NARROW_VIGNETTE : WALL_LOOK.vignette;
     this.look.exposure = WALL_LOOK.exposure * (1 - 0.14 * dim) * lerp(0.35, 1, settle) * lerp(1, 0.94, dusk);
     // The warmth is in the sun, not the grade: a warm gain would turn paper coral.
     this.look.gain = [WALL_LOOK.gain[0], WALL_LOOK.gain[1], WALL_LOOK.gain[2] + 0.01 * dusk];

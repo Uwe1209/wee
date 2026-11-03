@@ -705,10 +705,21 @@
      "at": "2026-11-03T10:36:20.687Z",
      "compare": "rounds/reduced/r2/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "reduced",
+     "round": 3,
+     "score": 7,
+     "gap": "At a short desktop viewport (960x540) the scrapbook still never shows the bottom of the Toolbox: the SHIP and ALSO rows sit below the fold for the whole pin and fade out at ~12.8 before any scroll could bring them up, so that copy is unreachable in reduced mode.",
+     "notes": "1080p stills are composed and close to the bar (hello, spex, scrapbook, contact all well lit, copy in light). Motion check at 960x540 without capture: no camera flight, held frames differ only by grain (~2/255 mean), transitions are plain cross-fades with no empty or black frames, scroll steps between project stills are single cross-fades (~16-20/255). Flash is a single soft pulse (mean luma 135->148->136 over 0.2vh), not a strobe but still visible; could go lower. The countdown word 'smile!' still appears at 1.7 over the photobooth strip, and the hello cue promises 'scroll to take a photo' that never happens in reduced mode. In the room still, dust motes keep drifting with time (max pixel change 145 at fixed scroll). During a project cross-fade the DOM copy swaps instantly while the photo is still ghosted, so captions double up (SPEX/BuildUp). Top-right SCRAPBOOK label on the wall reads dark-on-shadow. No console errors, no failed chapters.",
+     "at": "2026-11-03T15:28:10.036Z",
+     "compare": "rounds/reduced/r3/compare.jpg",
+     "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (7.5, 7, 7). Fixed along the way: resize flash, quality-only resizes no longer drop the pending scroll, crossfades between stills. For smoothing: scrapbook Toolbox overflows short screens (all modes); freeze dust in reduced; lower the reduced flash pulse; hide countdown/\"smile!\" and the \"scroll to take a photo\" cue in reduced; swap project captions at the crossfade midpoint."
   }
  },
- "updated": "2026-11-03T15:22:18.699Z"
+ "updated": "2026-11-03T15:28:26.415Z"
 }
