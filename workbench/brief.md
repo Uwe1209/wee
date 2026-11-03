@@ -77,3 +77,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Flight: kacha card's photo area reads as washed-out beige with only a logo (check the kacha bake: crop a real screen from the repo). HaoJia and PetAid cards are type only. Caption still dim at 8.58 while the card is centred.
 - Contact at 1440x900: "say hi!" note's bottom edge touches the footer line. At 1280x720 the footer orphans "LIEW".
 - Type: display headlines use straight apostrophes ("Hi, I'm", "Let's"); use curly ones. Big gap in about between intro paragraph and degree meta.
+- Phone spex: the SPEX project card overlaps the polaroid caption "SPEX: catch it…" (phone element).
