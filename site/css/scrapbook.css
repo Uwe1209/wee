@@ -1,5 +1,5 @@
 /* ---- scrapbook: the desk ---- */
-.sec-scrapbook .screen { padding: calc(var(--vh) * 11) var(--pad) 0; }
+.sec-scrapbook .screen { padding: var(--chapter-top) var(--pad) 0; }
 .sec-scrapbook .title { font-size: 5.4vw; }
 .role { margin-top: 2.2vw; max-width: 34vw; }
 .role h3 { font: 400 2.5vw/1 var(--serif); }

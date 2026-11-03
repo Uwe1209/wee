@@ -10,6 +10,8 @@
   --wall: #d9c7ad;
   --vh: 1vh;
   --pad: 4.4vw;
+  /* One top margin for every chapter opening: the kicker starts here. */
+  --chapter-top: calc(var(--vh) * 11);
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --serif: 'Instrument Serif', Georgia, serif;
   --sans: 'Inter Tight', system-ui, sans-serif;

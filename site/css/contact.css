@@ -1,5 +1,5 @@
 /* ---- contact: the wall at dusk ---- */
-.sec-contact .block { padding-top: calc(var(--vh) * 18); max-width: 52vw; }
+.sec-contact .block { padding-top: var(--chapter-top); max-width: 52vw; }
 /* Two balanced lines; the italic pair never splits, so 'memory.' can't sit alone. */
 .sec-contact .title { text-wrap: balance; }
 .sec-contact .title em { white-space: nowrap; }
