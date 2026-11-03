@@ -1,6 +1,6 @@
 /* ---- phones: name on top, memories in the middle, words at the bottom ---- */
 @media (max-aspect-ratio: 1/1) {
-  :root { --pad: 6vw; }
+  :root { --pad: 6vw; --chapter-top: calc(var(--vh) * 9); }
   .bar { font-size: 9px; letter-spacing: 0.12em; }
   .bar span:nth-child(3) { display: none; }
   .name { top: calc(var(--vh) * 8); font-size: 17vw; }
@@ -20,7 +20,9 @@
     background: rgba(250, 245, 236, 0.86); padding: 14px 16px; border-radius: 3px; box-shadow: 0 6px 20px rgba(60, 38, 24, 0.12);
   }
   .sec-about .block > * + * { margin-top: 0; }
-  .projects-head { top: calc(var(--vh) * 5); }
+  /* The intro rests lower now (chapter top); keep the goal cards below its taller phone lead. */
+  .sec-about [data-block="about-goal"] { padding-top: calc(var(--vh) * 28); }
+  .projects-head { top: calc(var(--chapter-top) + 14px); } /* level with the kickers inset 14px in their cards */
   .projects-head .hand { font-size: 6vw; }
   .project { top: auto; bottom: calc(var(--vh) * 4); width: auto; right: var(--pad); background: rgba(18, 12, 8, 0.72); padding: 16px; border-radius: 4px; }
   .project h3 { font-size: 10vw; margin: 8px 0 10px; }
@@ -28,7 +30,6 @@
   .stack { gap: 5px; margin-top: 12px; }
   .stack li { padding: 5px 7px; }
   .links { margin-top: 12px; gap: 16px; }
-  .sec-scrapbook .screen { padding-top: calc(var(--vh) * 6); }
   .sec-scrapbook .screen > * { background: rgba(250, 245, 236, 0.88); padding: 12px 14px; border-radius: 3px; }
   .role { margin-top: 10px; }
   .role h3 { font-size: 7vw; }
