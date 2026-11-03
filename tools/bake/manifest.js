@@ -232,6 +232,82 @@ const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240],
   return soft;
 };
 
+// The phone opening's window, painted in screen space. A phone sees only a
+// sliver of the hello window (gobo px ~495-660 x 255-765), so a regular window
+// there is a blur. Instead the light is drawn where the phone frame wants it
+// (390 x 844 css px, hello and taped averaged) and mapped onto the gobo by the
+// homography `SCREEN` from the frame's corners: a window corner (mullion,
+// sill bar and leaves) on the empty wall right of the name, the sill's shadow in
+// the gap above the collage, and the floor of the window's shade under the
+// chips. The name, collage, tagline and chips sit in open sun.
+const SCREEN = { from: [[495.5, 276], [658.5, 256.5], [497.5, 764.5], [640, 700.5]], to: [[0, 0], [390, 0], [0, 844], [390, 844]] };
+const homography = ([[x0, y0], [x1, y1], [x2, y2], [x3, y3]], [[u0, v0], [u1, v1], [u2, v2], [u3, v3]]) => {
+  const rows = [];
+  [[x0, y0, u0, v0], [x1, y1, u1, v1], [x2, y2, u2, v2], [x3, y3, u3, v3]].forEach(([x, y, u, v]) => {
+    rows.push([x, y, 1, 0, 0, 0, -u * x, -u * y, u]);
+    rows.push([0, 0, 0, x, y, 1, -v * x, -v * y, v]);
+  });
+  for (let c = 0; c < 8; c += 1) {
+    const pivot = rows.slice(c).reduce((best, row, i) => (Math.abs(row[c]) > Math.abs(rows[best][c]) ? c + i : best), c);
+    [rows[c], rows[pivot]] = [rows[pivot], rows[c]];
+    for (let r = 0; r < 8; r += 1) {
+      if (r === c) continue;
+      const k = rows[r][c] / rows[c][c];
+      for (let j = c; j < 9; j += 1) rows[r][j] -= k * rows[c][j];
+    }
+  }
+  const h = rows.map((row, i) => row[8] / row[i]);
+  return (x, y) => {
+    const w = h[6] * x + h[7] * y + 1;
+    return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
+  };
+};
+const phoneHelloGobo = () => {
+  const size = 1024;
+  const canvas = makeCanvas(size, size);
+  const ctx = canvas.getContext('2d');
+  const image = ctx.createImageData(size, size);
+  const toScreen = homography(SCREEN.from, SCREEN.to);
+  const step = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const segment = (px, py, [ax, ay], [bx, by]) => {
+    const dx = bx - ax; const dy = by - ay;
+    const t = Math.min(1, Math.max(0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+  };
+  const rand = random(17);
+  const leaves = [];
+  const leaf = (x0, x1, y0, y1, n) => {
+    for (let k = 0; k < n; k += 1) {
+      leaves.push({ x: x0 + rand() * (x1 - x0), y: y0 + rand() * (y1 - y0), a: rand() * Math.PI, rx: 16 + rand() * 18, ry: 6 + rand() * 5 });
+    }
+  };
+  leaf(262, 380, 70, 170, 9); // in the window corner, clear of the labels
+  leaf(250, 400, 826, 870, 5); // in the shade under the chips
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const [sx, sy] = toScreen(x + 0.5, y + 0.5);
+      let lit = 1;
+      // Sill bar: in the gap between the name and the collage, rising a little to the right.
+      lit *= step(9, 19, Math.abs(sy - (199 - 0.05 * (sx - 195))));
+      // Mullion: down the gap between the two label groups, stopping at the sill.
+      if (sy < 205) lit *= step(8, 17, segment(sx, sy, [238, -60], [219, 200]));
+      // Shade below the window, under the chips.
+      lit *= 1 - step(812, 838, sy);
+      for (const { x: lx, y: ly, a, rx, ry } of leaves) {
+        const dx = sx - lx; const dy = sy - ly;
+        const u = (dx * Math.cos(a) + dy * Math.sin(a)) / rx;
+        const v = (-dx * Math.sin(a) + dy * Math.cos(a)) / ry;
+        lit *= 0.15 + 0.85 * step(0.8, 1.25, Math.hypot(u, v));
+      }
+      const i = (y * size + x) * 4;
+      const value = Math.round(255 * lit);
+      image.data[i] = value; image.data[i + 1] = value; image.data[i + 2] = value; image.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+  return canvas;
+};
+
 // Photo-album corner mount: a pocket of glossy black paper whose front is a
 // right triangle, right angle at the top left (the scene turns a copy to each
 // corner). The long edge is the pocket's lip and catches the light; `pad`
@@ -420,6 +496,7 @@ export const TEXTURES = {
     }),
   },
   'gobo-hello': { make: () => windowGobo({ nudge: { 5: [20, 0] } }), quality: 0.9 },
+  'gobo-hello-phone': { make: () => phoneHelloGobo(), quality: 0.9 },
 
   // --- the flash: the fresh strip, black and white
   'strip-mono': { make: (p) => photoStrip(memoryFrames(p), { look: 'mono', stamp: "'26 11 02", label: 'YOU WEE LIEW  ·  KUCHING  ·  02 11 26', seed: 4 }) },
