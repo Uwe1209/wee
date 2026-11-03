@@ -40,7 +40,8 @@
   .sec-about [data-block="about-intro"] { transform: rotate(-1.1deg); }
   /* The goal is a second note, pinned just under the intro; its tape crosses the intro's torn edge. */
   .sec-about [data-block="about-goal"] { padding-top: calc(var(--vh) * 19.5); transform: rotate(0.9deg); }
-  .sec-scrapbook .screen { rotate: -0.8deg; transform-origin: 50% 25%; translate: -10px 0; } /* re-centred after the tilt */
+  /* The scrapbook sheet stays square: its parts are separate layers (each has its
+     own reveal transform), and a tilt on the sheet steps their edges apart. */
   .sec-contact .block > div { rotate: 1deg; }
   /* Tape: masking (cream, see-through) and washi (riso pink / blue with white stripes), torn ends. */
   .sec-about .block > :first-child::before, .sec-scrapbook .screen > :first-child::before, .sec-contact .block > div::before {
@@ -69,7 +70,7 @@
   .role h3 { font-size: 6vw; }
   .role .meta { font-size: 10px; letter-spacing: 0.08em; margin: 4px 0; }
   .role p:not(.meta) { font-size: 16px; line-height: 1.36; }
-  .skills dl { gap: 2px 10px; }
+  .skills dl { grid-template-columns: 70px 1fr; gap: 2px 12px; } /* a fixed label column */
   .skills dd { font-size: 16px; line-height: 1.25; }
   .contact-links a { font-size: 6vw; overflow-wrap: anywhere; } /* the full address fits a 390 px screen */
   .footer { font-size: 9px; margin-top: 18px; max-width: none; }
