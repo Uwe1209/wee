@@ -14,8 +14,8 @@ const RAIL = new Rail([
   { v: 0, pos: [-2.63, 0, 13.36], look: [-0.68, 0, 0.5] },
   { v: T.flash.push[1], pos: [-1.35, 0.12, 11.6], look: [0.75, 0.05, 0.45] },
   { v: T.about.dolly[0], pos: [-1.9, 0.04, 12.7], look: [0.05, 0, 0.5] },
-  { v: T.about.dolly[1], pos: [12.15, -1.47, 13.8], look: [14.15, -1.5, 0.5] },
-  { v: T.about.dolly[2], pos: [12.45, -1.45, 13.6], look: [14.35, -1.5, 0.5] },
+  { v: T.about.dolly[1], pos: [12.0, -1.47, 13.9], look: [14.0, -1.5, 0.5] },
+  { v: T.about.dolly[2], pos: [12.55, -1.45, 13.4], look: [14.45, -1.5, 0.5] },
   { v: T.transitions.deskToWall[0], pos: [25.6, -0.05, 12.8], look: [27.6, 0, 0.5] },
   { v: T.total, pos: [26.3, 0.0, 11.7], look: [28.1, 0, 0.5] },
 ]);

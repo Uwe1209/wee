@@ -481,7 +481,37 @@ export const TEXTURES = {
       { image: p.poster, zoom: 1.75, focusX: 0.75, focusY: 0.4 }, { image: p.portrait, focusY: 0.44 },
     ], { look: 'color', stamp: "'26 11 02", seed: 9 }),
   },
-  'note-hello': { make: () => note('say hi! ↓', { width: 420, font: '600 76px Caveat', seed: 53 }) },
+  // The contact note sits between the strip and the links; its ballpoint arrow
+  // leaves the note's left end and hooks up and left, at the email.
+  'note-hello': {
+    make: () => {
+      const canvas = makeCanvas(500, 190);
+      const ctx = canvas.getContext('2d');
+      roughRect(ctx, 6, 6, 488, 178, { jitter: 2.5, step: 12, seed: 53 });
+      ctx.fillStyle = '#fbf6ea';
+      ctx.fill();
+      ctx.fillStyle = INK;
+      ctx.strokeStyle = INK;
+      ctx.font = '600 80px Caveat';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('say hi!', 330, 102);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(196, 128);
+      ctx.quadraticCurveTo(110, 150, 52, 58);
+      ctx.stroke();
+      const back = Math.atan2(150 - 58, 110 - 52);
+      ctx.beginPath();
+      ctx.moveTo(52 + Math.cos(back + 0.55) * 34, 58 + Math.sin(back + 0.55) * 34);
+      ctx.lineTo(52, 58);
+      ctx.lineTo(52 + Math.cos(back - 0.5) * 34, 58 + Math.sin(back - 0.5) * 34);
+      ctx.stroke();
+      return canvas;
+    },
+  },
   // The dusk window, thrown at a grazing angle: the left column is one tall pane
   // (both bars bridged), widened to the left, so the call to action sits in one
   // long patch of sun; the right column's bars and leaves rake across the strip.
