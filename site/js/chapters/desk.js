@@ -37,11 +37,12 @@ const SPREAD = {
     // The copy sheet owns the frame down to ~0.71; the memories get the band
     // below it. A phone has room for two, large: the team riso and the
     // certificate. Pieces left out of a spread stay off the page.
-    'gators-riso': { at: [0.33, 0.85], width: 0.62, rot: -0.04 },
-    'certificate-instant': { at: [0.8, 0.852], width: 0.34, rot: 0.06 },
-    'sticker-star': { at: [0.655, 0.75], width: 0.075, rot: 0.2 },
-    'sticker-heart': { at: [0.95, 0.965], width: 0.065, rot: -0.2 },
-    'sticker-sparkle': { at: [0.05, 0.975], width: 0.055, rot: 0.15 },
+    // Inset enough that the camera's drift through the pin (a slow push) keeps both whole.
+    'gators-riso': { at: [0.35, 0.835], width: 0.56, rot: -0.035 },
+    'certificate-instant': { at: [0.795, 0.84], width: 0.32, rot: 0.06 },
+    'sticker-star': { at: [0.64, 0.745], width: 0.07, rot: 0.2 },
+    'sticker-heart': { at: [0.92, 0.94], width: 0.06, rot: -0.2 },
+    'sticker-sparkle': { at: [0.09, 0.95], width: 0.05, rot: 0.15 },
   },
 };
 const SPREAD_STATE = STATES.scrapbook; // the camera pose the spread is solved for
