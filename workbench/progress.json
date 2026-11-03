@@ -107,6 +107,16 @@
      "at": "2026-11-03T05:28:04.891Z",
      "compare": "rounds/flight/r7/compare.jpg",
      "strip": "rounds/flight/r7/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 8,
+     "score": 7.5,
+     "gap": "The far end of the corridor is a dead, near-black void: there is no bright far window or glow at the vanishing point, so the room has no depth anchor and all the light comes from the side windows.",
+     "notes": "Strong round: warm raking beams, gobo patches on the floor and dust carry the golden-hour mood; at all four held states the card sits right of centre, fully in frame, screenshot readable, clear of the caption column. Tape, develop and gloss streak read well, and the near/far stacking gives depth. Secondary issues: the paper borders look flat and evenly lit (no curl or lifted-corner shading compared with the bar); at v6.995 the SPEX card swings past the camera, strongly foreshortened and clipped at the top, which feels close to a whip; at v10.95 the card overlaps the window and the window blows it out on the right; between cards (v8.6-9.0) the caption fades out while the next card is still small and far away, so the frame reads empty. No console errors or failed chapters.",
+     "at": "2026-11-03T05:45:51.912Z",
+     "compare": "rounds/flight/r8/compare.jpg",
+     "strip": "rounds/flight/r8/strip.jpg"
     }
    ],
    "status": "open"
@@ -563,10 +573,21 @@
      "at": "2026-11-03T05:36:47.706Z",
      "compare": "rounds/look/r3/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "look",
+     "round": 4,
+     "score": 7,
+     "gap": "In the kacha room the window panes sit at a dull cream-grey (~196,181,162) and never clip to a blooming white, while the hero card's photo is the brightest thing on screen and reads milky/lavender-washed, so the light source has no halation and the bloom sits on the wrong object.",
+     "notes": "Wall chapters (hello, taped, scrapbook) now track the bar closely: warm lit plaster, cool grey-brown window shadows, fine visible grain, no banding seen. Skin tones natural on the wall; scrapbook photos are a touch faded/peachy. Contact wall is flat peach and slightly more orange than the bar's #ece0cd lit plaster, with purple-grey top shadow. Room blacks deep and not crushed (~30,28,31) but room shadows lean red-brown rather than cool. Dust motes and floor glow under the card add a little haze to the lower right of kacha.",
+     "at": "2026-11-03T05:45:43.217Z",
+     "compare": "rounds/look/r4/compare.jpg",
+     "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (6, 7, 7, 7). Wall chapters now track the bar. Open for smoothing: room window panes never clip or bloom while the near card photo is the brightest object (lift window emissive, cap card photo highlights); scrapbook photos a little faded/peachy; contact lit wall slightly orange."
   }
  },
- "updated": "2026-11-03T05:36:47.706Z"
+ "updated": "2026-11-03T05:45:54.975Z"
 }
