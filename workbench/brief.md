@@ -86,3 +86,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Look: scrapbook hazy/low-contrast, grey-brown shadow band; contact shadows lean too violet; room dust motes a bit large and bright.
 - Look: milky halation over the right third of the kacha card near the window (halation spreading onto mid-tones).
 - Room window (priority): panes are dull cream-grey (~196,181,162), never clip or bloom, while the near card photo is the brightest thing and looks milky. Raise window emissive/exposure so it clips into bloom; keep PHOTO_NEUTRAL photo gain from making the card brighter than the window.
+- Flight: SPEX card swings past near-whip at 6.995 (foreshortened, cut at top); empty frame between captions 8.6-9.0 while the next card is small; card borders flat with no curl shading vs the bar.
