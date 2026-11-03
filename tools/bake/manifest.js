@@ -276,28 +276,39 @@ const phoneHelloGobo = () => {
   };
   const rand = random(17);
   const leaves = [];
-  const leaf = (x0, x1, y0, y1, n) => {
+  // Leaves along a twig from `a` to `b`, alternating sides, each pointing out
+  // and along it.
+  const twigs = [];
+  const sprig = ([ax, ay], [bx, by], n) => {
+    twigs.push([[ax, ay], [bx, by]]);
+    const along = Math.atan2(by - ay, bx - ax);
     for (let k = 0; k < n; k += 1) {
-      leaves.push({ x: x0 + rand() * (x1 - x0), y: y0 + rand() * (y1 - y0), a: rand() * Math.PI, rx: 16 + rand() * 18, ry: 6 + rand() * 5 });
+      const t = (k + 0.5 + (rand() - 0.5) * 0.4) / n;
+      const side = k % 2 ? 1 : -1;
+      const a = along + side * (0.5 + rand() * 0.5);
+      const rx = 8 + rand() * 7;
+      leaves.push({ x: ax + (bx - ax) * t + Math.cos(a) * rx, y: ay + (by - ay) * t + Math.sin(a) * rx, a, rx, ry: 3.5 + rand() * 2.5 });
     }
   };
-  leaf(262, 380, 70, 170, 9); // in the window corner, clear of the labels
-  leaf(250, 400, 826, 870, 5); // in the shade under the chips
+  sprig([392, 70], [292, 128], 9); // in the window corner, clear of the labels
+  sprig([380, 150], [318, 105], 5);
+  sprig([400, 838], [300, 822], 6); // in the shade under the chips
   for (let y = 0; y < size; y += 1) {
     for (let x = 0; x < size; x += 1) {
       const [sx, sy] = toScreen(x + 0.5, y + 0.5);
       let lit = 1;
       // Sill bar: in the gap between the name and the collage, rising a little to the right.
-      lit *= step(9, 19, Math.abs(sy - (199 - 0.05 * (sx - 195))));
+      lit *= step(5, 17, Math.abs(sy - (197 + 0.035 * (sx - 195))));
       // Mullion: down the gap between the two label groups, stopping at the sill.
-      if (sy < 205) lit *= step(8, 17, segment(sx, sy, [238, -60], [219, 200]));
+      if (sy < 205) lit *= step(6, 15, segment(sx, sy, [238, -60], [219, 200]));
+      for (const [a, b] of twigs) lit *= 0.35 + 0.65 * step(0.6, 2.2, segment(sx, sy, a, b));
       // Shade below the window, under the chips.
       lit *= 1 - step(812, 838, sy);
       for (const { x: lx, y: ly, a, rx, ry } of leaves) {
         const dx = sx - lx; const dy = sy - ly;
         const u = (dx * Math.cos(a) + dy * Math.sin(a)) / rx;
         const v = (-dx * Math.sin(a) + dy * Math.cos(a)) / ry;
-        lit *= 0.15 + 0.85 * step(0.8, 1.25, Math.hypot(u, v));
+        lit *= 0.25 + 0.75 * step(0.7, 1.35, Math.hypot(u, v));
       }
       const i = (y * size + x) * 4;
       const value = Math.round(255 * lit);
