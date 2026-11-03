@@ -24,8 +24,8 @@ export const TIMELINE = {
 
   // Unpinned blocks: the scroll value at which each block's top meets the top of the screen.
   blocks: {
-    'about-intro': 5.08, // the copy rises in while the camera is still gliding (kicker enters ~4.3)
-    'about-goal': 5.78,
+    'about-intro': 5.23, // the copy rises in while the camera is still gliding (kicker enters ~4.45)
+    'about-goal': 5.62, // one block with the intro: all of it on screen together around 5.4
     contact: 14.4,
   },
 
