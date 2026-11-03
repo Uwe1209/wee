@@ -467,10 +467,20 @@
      "at": "2026-11-03T00:35:27.754Z",
      "compare": "rounds/type/r1/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "type",
+     "round": 2,
+     "score": 7,
+     "gap": "Chapter openings have no shared vertical rhythm: the mono kicker sits at y≈40 on about (headline jammed against the top edge), 85 on spex, 128 on scrapbook and 203 on contact, so the kicker-to-title-to-body stack jumps around instead of starting from one top margin.",
+     "notes": "Italic pink words in chapter titles (You Wee., mostly., next memory.) are flat pink with no riso-blue offset, unlike the hero Liew. Scrapbook toolbox category labels (FRONTEND, BACKEND, DATA...) are pink mono on peach and nearly illegible. Scrapbook Facilitator meta wraps leaving SCHOOL alone on a line. Straight apostrophes in display type (Hi, I'm / Let's) instead of curly. Hello top-right SCRAPBOOK N° chrome lost in window shadow. About has a large dead gap between the intro paragraph and the degree meta. Links (pink underline, arrows) read clearly; family usage itself is consistent.",
+     "at": "2026-11-03T00:42:42.336Z",
+     "compare": "rounds/type/r2/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T00:38:14.431Z"
+ "updated": "2026-11-03T00:42:42.337Z"
 }
