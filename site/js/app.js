@@ -129,6 +129,8 @@ export class App {
     this.scroll.setLength((T.total + 1) * height);
     if (v > 0) this.scroll.setTarget(v * height, { instant: true });
     this.api.layout = { vh: height, width, total: T.total, dpr, buffer: [size.x, size.y], sections: T.sections };
+    // Resizing clears the canvas; redraw now so the browser never composites an empty frame.
+    if (this.loop) this.render(this.v);
   }
 
   frame(now) {
