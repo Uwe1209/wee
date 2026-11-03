@@ -38,7 +38,7 @@
     "taped"
    ],
    "strip": {
-    "from": 1.0,
+    "from": 1,
     "to": 3.3,
     "count": 12
    },
@@ -66,8 +66,8 @@
    "track": "wall",
    "states": [
     4.6,
-    5.6,
-    6.1
+    5.4,
+    5.9
    ],
    "strip": {
     "from": 3.25,
@@ -211,7 +211,7 @@
    "track": "wall",
    "states": [
     "to-wall",
-    14.0,
+    14,
     "contact"
    ],
    "bar": [
