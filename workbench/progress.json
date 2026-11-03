@@ -655,10 +655,20 @@
      "at": "2026-11-03T10:14:07.558Z",
      "compare": "rounds/reduced/r1/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "reduced",
+     "round": 2,
+     "score": 7,
+     "gap": "Scene changes inside a chapter are hard cuts, not cross-fades: at v 3.40 the wall swaps from the opening cluster to the about cluster in one frame while 'You Wee Liew' is still on screen (frame diff 29), and in the projects room each card change (7.2, 7.76, 8.25... diff 17-25) jumps instantly; cross-fade between consecutive stills over about 0.15 vh.",
+     "notes": "The five named stills are composed, legible and on par with the animated best frames; spex, scrapbook and contact read as finished compositions. Hold tests show no camera drift (diff about 2-3, grain only). Flash is one soft warm lift (+13 luma at 1.8, gone by 2.0), so no strobe and no white-out. Room to desk (11.0-11.35) and desk to wall (13.0-13.4) are proper cross-fades; wall to room is close to a cut (mostly done between 6.25 and 6.4). No empty or black frames and no console errors. Copy: every text node was visible at some scroll point except one countdown digit ('2'). In the 3.3-3.6 range the hello copy sits over the about cluster, and 4.2, 6.1 and 13.1-13.6 show the wall with no copy at all, which reads as dead scroll. The hello still shows the taped strip but the cue still says 'scroll to take a photo'. SPEX copy appears over the wall at 6.25 before the room arrives.",
+     "at": "2026-11-03T10:36:20.687Z",
+     "compare": "rounds/reduced/r2/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T10:24:20.524Z"
+ "updated": "2026-11-03T10:36:20.688Z"
 }

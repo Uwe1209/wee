@@ -49,7 +49,7 @@ const NARROW = [
     // every card inside the frame.
     v: T.flash.push[1],
     spread: {
-      'flash:strip-color': { at: [0.5, 0.455], width: 0.25, rot: -0.035, z: 0.1 },
+      'flash:strip-color': { at: [0.5, 0.44], width: 0.25, rot: -0.035, z: 0.1 },
       'hello:poster-instant': { at: [0.19, 0.37], width: 0.32, rot: 0.045, z: 0.1 },
       'hello:stage-riso': { at: [0.81, 0.33], width: 0.32, rot: -0.05, z: 0.1 },
       'hello:note-uriis': { at: [0.8, 0.43], width: 0.27, rot: 0.05, z: 0.14 },
@@ -89,8 +89,11 @@ const NARROW = [
 const ABOUT_AIM = [1.5, -1.4];
 // Phones move the window along the wall and up (about, dusk) so its bars fall
 // in the gap between the copy and the memories, not across a face.
-const NARROW_AIM = { about: [0, 2.1], dusk: [0, -1.5] };
-const WIDE_AIM = { about: [0, 0], dusk: [0, 0] };
+// In the opening (`day`) the phone's window is also thrown larger (the sun
+// `back` times as far off the wall), so one pane holds the name, the memories
+// and the tagline, with bars only across the top chrome and the chips.
+const NARROW_AIM = { day: [-2.2, 0.4], back: 1.6, about: [0, 2.1], dusk: [0, -1.5] };
+const WIDE_AIM = { day: [0, 0], back: 1, about: [0, 0], dusk: [0, 0] };
 
 // Cross-fades two baked windows into one target, so the sun's window can
 // change without a visible switch. Only drawn while a fade is under way.
@@ -415,11 +418,16 @@ export class WallChapter {
     if (about > 0 && aboutFade < 1) this.aboutWindow.draw(this.app.renderer, aboutFade);
     const aboutMap = aboutFade < 1 ? this.aboutWindow.texture : this.tex['gobo-about'];
     const nudge = this.camera.aspect < 1 ? NARROW_AIM : WIDE_AIM;
-    const follow = this.lookAt.x * 0.88 + (DUSK.aim[0] + nudge.dusk[0]) * corner + (ABOUT_AIM[0] + nudge.about[0]) * about;
-    const lower = (ABOUT_AIM[1] + nudge.about[1]) * about + nudge.dusk[1] * corner;
+    const day = (1 - about) * (1 - corner);
+    const follow = this.lookAt.x * 0.88 + (DUSK.aim[0] + nudge.dusk[0]) * corner + (ABOUT_AIM[0] + nudge.about[0]) * about + nudge.day[0] * day;
+    const lower = (ABOUT_AIM[1] + nudge.about[1]) * about + nudge.dusk[1] * corner + nudge.day[1] * day;
     this.sun.position.set(follow - lerp(15.6, DUSK.reach, corner), lerp(DAY.sunY, DUSK.sunY, dusk) + lower, lerp(16.5, DUSK.z, corner));
     this.sun.angle = lerp(0.5, DUSK.angle, corner);
     this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);
+    if (nudge.back !== 1 && day > 0) {
+      const target = this.sun.target.position;
+      this.sun.position.sub(target).multiplyScalar(lerp(1, nudge.back, day)).add(target);
+    }
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.
     this.sun.map = v < T.flash.fire ? this.tex['gobo-hello'] : corner > 0 ? this.tex['gobo-dusk'] : about > 0 ? aboutMap : this.tex.gobo;
