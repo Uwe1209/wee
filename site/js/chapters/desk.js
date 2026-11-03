@@ -228,6 +228,10 @@ export class DeskChapter {
         mesh.add(strip);
       }
       mesh.userData.spinIn = (index % 2 ? 1 : -1) * (0.35 + 0.05 * index);
+      // Each memory fades in as it starts to drop (set before the chapter compiles).
+      // A cut-out's alpha test scales with the fade, so its edge stays where it is.
+      mesh.material.transparent = true;
+      mesh.userData.alphaTest = mesh.material.alphaTest;
       mesh.userData.foot = tapeSpec ? 1 : 0.55; // a die-cut sticker shades about a third of its square
       shadeSelf(mesh.material);
       // Undeveloped prints show a faint latent image, not blank grey card.
@@ -310,6 +314,10 @@ export class DeskChapter {
       const t = clamp01((v - (start + index * step)) / (step * 3));
       const land = backOut(t);
       mesh.visible = t > 0 && !mesh.userData.hidden;
+      const shown = smooth(clamp01(t / T.scrapbook.fadeIn));
+      mesh.material.opacity = shown;
+      if (mesh.userData.alphaTest > 0) mesh.material.alphaTest = mesh.userData.alphaTest * Math.max(shown, 0.01);
+      mesh.children.forEach((strip) => { strip.material.opacity = shown; });
       const rise = DROP.rise * (1 - smooth(t));
       mesh.position.set(lerp(rest.x, eye.x, rise), lerp(rest.y, eye.y, rise) + (1 - land) * DROP.slide, lerp(rest.z, eye.z, rise));
       mesh.rotation.z = rest.rot + (1 - land) * mesh.userData.spinIn;
@@ -320,7 +328,10 @@ export class DeskChapter {
       mesh.castShadow = height < AIR_SHADOW.handoff;
       mesh.material.userData.selfShade.value = mesh.castShadow ? 1 : AIR_SHADOW.selfShade;
       shadow.visible = mesh.visible && !mesh.castShadow;
-      if (shadow.visible) this.placeAirShadow(shadow, mesh, height);
+      if (shadow.visible) {
+        this.placeAirShadow(shadow, mesh, height);
+        shadow.material.userData.shadow.uStrength.value *= shown;
+      }
     });
   }
 
@@ -351,6 +362,9 @@ export class DeskChapter {
     this.items.forEach((mesh) => {
       const rest = mesh.userData.rest;
       mesh.visible = !mesh.userData.hidden;
+      mesh.material.opacity = 1;
+      if (mesh.userData.alphaTest > 0) mesh.material.alphaTest = mesh.userData.alphaTest;
+      mesh.children.forEach((strip) => { strip.material.opacity = 1; });
       mesh.position.set(rest.x, rest.y, rest.z);
       mesh.rotation.z = rest.rot;
       const develop = mesh.material.userData.develop;

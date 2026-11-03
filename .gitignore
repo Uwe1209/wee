@@ -5,3 +5,4 @@ workbench/**/frames/
 *.log
 workbench/rounds/*/r*/snapshot/
 __pycache__/
+workbench/film/full.mp4

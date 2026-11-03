@@ -84,6 +84,7 @@ export const TIMELINE = {
 
   scrapbook: {
     settle: [11.35, 12.4],
+    fadeIn: 0.3, // share of each memory's drop over which it fades in, so none pops into the air
   },
 
   contact: {
