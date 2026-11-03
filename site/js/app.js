@@ -29,6 +29,7 @@ const mixLook = (a, b, t) => {
 
 const FALLBACK = new THREE.Color(0xd9c7ad);
 const CROSSFADE = 4;
+const STILL_FADE = 0.15; // vh over which reduced mode cross-fades one still into the next
 
 // The glare opens the lens: exposure lifts, bloom and halation spread its
 // energy, and the vignette eases (the shader vignettes only the scene).
@@ -155,7 +156,8 @@ export class App {
     if (v < tr.wallToRoom[0]) return { a: 'wall' };
     if (v < tr.wallToRoom[1]) {
       const p = progress(v, tr.wallToRoom);
-      return { a: 'wall', b: 'room', mix: smooth(progress(p, [LEAK.peak - LEAK.half, LEAK.peak + LEAK.half])), glare: leakGlare(p), type: 1 };
+      const mix = this.reduced ? p : smooth(progress(p, [LEAK.peak - LEAK.half, LEAK.peak + LEAK.half]));
+      return { a: 'wall', b: 'room', mix, glare: leakGlare(p), type: 1 };
     }
     if (v < tr.roomToDesk[0]) return { a: 'room' };
     if (v < tr.roomToDesk[1]) return { a: 'room', b: 'desk', mix: easeInOut(progress(v, tr.roomToDesk)), type: 2 };
@@ -178,7 +180,24 @@ export class App {
     return T.scrapbook.settle[1] + 0.3;
   }
 
-  draw(name, v, slot) {
+  // Reduced motion: near the cut between two stills of one chapter, the two
+  // stills and how far to fade from the first to the second; null elsewhere.
+  stillFade(name, v) {
+    const half = STILL_FADE / 2;
+    const from = this.stillV(name, v - half);
+    const to = this.stillV(name, v + half);
+    if (from === to) return null;
+    let lo = v - half;
+    let hi = v + half;
+    for (let i = 0; i < 24; i += 1) {
+      const mid = (lo + hi) / 2;
+      if (this.stillV(name, mid) === from) lo = mid;
+      else hi = mid;
+    }
+    return { from, to, mix: smooth(progress(v, [hi - half, hi + half])) };
+  }
+
+  draw(name, v, slot, still) {
     const chapter = this.chapters[name];
     this.renderer.setRenderTarget(slot);
     if (!chapter.ready || this.failed.has(name)) {
@@ -186,7 +205,7 @@ export class App {
       return null;
     }
     try {
-      chapter.update(this.reduced ? this.stillV(name, v) : v, this.time, this.intro);
+      chapter.update(still ?? (this.reduced ? this.stillV(name, v) : v), this.time, this.intro);
       this.renderer.render(chapter.scene, chapter.camera);
       return chapter;
     } catch (error) {
@@ -201,8 +220,15 @@ export class App {
   render(v) {
     const plan = this.plan(v);
     this.drawn = new Set([plan.a, plan.b].filter(Boolean));
-    const a = this.draw(plan.a, v, this.slots[0]);
+    const fade = this.reduced && !plan.b ? this.stillFade(plan.a, v) : null;
+    let a;
     let source = this.slots[0];
+    if (fade) {
+      // The dominant still renders last, so the DOM reads the chapter's state from it.
+      const order = fade.mix < 0.5 ? [[fade.to, 1], [fade.from, 0]] : [[fade.from, 0], [fade.to, 1]];
+      order.forEach(([still, slot]) => { a = this.draw(plan.a, v, this.slots[slot], still) ?? a; });
+      source = this.pipeline.transition(this.slots[0], this.slots[1], fade.mix, CROSSFADE, this.time, 0);
+    } else a = this.draw(plan.a, v, this.slots[0]);
     let look = (a ?? this.chapters.wall).look;
     if (plan.b) {
       const b = this.draw(plan.b, v, this.slots[1]);
