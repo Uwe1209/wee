@@ -377,7 +377,8 @@
      "strip": "rounds/about/r7/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (7, 7, 7). Open for smoothing: the cluster reads as a tidy grid (overlap and layer the pieces); the wall holds still from 4.9 to 5.8 while copy scrolls; bare wall around 4.1; riso-blue offset on \"You Wee.\" (type pass); bloom at 6.25 upper left."
   },
   "contact": {
    "rounds": [
@@ -436,5 +437,5 @@
    "final": "Met the bar at 8 in round 5. For the type pass: riso-blue offset on the italic \"next memory.\". For smoothing: strip drop shadow reads as a solid grey slab mid-scroll; plaster seam beside the heading."
   }
  },
- "updated": "2026-11-03T00:30:41.613Z"
+ "updated": "2026-11-03T00:31:01.593Z"
 }
