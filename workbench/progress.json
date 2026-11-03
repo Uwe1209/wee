@@ -498,10 +498,35 @@
      "at": "2026-11-03T04:56:47.396Z",
      "compare": "rounds/type/r3/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "type",
+     "round": 4,
+     "score": 7,
+     "gap": "In the projects room (spex) the type goes washed out: the SPEX title is a pale grey at low contrast and the body copy and chips are mid-grey on dark wood, so it reads faded next to the crisp ink-on-plaster chapters; give the dark-room text a light-on-dark treatment with real contrast (paper-white title, about 85% body) so it holds the same weight as the other chapters.",
+     "notes": "Faces are consistent everywhere (Instrument Serif, Caveat, JetBrains Mono, Inter Tight) and the kicker sits at the same left margin and height in about, spex, scrapbook and contact. No one-word orphans in headings at 1920. The pink italic accent words in about, scrapbook and contact lack the riso-blue offset copy that hello's 'Liew' has, so the display treatment isn't one system. The hello top-right chrome (KUCHING, SCRAPBOOK N° 12) almost disappears in the gobo shadow. The Facilitator meta line breaks after a dangling '·'. The pink-underlined toolbox labels (FRONTEND, BACKEND...) look like links but aren't. The contact links are clearly links with pink rules. Focus styles can't be checked from stills.",
+     "at": "2026-11-03T05:05:25.276Z",
+     "compare": "rounds/type/r4/compare.jpg",
+     "strip": null
+    }
+   ],
+   "status": "open"
+  },
+  "look": {
+   "rounds": [
+    {
+     "element": "look",
+     "round": 1,
+     "score": 6,
+     "gap": "Photos are orange-soaked. Skin samples at #b15e2c to #b3553b and white shirts at #d19c66 (hello SPEX polaroid, contact strip), so faces read terracotta and whites never get near paper-white. The warm grade needs to stay off photo midtones and highlights so skin looks natural.",
+     "notes": "Wall chapters (hello, taped, scrapbook) otherwise match the bar's light well: raking gobo and warm plaster. Shadows are inconsistent. Hello and taped shadows are dark warm brown (#43322a, darker and less cool than the bible's #6b4a3a shade). Contact's shadows swing to violet (#483a47), so the grade doesn't read as continuous across chapters. Contact wall has a visible hard vertical seam line at about x=580. Kacha room: blacks are deep but hold detail (about #1f120c), and bloom stays on the window and light shafts. The floor sun patches are saturated orange (#df8a51), and a soft glow haze bleeds off the polaroid's right edge. Grain is fine and visible. No obvious banding at capture resolution. Capture was clean: no console errors, no failed chapters.",
+     "at": "2026-11-03T05:05:36.180Z",
+     "compare": "rounds/look/r1/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T05:01:47.688Z"
+ "updated": "2026-11-03T05:05:36.180Z"
 }
