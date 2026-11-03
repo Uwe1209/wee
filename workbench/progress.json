@@ -561,7 +561,8 @@
      "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 on budget after round 4 (6.5, 7, 7.5, 7). The round-4 builder fix (paper-white project captions, 14:1 titles, 10:1 body) and the smoothing pass (riso offsets on all pink italics, curly apostrophes, highlighter toolbox labels, legible hello chrome) were not re-scored by a critic."
   },
   "look": {
    "rounds": [
@@ -742,5 +743,5 @@
    "final": "Stopped at 7 by the two-rounds rule (7.5, 7, 7). Fixed along the way: resize flash, quality-only resizes no longer drop the pending scroll, crossfades between stills. For smoothing: scrapbook Toolbox overflows short screens (all modes); freeze dust in reduced; lower the reduced flash pulse; hide countdown/\"smile!\" and the \"scroll to take a photo\" cue in reduced; swap project captions at the crossfade midpoint."
   }
  },
- "updated": "2026-11-03T15:41:29.137Z"
+ "updated": "2026-11-03T18:10:07.130Z"
 }

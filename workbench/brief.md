@@ -57,9 +57,10 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - [x] Interview
 - [x] Tooling: `tools/serve.py` (threaded, byte ranges), `tools/stills.mjs`, `tools/fetch_fonts.py`
 - [x] Three style frames: `workbench/style-frames/frame-{a,b,c}.png`
-- [ ] User picks a style frame (becomes the art bible)
-- [ ] Build, element by element
-- [ ] Motion QA and film
+- [x] User picks a style frame: B mix C, golden-hour scrapbook (art bible)
+- [x] Build, element by element (12 elements, 67 critic rounds)
+- [x] Smoothing pass, motion QA and 1080p60 film (`workbench/film/`)
+- [x] Final note: `workbench/FINAL.md`
 
 ## Smoothing-pass notes (seams between elements)
 
