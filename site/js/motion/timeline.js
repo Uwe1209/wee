@@ -24,8 +24,8 @@ export const TIMELINE = {
 
   // Unpinned blocks: the scroll value at which each block's top meets the top of the screen.
   blocks: {
-    'about-intro': 5.74,
-    'about-goal': 6.08,
+    'about-intro': 5.44, // the copy rises in while the camera is still gliding (enters ~4.65)
+    'about-goal': 5.78,
     contact: 14.4,
   },
 
@@ -59,16 +59,15 @@ export const TIMELINE = {
   },
 
   about: {
-    // Glide past the opening cluster at about the copy's speed (the wall drifts up
-    // with a gentle camera drop), then settle by the about cluster. Lengthened by
-    // 0.8 vh so the copy never sits on a photo and peak wall speed stays ~1.2x the copy's.
-    // The glide lands on the about cluster's framing by 5.5, while the whole
-    // copy is on screen, then pushes in slowly until the light leak.
-    dolly: [3.25, 5.5, 6.25],
+    // Glide past the opening cluster (the wall drifts up with a gentle camera
+    // drop) while the about copy starts to rise, land on the cluster's framing
+    // by 5.25, then keep a slow drift and push while the copy scrolls, until
+    // the light leak. The copy stays at least ~170 px off every photo.
+    dolly: [3.25, 5.25, 6.25],
     // The sun swings right and down onto the copy column and the about window
     // fades in over the day's: in by the time the copy rises into view, out
     // once the light leak has hidden the wall.
-    light: { in: [4.3, 5.0], fade: [4.3, 4.9], out: [6.42, 6.75] },
+    light: { in: [4.1, 4.75], fade: [4.1, 4.65], out: [6.42, 6.75] },
   },
 
   transitions: {
@@ -137,6 +136,22 @@ export const softPin = (x, length, s = TIMELINE.softness) => {
 export const flashEnvelope = (v, { fire, rise, fade } = TIMELINE.flash) => (v < fire
   ? smooth(progress(v, [fire - rise, fire]))
   : (1 - smooth(progress(v, [fire, fire + fade]))) ** 2);
+
+// Wall to room is light, not a wipe. In fractions of the transition window:
+// the glare builds to its peak exactly as the chapters cross (the swap is
+// centred on the peak, `half` either side, 0.15 vh in all), then decays over
+// the rest of the window and eases out, so the room's darkness arrives as a
+// ramp that settles instead of stopping dead. `veil` is the peak opacity of
+// the DOM veil that washes the page's text out with the flare.
+export const LEAK = { peak: 0.3, half: 0.125, veil: 0.85 };
+export const leakGlare = (p) => {
+  if (p < LEAK.peak) return smooth(p / LEAK.peak) ** 0.45;
+  const q = (p - LEAK.peak) / (1 - LEAK.peak);
+  return (1 - q) ** 1.75 * (1 + 0.75 * q);
+};
+// The same glare keyed on scroll, 0 outside the window. The composite and the
+// DOM veil both read it, so the text washes exactly with the scene.
+export const wallLeak = (v) => leakGlare(progress(v, TIMELINE.transitions.wallToRoom));
 
 // Critically damped approach, frame-rate independent.
 export const damp = (current, target, lambda, dt) => current + (target - current) * (1 - Math.exp(-lambda * dt));

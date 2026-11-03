@@ -1,7 +1,7 @@
 // The DOM half of the page: sections laid out from the timeline, pins,
 // scroll-keyed reveals, the countdown, and project captions that follow the
 // room's camera. Everything is driven from the same frame as WebGL.
-import { TIMELINE as T, clamp01, flashEnvelope, progress, smooth, softPin } from './motion/timeline.js';
+import { LEAK, TIMELINE as T, clamp01, flashEnvelope, progress, smooth, softPin, wallLeak } from './motion/timeline.js';
 
 const opacityStyle = (value) => value.toFixed(3);
 
@@ -10,7 +10,12 @@ const opacityStyle = (value) => value.toFixed(3);
 // page's text whites out with the scene. The warmth of the build and decay
 // comes from the composite showing through as the veil fades. Distances are
 // in frame heights, as in the composite.
-const VEIL = { centre: [255, 252, 244], edge: [251, 239, 218], falloff: 2, edgeOpacity: 1 };
+const VEIL = { centre: [255, 252, 244], edge: [251, 239, 218], falloff: 2, edgeOpacity: 1, origin: [0.5, 0.5] };
+// The light leak drives a second veil in the same way, painted with the
+// leak's colours: centred on the wall's sun in the upper left (where the
+// page's text sits), cream at the source and amber away from it, and clear at
+// the far side so the room keeps reading through the flare.
+const LEAK_VEIL = { centre: [253, 248, 232], edge: [236, 170, 105], falloff: 0.8, edgeOpacity: 0, origin: [0.1, 0.2] };
 
 export class Dom {
   constructor(doc, { reduced }) {
@@ -23,6 +28,11 @@ export class Dom {
     this.counts = [...doc.querySelectorAll('[data-count]')];
     this.countdown = doc.querySelector('.countdown');
     this.veil = doc.querySelector('[data-flash-veil]');
+    // Fixed over the whole frame: the text it washes scrolls through it.
+    this.leakVeil = doc.createElement('canvas');
+    this.leakVeil.setAttribute('aria-hidden', 'true');
+    this.leakVeil.style.cssText = 'position: fixed; inset: 0; width: 100%; height: calc(var(--vh) * 100); pointer-events: none; opacity: 0; visibility: hidden; will-change: opacity;';
+    doc.getElementById('content')?.after(this.leakVeil);
     this.intros = [...doc.querySelectorAll('[data-intro]')];
     this.projects = [...doc.querySelectorAll('[data-project]')];
     this.counter = doc.querySelector('[data-project-counter]');
@@ -51,7 +61,8 @@ export class Dom {
       const start = T.sections[block.closest('[data-section]').dataset.section][0];
       block.style.top = `${(T.blocks[block.dataset.block] - start) * vh}px`;
     });
-    if (this.veil) this.paintVeil(Math.ceil(this.root.clientWidth / 2), Math.ceil(vh / 2));
+    if (this.veil) this.paintVeil(this.veil, VEIL, Math.ceil(this.root.clientWidth / 2), Math.ceil(vh / 2));
+    if (this.leakVeil.isConnected) this.paintVeil(this.leakVeil, LEAK_VEIL, Math.ceil(this.root.clientWidth / 2), Math.ceil(vh / 2));
     // The countdown's box is the strip's slot at a fixed layout size; each
     // frame scales it from that width to the slot's width on screen.
     this.countdownWidth = this.countdown?.offsetWidth ?? 0;
@@ -60,20 +71,19 @@ export class Dom {
   // Painted once per layout at half resolution, never per frame. The gradient
   // is long and slow, so about one level of triangular noise keeps it from
   // banding into rings. The falloff is separable: across times down.
-  paintVeil(width, height) {
+  paintVeil(canvas, palette, width, height) {
     if (!width || !height) return;
-    const canvas = this.veil;
     canvas.width = width;
     canvas.height = height;
     const context = canvas.getContext('2d');
     const image = context.createImageData(width, height);
     const { data } = image;
-    const { centre, edge, falloff, edgeOpacity } = VEIL;
+    const { centre, edge, falloff, edgeOpacity, origin: [ox, oy] } = palette;
     const across = new Float32Array(width);
-    for (let x = 0; x < width; x += 1) across[x] = Math.exp(-falloff * ((x + 0.5 - width / 2) / height) ** 2);
+    for (let x = 0; x < width; x += 1) across[x] = Math.exp(-falloff * ((x + 0.5 - ox * width) / height) ** 2);
     let seed = 0x9e3779b9;
     for (let y = 0, i = 0; y < height; y += 1) {
-      const down = Math.exp(-falloff * ((y + 0.5) / height - 0.5) ** 2);
+      const down = Math.exp(-falloff * ((y + 0.5) / height - oy) ** 2);
       for (let x = 0; x < width; x += 1, i += 4) {
         const glow = across[x] * down;
         seed ^= seed << 13;
@@ -131,6 +141,10 @@ export class Dom {
       const veil = T.flash.veil * smooth(progress(flashEnvelope(v), [0.05, 0.9])) * (this.reduced ? 0.05 : 1);
       this.set(this.veil, '', opacityStyle(veil));
     }
+    // The leak washes the text out with the scene and lets it back as the room
+    // settles. Reduced motion has no leak veil: its composite is a crossfade.
+    const leak = this.reduced ? 0 : LEAK.veil * wallLeak(v) ** 1.5;
+    this.set(this.leakVeil, '', opacityStyle(leak));
 
     // Load-in: each element has a delay (0..1) along the intro.
     this.intros.forEach((el) => {
