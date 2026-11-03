@@ -84,3 +84,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Look: shadow colour inconsistent across chapters (hello/taped #43322a darker than the bible's #6b4a3a; contact violet #483a47). Kacha room floor sun patches very saturated orange (#df8a51); glow bleeds off the kacha polaroid's right edge.
 - Flight: beam haze and card gloss wash out the lower-left of the herbarium and lemon screenshots. Far cards read as a pale clump with no light falloff.
 - Look: scrapbook hazy/low-contrast, grey-brown shadow band; contact shadows lean too violet; room dust motes a bit large and bright.
+- Look: milky halation over the right third of the kacha card near the window (halation spreading onto mid-tones).
