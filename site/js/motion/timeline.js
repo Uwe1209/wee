@@ -24,7 +24,7 @@ export const TIMELINE = {
 
   // Unpinned blocks: the scroll value at which each block's top meets the top of the screen.
   blocks: {
-    'about-intro': 5.44, // the copy rises in while the camera is still gliding (enters ~4.65)
+    'about-intro': 5.08, // the copy rises in while the camera is still gliding (kicker enters ~4.3)
     'about-goal': 5.78,
     contact: 14.4,
   },
@@ -61,13 +61,14 @@ export const TIMELINE = {
   about: {
     // Glide past the opening cluster (the wall drifts up with a gentle camera
     // drop) while the about copy starts to rise, land on the cluster's framing
-    // by 5.25, then keep a slow drift and push while the copy scrolls, until
-    // the light leak. The copy stays at least ~170 px off every photo.
-    dolly: [3.25, 5.25, 6.25],
+    // by 4.9, then keep a slow drift and push while the copy scrolls, until the
+    // light leak. The glide is short enough that the departing gators photo
+    // clears the copy column before the copy reaches it (~80 px clearance).
+    dolly: [3.25, 4.9, 6.25],
     // The sun swings right and down onto the copy column and the about window
     // fades in over the day's: in by the time the copy rises into view, out
     // once the light leak has hidden the wall.
-    light: { in: [4.1, 4.75], fade: [4.1, 4.65], out: [6.42, 6.75] },
+    light: { in: [3.9, 4.5], fade: [3.9, 4.4], out: [6.42, 6.75] },
   },
 
   transitions: {
