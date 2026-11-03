@@ -10,12 +10,13 @@ const opacityStyle = (value) => value.toFixed(3);
 // page's text whites out with the scene. The warmth of the build and decay
 // comes from the composite showing through as the veil fades. Distances are
 // in frame heights, as in the composite.
-const VEIL = { centre: [255, 252, 244], edge: [251, 239, 218], falloff: 2, edgeOpacity: 1, origin: [0.5, 0.5] };
+const VEIL = { centre: [255, 252, 244], edge: [251, 239, 218], falloff: 2, edgeOpacity: 1, origin: [0.5, 0.5], warmth: 1 };
 // The light leak drives a second veil in the same way, painted with the
 // leak's colours: centred on the wall's sun in the upper left (where the
-// page's text sits), cream at the source and amber away from it, and clear at
-// the far side so the room keeps reading through the flare.
-const LEAK_VEIL = { centre: [253, 248, 232], edge: [236, 170, 105], falloff: 0.8, edgeOpacity: 0, origin: [0.1, 0.2] };
+// page's text sits), and clear across most of the frame so the scene keeps
+// reading through the flare. It matches the composite's flare: near white at
+// the source, turning gold quickly (`warmth` steepens the colour falloff).
+const LEAK_VEIL = { centre: [253, 251, 242], edge: [250, 199, 132], falloff: 1.6, edgeOpacity: 0, origin: [0.1, 0.2], warmth: 3 };
 
 export class Dom {
   constructor(doc, { reduced }) {
@@ -78,7 +79,7 @@ export class Dom {
     const context = canvas.getContext('2d');
     const image = context.createImageData(width, height);
     const { data } = image;
-    const { centre, edge, falloff, edgeOpacity, origin: [ox, oy] } = palette;
+    const { centre, edge, falloff, edgeOpacity, origin: [ox, oy], warmth } = palette;
     const across = new Float32Array(width);
     for (let x = 0; x < width; x += 1) across[x] = Math.exp(-falloff * ((x + 0.5 - ox * width) / height) ** 2);
     let seed = 0x9e3779b9;
@@ -86,13 +87,14 @@ export class Dom {
       const down = Math.exp(-falloff * ((y + 0.5) / height - oy) ** 2);
       for (let x = 0; x < width; x += 1, i += 4) {
         const glow = across[x] * down;
+        const tint = glow ** warmth;
         seed ^= seed << 13;
         seed ^= seed >>> 17;
         seed ^= seed << 5;
         const dither = ((seed & 0xffff) + (seed >>> 16)) / 0xffff - 1;
-        data[i] = edge[0] + (centre[0] - edge[0]) * glow + dither;
-        data[i + 1] = edge[1] + (centre[1] - edge[1]) * glow + dither;
-        data[i + 2] = edge[2] + (centre[2] - edge[2]) * glow + dither;
+        data[i] = edge[0] + (centre[0] - edge[0]) * tint + dither;
+        data[i + 1] = edge[1] + (centre[1] - edge[1]) * tint + dither;
+        data[i + 2] = edge[2] + (centre[2] - edge[2]) * tint + dither;
         data[i + 3] = 255 * (edgeOpacity + (1 - edgeOpacity) * glow) + dither;
       }
     }
