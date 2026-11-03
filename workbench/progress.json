@@ -599,10 +599,20 @@
      "at": "2026-11-03T09:44:35.828Z",
      "compare": "rounds/phone/r1/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "phone",
+     "round": 2,
+     "score": 6,
+     "gap": "On About, Scrapbook and Contact the copy is a stack of full-width cream cards that sits over the memories (the portrait is half covered, the dodgeball photos are almost entirely hidden behind the Toolbox card, and the contact strip is tucked under the card), while the bottom 30-45% of each screen is empty wall; move the photos into that empty lower zone so words and memories each get their own space.",
+     "notes": "Hello: good phone composition with name, memories and words in separate zones, but the SPEX polaroid is cut off at the left edge and the URIIS photo at the right; on Taped the ADMIT ONE ticket is clipped and runs into the tagline. The mid-hello corner brackets float with no photo between them, which reads like debris. SPEX is the strongest screen: big photo, readable dark backing, 16px+ body text; the polaroid caption 'SPEX catch it in' runs under the card's meta line. About: the stacked cards are separate slabs with seams, so it looks like a form rather than taped paper; the 3.49 sticker and pink star are clipped at the right edge. Contact: email and GitHub link are large and readable, but the lower half is empty and the dark shadow wedge at the bottom is heavy. No console errors and no failed chapters. Body text meets 16px and nothing scrolls horizontally.",
+     "at": "2026-11-03T09:59:04.128Z",
+     "compare": "rounds/phone/r2/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T09:44:35.828Z"
+ "updated": "2026-11-03T09:59:04.132Z"
 }
