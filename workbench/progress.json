@@ -477,10 +477,20 @@
      "at": "2026-11-03T00:42:42.336Z",
      "compare": "rounds/type/r2/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "type",
+     "round": 3,
+     "score": 7.5,
+     "gap": "In the scrapbook Toolbox, the pink mono category labels (FRONTEND, BACKEND, DATA, SHIP, ALSO) are washed out to near-illegible on the lit wall and sit a few px above the baseline of their Inter Tight values; they need riso-pink at full strength (or ink) and baseline alignment with each row.",
+     "notes": "System is consistent: Instrument Serif display with pink italic, Caveat notes, JetBrains Mono kickers, Inter Tight body, 84px left margin and kicker at the same y on about/spex/scrapbook/contact. Links are clearly links (pink underline + arrow). No one-word orphans in headings. Secondary: Facilitator meta line wraps leaving 'SCHOOL' alone on a second line; hello top-right chrome 'SCRAPBOOK N° 12' and centre 'KUCHING, SARAWAK' nearly vanish in the window shadow; SPEX title and body read greyed/low-contrast on the dark room; 'Hi, I'm You Wee.' and other pink italics lack the riso-blue offset the hero uses (fine if deliberate, but the bible names it for display italics); focus styles not verifiable from stills.",
+     "at": "2026-11-03T04:56:47.396Z",
+     "compare": "rounds/type/r3/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
   }
  },
- "updated": "2026-11-03T00:42:42.337Z"
+ "updated": "2026-11-03T04:56:47.397Z"
 }
