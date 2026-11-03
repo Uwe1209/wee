@@ -61,14 +61,16 @@ const NARROW = [
     },
   },
   {
-    v: STATES.about, // copy down to ~0.62
+    v: STATES.about, // copy down to ~0.6
     spread: {
-      'about:portrait-instant': { at: [0.31, 0.805], width: 0.55, rot: -0.04, z: 0.1 },
-      'about:card-swinburne': { at: [0.79, 0.68], width: 0.4, rot: 0.03, z: 0.12 },
-      'about:badge-cgpa': { at: [0.87, 0.77], width: 0.17, rot: 0.08, z: 0.13 },
-      'about:card-courses': { at: [0.79, 0.88], width: 0.38, rot: -0.03, z: 0.11 },
-      'about:sticker-star-pink': { at: [0.95, 0.955], width: 0.07, rot: -0.3, z: 0.14 },
-      'about:sticker-sparkle': { at: [0.05, 0.64], width: 0.06, rot: 0.2, z: 0.16 },
+      // The degree and coursework cards repeat the copy and can't be read at
+      // phone size, so the portrait takes their room, with the badge on its corner.
+      'about:portrait-instant': { at: [0.42, 0.79], width: 0.56, rot: -0.03, z: 0.1 },
+      'about:badge-cgpa': { at: [0.84, 0.88], width: 0.2, rot: 0.08, z: 0.13 },
+      'about:sticker-star-pink': { at: [0.9, 0.665], width: 0.08, rot: -0.3, z: 0.14 },
+      'about:sticker-sparkle': { at: [0.1, 0.63], width: 0.06, rot: 0.2, z: 0.16 },
+      'about:card-swinburne': null,
+      'about:card-courses': null,
       'about:note-looking': null,
     },
   },
@@ -92,9 +94,10 @@ const ABOUT_AIM = [1.5, -1.4];
 // In the opening (`day`) the phone's window is also thrown larger (the sun
 // `back` times as far off the wall), so one pane holds the name, the memories
 // and the tagline; its frame only shades the top-right chrome and the corner
-// below the chips.
-const NARROW_AIM = { day: [-2.4, 0.4], back: 1.8, about: [0, 2.1], dusk: [0, -1.5] };
-const WIDE_AIM = { day: [0, 0], back: 1, about: [0, 0], dusk: [0, 0] };
+// below the chips. The about window is thrown larger too (`aboutBack`) and
+// raised, so its bar falls in the gap above the portrait, not across it.
+const NARROW_AIM = { day: [-2.4, 0.4], back: 1.8, about: [0, 5.1], aboutBack: 1.8, dusk: [0, -1.5] };
+const WIDE_AIM = { day: [0, 0], back: 1, about: [0, 0], aboutBack: 1, dusk: [0, 0] };
 
 // Cross-fades two baked windows into one target, so the sun's window can
 // change without a visible switch. Only drawn while a fade is under way.
@@ -425,9 +428,9 @@ export class WallChapter {
     this.sun.position.set(follow - lerp(15.6, DUSK.reach, corner), lerp(DAY.sunY, DUSK.sunY, dusk) + lower, lerp(16.5, DUSK.z, corner));
     this.sun.angle = lerp(0.5, DUSK.angle, corner);
     this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);
-    if (nudge.back !== 1 && day > 0) {
+    if (nudge !== WIDE_AIM && (day > 0 || about > 0)) {
       const target = this.sun.target.position;
-      this.sun.position.sub(target).multiplyScalar(lerp(1, nudge.back, day)).add(target);
+      this.sun.position.sub(target).multiplyScalar(1 + (nudge.back - 1) * day + (nudge.aboutBack - 1) * about).add(target);
     }
     // Until the flash, one leaf of the window is nudged off the strip's spot so
     // it waits in clean sun; the swap back happens under the flash's white.

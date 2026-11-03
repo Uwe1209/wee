@@ -53,7 +53,7 @@
   .sec-scrapbook .screen > :first-child::before { left: auto; right: 18px; margin-left: 0; rotate: 6deg; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.42) 0 5px, transparent 5px 11px), rgba(120, 180, 240, 0.8); }
   .sec-contact .block > div::before { left: 30%; rotate: -5deg; background: rgba(255, 214, 90, 0.82); }
   .sec-about .lead { margin-top: 0; }
-  .sec-about .facts { font-size: 11px; line-height: 1.6; }
+  .sec-about .facts { font-size: 11px; line-height: 1.6; letter-spacing: 0.04em; text-wrap: balance; } /* the term line fits one line, so CGPA 3.49 stays whole */
   .projects-head { top: calc(var(--chapter-top) + 14px); } /* level with the kickers inset 14px in their cards */
   .projects-head .hand { font-size: 6vw; }
   .project { top: auto; bottom: calc(var(--vh) * 4); width: auto; right: var(--pad); background: rgba(18, 12, 8, 0.72); padding: 16px; border-radius: 4px; }
