@@ -230,6 +230,9 @@ export class DeskChapter {
       mesh.userData.spinIn = (index % 2 ? 1 : -1) * (0.35 + 0.05 * index);
       mesh.userData.foot = tapeSpec ? 1 : 0.55; // a die-cut sticker shades about a third of its square
       shadeSelf(mesh.material);
+      // Undeveloped prints show a faint latent image, not blank grey card.
+      const tone = mesh.material.userData.tone;
+      if (tone?.latent) tone.latent.value = 1;
       return mesh;
     });
     const quad = new THREE.PlaneGeometry(1, 1);

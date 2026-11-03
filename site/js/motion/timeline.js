@@ -56,6 +56,7 @@ export const TIMELINE = {
     push: [1.0, 1.8], // camera eases toward the empty spot
     peak: 9, // HDR flash intensity
     veil: 1, // peak opacity of the veil that blows the page's text out with the scene (opaque at the peak)
+    reduced: 0.02, // reduced motion: the flash is only a faint lift of the frame and the page
   },
 
   about: {

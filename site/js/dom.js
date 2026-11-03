@@ -39,6 +39,9 @@ export class Dom {
     this.counter = doc.querySelector('[data-project-counter]');
     this.cache = new WeakMap();
     this.vh = window.innerHeight;
+    // Reduced motion never takes the photo (no countdown, no flash), so the cue only says scroll.
+    const cue = doc.querySelector('[data-reveal="hello-cue"]');
+    if (reduced && cue) cue.textContent = 'Scroll ↓';
   }
 
   set(el, transform, opacity) {
@@ -101,7 +104,7 @@ export class Dom {
     context.putImageData(image, 0, 0);
   }
 
-  update(v, intro, room, wall) {
+  update(v, intro, room, wall, dip = 1) {
     const { vh } = this;
     this.pins.forEach((el) => {
       const [a, b] = T.pins[el.dataset.pin];
@@ -123,7 +126,7 @@ export class Dom {
     const flashed = 1 - smooth(progress(v, [T.flash.fire - 0.02, T.flash.fire + 0.02]));
     this.counts.forEach((el, i) => {
       const local = (v - (c0 + i * beat)) / beat;
-      const show = clamp01(local * 4) * (1 - clamp01((local - 0.92) * 6)) * (i === this.counts.length - 1 ? clamp01(flashed) : 1);
+      const show = this.reduced ? 0 : clamp01(local * 4) * (1 - clamp01((local - 0.92) * 6)) * (i === this.counts.length - 1 ? clamp01(flashed) : 1);
       const scale = 0.86 + 0.14 * smooth(clamp01(local * 3));
       this.set(el, this.reduced ? '' : `scale(${scale.toFixed(3)})`, opacityStyle(local < 0 ? 0 : show));
     });
@@ -140,7 +143,7 @@ export class Dom {
     // envelope, is fully opaque for the top of it (about 0.05 vh round the
     // peak, so nothing reads) and is gone before the strip drops in. Reduced motion keeps a gentle fade, as the composite does.
     if (this.veil) {
-      const veil = T.flash.veil * smooth(progress(flashEnvelope(v), [0.05, 0.9])) * (this.reduced ? 0.05 : 1);
+      const veil = T.flash.veil * smooth(progress(flashEnvelope(v), [0.05, 0.9])) * (this.reduced ? T.flash.reduced : 1);
       this.set(this.veil, '', opacityStyle(veil));
     }
     // The leak washes the text out with the scene and lets it back as the room
@@ -162,7 +165,7 @@ export class Dom {
     } else {
       this.projects.forEach((el, j) => {
         const focus = room.focus[j] ?? 0;
-        this.set(el, this.reduced ? '' : `translate3d(0, ${((1 - focus) * 16).toFixed(2)}px, 0)`, opacityStyle(focus));
+        this.set(el, this.reduced ? '' : `translate3d(0, ${((1 - focus) * 16).toFixed(2)}px, 0)`, opacityStyle(focus * dip));
       });
       if (this.counter) {
         const label = `${String(room.active + 1).padStart(2, '0')} / ${String(this.projects.length).padStart(2, '0')}`;

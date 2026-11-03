@@ -10,6 +10,28 @@
 .skills dl { display: grid; grid-template-columns: auto 1fr; gap: 0.45vw 1.2vw; align-items: baseline; }
 .skills dl div { display: contents; }
 .skills dt { font: 700 max(10px, 0.68vw)/1.6 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
-/* Riso pink can't hold 4.5:1 on the lit wall, so the label is ink and the pink is a marker swipe, as on .lead strong. */
-.skills dt { justify-self: start; box-shadow: inset 0 -0.5em 0 rgba(255, 72, 176, 0.42); }
+/* Riso pink can't hold 4.5:1 on the lit wall, so the label is ink on a highlighter
+   block: the full height of the word, a little proud of it, laid on slightly crooked. */
+.skills dt {
+  justify-self: start; padding: 0.05em 0.45em 0.02em; margin-left: -0.45em;
+  background: rgba(255, 72, 176, 0.5); rotate: -1.2deg;
+}
+.skills dl div:nth-child(2n) dt { rotate: 0.9deg; }
 .skills dd { font: 400 max(14px, 1vw)/1.5 var(--sans); }
+/* Short landscape screens (laptops, 720p, 540p): the px floors above outgrow the
+   pinned screen, so the copy sets by height and takes a slightly wider column
+   (still clear of the riso print) to save lines; the whole Toolbox stays on screen. */
+@media (min-aspect-ratio: 1/1) and (max-height: 800px) {
+  .sec-scrapbook .screen { padding-top: calc(var(--vh) * 8); }
+  .sec-scrapbook .screen > div > .kicker { margin-bottom: calc(var(--vh) * 1.2); }
+  .sec-scrapbook .title { font-size: calc(var(--vh) * 8.4); }
+  .role { margin-top: calc(var(--vh) * 3); max-width: 40vw; }
+  .role h3 { font-size: calc(var(--vh) * 4); }
+  .role .meta { font-size: max(10px, calc(var(--vh) * 1.2)); margin: calc(var(--vh) * 0.8) 0; }
+  .role p:not(.meta) { font-size: max(13px, calc(var(--vh) * 2.05)); line-height: 1.42; }
+  .skills { margin-top: calc(var(--vh) * 3.4); max-width: 40vw; }
+  .skills .kicker { margin-bottom: calc(var(--vh) * 1.2); }
+  .skills dl { gap: calc(var(--vh) * 0.7) 1.2vw; }
+  .skills dt { font-size: max(9.5px, calc(var(--vh) * 1.2)); }
+  .skills dd { font-size: max(13px, calc(var(--vh) * 2)); line-height: 1.35; }
+}

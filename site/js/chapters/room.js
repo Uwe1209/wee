@@ -889,7 +889,8 @@ export class RoomChapter {
     return u - (DWELL * Math.sin(2 * Math.PI * (u - 0.5))) / (2 * Math.PI) - 0.5;
   }
 
-  update(v, time) {
+  update(v, clock) {
+    const time = this.app.reduced ? 0 : clock; // reduced motion: cards and dust hold still
     const c = this.flight(v);
     const t = clamp01((c + 1) / (this.keyCount - 1));
     this.camera.position.copy(this.posCurve.getPoint(t));

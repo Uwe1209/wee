@@ -140,11 +140,13 @@ void main() {
     // and the room then rises out of it, its window glowing through.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    float sink = 1.0 - 0.88 * burn;
-    float leave = (1.0 - uMix) * (1.0 - uMix) * sink;
+    // The wall sinks almost entirely; the room only to about 0.7, so its
+    // window and walls read faintly through the top of the flare.
+    float sink = 1.0 - 0.3 * burn;
+    float leave = (1.0 - uMix) * (1.0 - uMix) * (1.0 - 0.88 * burn);
     // Only the room's window (far brighter than any paper) burns through the
     // flare early, so the room's first sign is its light, not its walls.
-    float shine = smoothstep(0.8, 0.95, dot(kb, vec3(0.2126, 0.7152, 0.0722)));
+    float shine = smoothstep(0.6, 0.85, dot(kb, vec3(0.2126, 0.7152, 0.0722)));
     float arrive = mix(uMix * uMix * sink, uMix, shine);
     vec3 k = ka * leave + kb * arrive;
     color = k / max(vec3(1.0) - k, vec3(0.002));
@@ -176,9 +178,9 @@ void main() {
     // spreads as it peaks; the filmic shoulder turns its falloff gold, then amber.
     float hot = 14.0 * burn * exp(-r / mix(0.04, 0.1, burn));
     // Lens character: a soft horizontal streak through the source, and a faint
-    // ghost mirrored through the centre.
+    // ghost riding that streak, mirrored across the frame from the source.
     float streak = exp(-d.y * d.y / 0.0001) * exp(-abs(d.x) * 2.5);
-    float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - 1.0 + sun.y) * aspect));
+    float gr = length(vec2(uv.x - 1.0 + sun.x, (uv.y - sun.y) * aspect));
     float ghost = (1.0 - smoothstep(0.035, 0.05, gr)) * (0.5 + 0.5 * smoothstep(0.02, 0.045, gr));
     color += vec3(1.0, 0.45, 0.15) * wash + vec3(1.0, 0.55, 0.25) * hot + g * (vec3(1.0, 0.5, 0.18) * (halo + streak * 0.6) + vec3(1.0, 0.72, 0.42) * core * 1.6 + vec3(0.9, 0.5, 0.3) * ghost * 0.08);
   } else if (uType < 2.5) {

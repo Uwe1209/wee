@@ -61,3 +61,7 @@ a:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-ra
 .no-webgl .countdown, .no-webgl .cue-wrap, .no-webgl .flash-caption { display: none; }
 .no-webgl .project { margin-top: 6vh; color: var(--ink); }
 .no-webgl .sec-projects { color: var(--ink); }
+/* Display headlines carry the same riso misregistration as the name: the pink
+   face over a solid blue copy, offset down and right (in em, so it scales with each title). */
+.title .riso { margin-left: 0; white-space: nowrap; }
+.title .riso .blue { left: 0.04em; top: 0.026em; }
