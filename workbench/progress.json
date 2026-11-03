@@ -97,6 +97,16 @@
      "at": "2026-11-03T05:06:01.053Z",
      "compare": "rounds/flight/r6/compare.jpg",
      "strip": "rounds/flight/r6/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 7,
+     "score": 7,
+     "gap": "The far cards queued down the corridor show blank lavender rectangles instead of their screenshots (visible behind SPEX, kacha and herbarium), so the depth stack reads as empty placeholder frames rather than a row of real photos.",
+     "notes": "Mood is strong: warm beams, dust, floor gobo, bright window kept right of the copy. Hero cards are well framed right of centre and readable. Secondary: at the spex state the SPEX title and body are still faded grey (low contrast); mid-flight frames (v6.995) show the SPEX card swung huge and cropped at the top edge, and v8.973 has no caption at all while the herbarium card is a washed-out blur, so the hand-off between cards still feels like a gap; the beam glare washes the herbarium and lemon screenshots; cards are fully lit with little develop/gloss variation, so they read more as flat cards than semi-gloss photos. No console errors or failed chapters.",
+     "at": "2026-11-03T05:28:04.891Z",
+     "compare": "rounds/flight/r7/compare.jpg",
+     "strip": "rounds/flight/r7/strip.jpg"
     }
    ],
    "status": "open"
@@ -548,5 +558,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T05:20:33.326Z"
+ "updated": "2026-11-03T05:28:04.891Z"
 }
