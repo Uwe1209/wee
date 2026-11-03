@@ -1,0 +1,22 @@
+{
+ "element": "reduced",
+ "round": 2,
+ "url": "http://localhost:8080/workbench/rounds/reduced/r2/snapshot/index.html?capture&dpr=1&reduced",
+ "viewport": [
+  1920,
+  1080,
+  1
+ ],
+ "frames": [
+  "workbench/rounds/reduced/r2/hello.jpg",
+  "workbench/rounds/reduced/r2/flash.jpg",
+  "workbench/rounds/reduced/r2/spex.jpg",
+  "workbench/rounds/reduced/r2/scrapbook.jpg",
+  "workbench/rounds/reduced/r2/contact.jpg"
+ ],
+ "strip": [],
+ "failed": [],
+ "problems": [],
+ "ms": 102047,
+ "at": "2026-11-03T10:25:29.394Z"
+}
