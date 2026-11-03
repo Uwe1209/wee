@@ -680,6 +680,16 @@
      "at": "2026-11-03T15:22:18.698Z",
      "compare": "rounds/phone/r7/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "phone",
+     "round": 8,
+     "score": 7.5,
+     "gap": "On the scrapbook screen the dodgeball riso print runs off the left edge and is cut off at the bottom, and the long note card shows a visible seam with its left edge stepping out at TOOLBOX, so the closing memories read as cropped and the card as two scraps instead of one sheet.",
+     "notes": "Hello/taped: well composed in three zones (name, cluster, words + chips); large dead band between the cluster and the tagline on taped. About: strong, portrait large and recognisable, body text readable. Spex: dark card legible, map print good, links clear. Contact: clean, strip faces recognisable, say-hi note works. Body text looks >=16px throughout; no console errors, no failed chapters. Scrapbook toolbox mono labels cramp against values (FRONTEND nearly touches React).",
+     "at": "2026-11-03T15:34:48.272Z",
+     "compare": "rounds/phone/r8/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
@@ -721,5 +731,5 @@
    "final": "Stopped at 7 by the two-rounds rule (7.5, 7, 7). Fixed along the way: resize flash, quality-only resizes no longer drop the pending scroll, crossfades between stills. For smoothing: scrapbook Toolbox overflows short screens (all modes); freeze dust in reduced; lower the reduced flash pulse; hide countdown/\"smile!\" and the \"scroll to take a photo\" cue in reduced; swap project captions at the crossfade midpoint."
   }
  },
- "updated": "2026-11-03T15:28:26.415Z"
+ "updated": "2026-11-03T15:34:48.273Z"
 }
