@@ -17,13 +17,13 @@
   .lead { font-size: 17px; margin-top: 14px; }
   .kicker { font-size: 10px; margin-bottom: 10px; }
   .sec-contact .block > div {
-    background: rgba(250, 245, 236, 0.86); padding: 14px 16px; border-radius: 3px; box-shadow: 0 6px 20px rgba(60, 38, 24, 0.12);
+    background: #f6efe3; padding: 14px 16px; border-radius: 3px; box-shadow: 0 6px 20px rgba(60, 38, 24, 0.14);
   }
   /* Copy sits on paper in the upper zone; the memories get the lower one. Each
      block is one sheet: its parts butt together (padding, not margins) on the
      same backing, with one shadow for the whole sheet, so no seams show. */
   .sec-about .block > *, .sec-scrapbook .screen > * {
-    background: rgba(250, 245, 236, 0.88); margin: 0; padding: 10px 16px 0; border-radius: 0; box-shadow: none;
+    display: flow-root; background: #f6efe3; margin: 0 0 -1px; padding: 10px 16px 1px; border-radius: 0; box-shadow: none;
   }
   .sec-about .block > :first-child, .sec-scrapbook .screen > :first-child { padding-top: 14px; border-radius: 3px 3px 0 0; }
   .sec-about .block > :last-child, .sec-scrapbook .screen > :last-child { padding-bottom: 14px; border-radius: 0 0 3px 3px; }

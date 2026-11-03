@@ -3,7 +3,7 @@
 // contact corner at dusk. The camera lives inside the wall's frame, so every
 // coordinate here is along the wall (x), up (y) and out from it (z).
 import * as THREE from 'three';
-import { TIMELINE as T, clamp01, easeOut, lerp, progress, smooth } from '../motion/timeline.js';
+import { STATES, TIMELINE as T, clamp01, easeOut, lerp, progress, smooth } from '../motion/timeline.js';
 import { texture } from '../engine/textures.js';
 import { card, instantRect, place, sticker, stripRects, tape, tapeTop } from '../engine/paper3d.js';
 import { Rail } from '../engine/rail.js';
@@ -32,17 +32,46 @@ const DUSK = {
   sun: new THREE.Color(0xffbe84), sky: new THREE.Color(0x898fab), ground: new THREE.Color(0x5c4e5a), skyIntensity: 1.8,
   sunIntensity: 4.7, sunY: 3.2, aim: [4.17, -1.0], reach: 22.6, z: 7, angle: 0.18, rake: 3.2,
 };
-// Where the contact note rests on wide and narrow screens; on a phone it is
-// drawn larger so its handwriting stays readable at the wider lens.
-const CONTACT_NOTE = {
-  wide: { x: 27.18, y: -0.75, z: 0.14, rot: 0.05, scale: 1.0 },
-  narrow: { x: 32.2, y: -1.3, z: 0.14, rot: 0.05, scale: 1.6 },
-};
+// Where the contact note rests (wide screens; phones use NARROW below).
+const CONTACT_NOTE = { x: 27.18, y: -0.75, z: 0.14, rot: 0.05 };
+// Phones: the copy sits on paper in the upper part of the frame, so the about
+// and contact memories are laid out again in the band below it. Like the desk's
+// spread, each piece is designed in screen space at its chapter's state ([u, v]
+// centre from the top-left, width as a share of the frame's width, tilt, height
+// off the wall) and solved through the narrow camera on resize. Keys are
+// group:texture; null takes the piece off a phone's wall.
+const NARROW = [
+  {
+    v: STATES.about, // copy down to ~0.62
+    spread: {
+      'about:portrait-instant': { at: [0.31, 0.805], width: 0.55, rot: -0.04, z: 0.1 },
+      'about:card-swinburne': { at: [0.79, 0.68], width: 0.4, rot: 0.03, z: 0.12 },
+      'about:badge-cgpa': { at: [0.87, 0.77], width: 0.17, rot: 0.08, z: 0.13 },
+      'about:card-courses': { at: [0.79, 0.88], width: 0.38, rot: -0.03, z: 0.11 },
+      'about:sticker-star-pink': { at: [0.95, 0.955], width: 0.07, rot: -0.3, z: 0.14 },
+      'about:sticker-sparkle': { at: [0.05, 0.64], width: 0.06, rot: 0.2, z: 0.16 },
+      'about:note-looking': null,
+    },
+  },
+  {
+    v: T.total, // copy down to ~0.47
+    spread: {
+      'contact:strip-contact': { at: [0.27, 0.715], width: 0.31, rot: 0.04, z: 0.1 },
+      'contact:note-hello': { at: [0.71, 0.6], width: 0.44, rot: 0.05, z: 0.14 },
+      'contact:sticker-heart': { at: [0.46, 0.525], width: 0.11, rot: 0.18, z: 0.12 },
+      'contact:sticker-star': { at: [0.6, 0.9], width: 0.1, rot: -0.2, z: 0.06 },
+    },
+  },
+];
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
 // about chapter: with the about window, the copy rises in its tall left pane,
 // the thin mullion falls in the gap between copy and cluster, and the cluster
 // sits in one right-hand pane with a bar just above it and one just below.
 const ABOUT_AIM = [1.5, -1.4];
+// Phones move the window along the wall and up (about, dusk) so its bars fall
+// in the gap between the copy and the memories, not across a face.
+const NARROW_AIM = { about: [0, 2.1], dusk: [0, -1.5] };
+const WIDE_AIM = { about: [0, 0], dusk: [0, 0] };
 
 // Cross-fades two baked windows into one target, so the sun's window can
 // change without a visible switch. Only drawn while a fade is under way.
@@ -252,12 +281,13 @@ export class WallChapter {
     // Contact corner, at the far end, lit at dusk.
     this.contactStrip = card(tex['strip-contact'], 0.98, { rects: stripRects(tex['strip-contact'].userData.size), lift: 0.4, segments: [6, 48] });
     this.contactStrip.userData.rest = { x: 29.6, y: 0.1, z: 0.1, rot: 0.04 };
+    this.contactStrip.userData.group = 'contact';
     wall.add(this.contactStrip);
     tapeTop(this.contactStrip, ink.tape('pink'), { width: 0.5, rot: -0.12 });
     // The note sits between the strip and the links, its arrow at the email; on
     // a phone the copy card covers that spot, so it moves under the card (resize).
     this.contactNote = card(tex['note-hello'], 1.35, { gloss: 0, roughness: 0.9, alphaTest: 0.5, curl: 0.03, lift: 0.3 });
-    add(this.contactNote, CONTACT_NOTE.wide, 'contact');
+    add(this.contactNote, CONTACT_NOTE, 'contact');
     add(sticker(tex['sticker-heart'], 0.55), { x: 30.5, y: 1.95, z: 0.06, rot: 0.18 }, 'contact');
     add(sticker(tex['sticker-star'], 0.48), { x: 28.4, y: -2.2, z: 0.06, rot: -0.2 }, 'contact');
 
@@ -276,14 +306,54 @@ export class WallChapter {
     this.camera.fov = aspect < 1 ? 46 : 30;
     this.camera.updateProjectionMatrix();
     this.plaster.geometry = aspect < 1 ? this.plasterShapes.narrow : this.plasterShapes.wide;
-    if (this.contactNote) {
-      const rest = aspect < 1 ? CONTACT_NOTE.narrow : CONTACT_NOTE.wide;
-      place(this.wall, this.contactNote, rest);
-      this.contactNote.scale.setScalar(rest.scale);
-    }
+    this.layout(aspect < 1);
   }
 
-  update(v, time, intro) {
+  // About and contact pieces: back at their wide rests, then (phones) solved
+  // from NARROW through the camera at each spread's state.
+  layout(narrow) {
+    const names = new Map(Object.entries(this.tex).map(([name, map]) => [map, name]));
+    const pieces = [...this.pieces, this.contactStrip].filter((mesh) => mesh.userData.group !== 'hello');
+    const rest = (mesh, at, scale, visible) => {
+      mesh.userData.rest = { ...at };
+      mesh.position.set(at.x, at.y, at.z);
+      mesh.rotation.z = at.rot;
+      mesh.scale.setScalar(scale);
+      mesh.visible = visible;
+    };
+    pieces.forEach((mesh) => {
+      mesh.userData.wide ??= { ...mesh.userData.rest };
+      rest(mesh, mesh.userData.wide, 1, true);
+    });
+    if (!narrow) return;
+    this.wall.updateMatrixWorld(true);
+    NARROW.forEach(({ v, spread }) => {
+      this.pose(v);
+      this.camera.updateMatrixWorld();
+      pieces.forEach((mesh) => {
+        const key = `${mesh.userData.group}:${names.get(mesh.material.map)}`;
+        if (!(key in spread)) return;
+        const spec = spread[key];
+        if (!spec) {
+          mesh.visible = false;
+          return;
+        }
+        const { at: [u, w], width, rot, z } = spec;
+        const centre = this.onWall(u, w, z);
+        const span = this.onWall(u + width / 2, w, z).x - this.onWall(u - width / 2, w, z).x;
+        rest(mesh, { x: centre.x, y: centre.y, z, rot }, span / mesh.userData.size.width, true);
+      });
+    });
+  }
+
+  // Where the line of sight through screen point [u, v] meets the wall at height z (wall frame).
+  onWall(u, v, z) {
+    const eye = this.camera.position;
+    const ray = this.wall.worldToLocal(new THREE.Vector3(u * 2 - 1, 1 - v * 2, 0.5).unproject(this.camera)).sub(eye);
+    return eye.clone().addScaledVector(ray, (z - eye.z) / ray.z);
+  }
+
+  pose(v) {
     RAIL.sample(v, this.pos, this.lookAt);
     // Portrait screens frame the memories, not the empty wall left of them.
     if (this.camera.aspect < 1) {
@@ -293,6 +363,10 @@ export class WallChapter {
     }
     this.camera.position.copy(this.pos);
     this.camera.lookAt(this.wall.localToWorld(this.lookWorld.copy(this.lookAt)));
+  }
+
+  update(v, time, intro) {
+    this.pose(v);
 
     // Sun pans with the camera, a little behind it, so window shadows slide.
     // The contact corner takes the dusk aim and window; both change while the
@@ -305,8 +379,9 @@ export class WallChapter {
     const aboutFade = smooth(progress(v, T.about.light.fade));
     if (about > 0 && aboutFade < 1) this.aboutWindow.draw(this.app.renderer, aboutFade);
     const aboutMap = aboutFade < 1 ? this.aboutWindow.texture : this.tex['gobo-about'];
-    const follow = this.lookAt.x * 0.88 + DUSK.aim[0] * corner + ABOUT_AIM[0] * about;
-    const lower = ABOUT_AIM[1] * about;
+    const nudge = this.camera.aspect < 1 ? NARROW_AIM : WIDE_AIM;
+    const follow = this.lookAt.x * 0.88 + (DUSK.aim[0] + nudge.dusk[0]) * corner + (ABOUT_AIM[0] + nudge.about[0]) * about;
+    const lower = (ABOUT_AIM[1] + nudge.about[1]) * about + nudge.dusk[1] * corner;
     this.sun.position.set(follow - lerp(15.6, DUSK.reach, corner), lerp(DAY.sunY, DUSK.sunY, dusk) + lower, lerp(16.5, DUSK.z, corner));
     this.sun.angle = lerp(0.5, DUSK.angle, corner);
     this.sun.target.position.set(follow + 0.4, 0.2 + DUSK.aim[1] * corner + lower, 0);

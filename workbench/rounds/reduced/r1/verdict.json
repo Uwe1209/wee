@@ -1,0 +1,8 @@
+{
+ "element": "reduced",
+ "round": 1,
+ "score": 7.5,
+ "gap": "When adaptive quality shrinks the render buffer mid-session (seen at v=0.7 with no ?capture: buffer 640x360 to 544x306), the WebGL wall drops out for a frame and the page flashes flat beige, sometimes with a scrambled layout, a hard flicker that reduced mode must never show; the stills should hold through a resize.",
+ "notes": "round.mjs does pass the reduced flag. Stills are bar-level: hello, spex, scrapbook and contact are composed, warm and legible, and the camera never moves (idle diffs are grain only, ~2/255; room ~4-5 from dust). Flash: frames 1.7-2.2 show only about +5% lift and no strobe, but the flash state looks exactly like hello, so the strip moment is simply absent. Chapter transitions (wall>room 6.45, room>desk 11.2, desk>wall 13.25) are plain crossfades, though copy from the next section fades in over the old scene (SPEX over the about wall at 6.2, Little Lemon over the desk at 11.2). Inside a chapter, the wall jumps from the taped still to the about still around 3.4-4.3, and the room steps between projects; both are hard cuts, not fades. 4.3 shows the about wall with no copy yet. A static pink '1' countdown digit sits over the strip at 1.45. Navigation works: native scroll and the End key reach 14.4. Every copy block becomes visible except the 3/2/1/smile! countdown and the strip description, which is fine. No CSS animations and no console errors. 'SCROLL TO TAKE A PHOTO' (top-right, in shadow) is barely legible and promises a photo that reduced mode never takes.",
+ "at": "2026-11-03T10:14:07.558Z"
+}
