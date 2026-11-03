@@ -79,3 +79,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Type: display headlines use straight apostrophes ("Hi, I'm", "Let's"); use curly ones. Big gap in about between intro paragraph and degree meta.
 - Phone spex: the SPEX project card overlaps the polaroid caption "SPEX: catch it…" (phone element).
 - Projects copy: SPEX title and body look grey/low-contrast against the dark room (type/look).
+- To-room burn (priority): r5 over-burns the peak (6.314) into a flat orange-white gradient. Tune `sink` to ~0.7 and the room `shine` key to ~(0.6, 0.85) so wall shapes or the room window read at 30-40% contrast; keep no double exposure. Ghost ring sits alone in the lower right; put it on the flare line. Room text block pops in at 6.64-6.74.
