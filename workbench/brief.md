@@ -98,3 +98,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Phone r7: taped strip crowds the ADMIT ONE ticket and URIIS photo; corner brackets read as stray triangles; about/contact have a dark shadow band across the middle.
 - Short screens (priority, all modes): at 960x540 the scrapbook Toolbox SHIP and ALSO rows sit below the fold for the whole pin and fade out at 12.8; fit the pinned scrapbook screen to short viewports (scale type or two columns by height).
 - Reduced: dust drifts in the room still (freeze it); flash pulse could be lower; "smile!" shows at 1.7 and the hello cue promises a photo; project captions swap instantly mid photo crossfade (swap at the midpoint).
+- Phone r8: taped has a large empty band between the photos and the tagline.
