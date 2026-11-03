@@ -73,6 +73,15 @@ export const ROOM_LOOK = {
   lift: [0.02, 0.012, 0.008], gain: [1.03, 0.99, 0.94], grain: 0.055, vignette: 0.45,
 };
 
+// A card's caption (0..1) at flight offset d = c - j. It comes up on the way in,
+// while the card is still far and small, and goes out just after the rest: once the
+// camera moves on, the card grows and slides off the right edge (from d = 0.19), so
+// the caption is half gone by the time the card is 10% wider than at rest, and gone
+// by d = 0.16 while the card is still whole in frame.
+const focusOn = (d) => (d < 0
+  ? 1 - smooth(clamp01((-d - 0.16) / 0.3))
+  : 1 - smooth(clamp01((d - 0.02) / 0.14)));
+
 const cardSpot = (index) => new THREE.Vector3(1.6 + (index % 2 ? 0.08 : -0.08), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
 
 // Cubic from 0 to 1 over x in [0, 1] with slope a at the start and b at the end.
@@ -590,9 +599,11 @@ export class RoomChapter {
       posKeys.push(new THREE.Vector3(home.x - 2.2, home.y + 0.12, home.z + STAND));
       lookKeys.push(new THREE.Vector3(home.x - 1.45, home.y - 0.05, home.z));
     });
+    // The exit key eases off the last card without closing in on it, so it stays whole
+    // in frame while the room hands over to the desk.
     const last = this.cards.at(-1).userData.home;
-    posKeys.push(new THREE.Vector3(last.x - 1.6, last.y - 0.4, last.z + 1.6));
-    lookKeys.push(new THREE.Vector3(last.x - 1.2, last.y - 2.4, last.z - 8));
+    posKeys.push(new THREE.Vector3(last.x - 2.6, last.y - 0.2, last.z + 5));
+    lookKeys.push(new THREE.Vector3(last.x - 1.5, last.y - 1.2, last.z - 6));
     this.posCurve = new THREE.CatmullRomCurve3(posKeys, false, 'centripetal');
     this.lookCurve = new THREE.CatmullRomCurve3(lookKeys, false, 'centripetal');
     this.keyCount = posKeys.length;
@@ -804,7 +815,7 @@ export class RoomChapter {
       const develop = mesh.material.userData.develop;
       if (develop) develop[0] = smooth(progress(c, [j - 0.95, j - 0.3]));
     });
-    this.focus = this.cards.map((_, j) => 1 - smooth(clamp01((Math.abs(c - j) - 0.16) / 0.3)));
+    this.focus = this.cards.map((_, j) => focusOn(c - j));
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
     const size = this.app.renderer.getDrawingBufferSize(SIZE);
     this.hazePass(size);

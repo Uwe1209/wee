@@ -76,3 +76,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Type: riso-blue offset only on "Liew"; "You Wee.", "mostly.", "next memory." are flat pink. Kicker height/colour inconsistent across chapters. Scrapbook Facilitator meta orphans "SCHOOL"; pink toolbox labels low-contrast and above baseline. Hello chrome ("SCRAPBOOK N°", "KUCHING, SARAWAK") nearly unreadable in shadow.
 - Flight: kacha card's photo area reads as washed-out beige with only a logo (check the kacha bake: crop a real screen from the repo). HaoJia and PetAid cards are type only. Caption still dim at 8.58 while the card is centred.
 - Contact at 1440x900: "say hi!" note's bottom edge touches the footer line. At 1280x720 the footer orphans "LIEW".
+- Type: display headlines use straight apostrophes ("Hi, I'm", "Let's"); use curly ones. Big gap in about between intro paragraph and degree meta.
