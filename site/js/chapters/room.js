@@ -69,9 +69,49 @@ const SHADE_REACH = 3.6;
 const SKY_SHADE = 0.5;
 
 export const ROOM_LOOK = {
-  bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 1.0, contrast: 1.05,
-  lift: [0.02, 0.012, 0.008], gain: [1.03, 0.99, 0.94], grain: 0.055, vignette: 0.45,
+  bloom: 0.08, halation: 0.3, exposure: 1.18, saturation: 0.9, contrast: 1.05,
+  lift: [0.028, 0.027, 0.032], gain: [1.0, 0.99, 0.97], grain: 0.055, vignette: 0.45,
 };
+
+// A card's caption (0..1) at flight offset d = c - j. It comes up on the way in,
+// while the card is still far and small, and goes out just after the rest: once the
+// camera moves on, the card grows and slides off the right edge (from d = 0.19), so
+// the caption is half gone by the time the card is 10% wider than at rest, and gone
+// by d = 0.16 while the card is still whole in frame.
+const focusOn = (d) => (d < 0
+  ? 1 - smooth(clamp01((-d - 0.16) / 0.3))
+  : 1 - smooth(clamp01((d - 0.02) / 0.14)));
+
+// A card the camera has just looked at is filed away, so it never hangs across
+// the lens as a blank slab while the camera passes it. After its caption starts
+// fading (d = c - j past its rest), it swings on its window-side edge toward the
+// wall and recedes down the hall; once the caption is gone it lifts and slides
+// toward the windows, out of frame by the time the next card is in view. Everything
+// is a function of d, so scrolling back unfiles it. Measured: a passed card never
+// covers more of the frame than at its rest (18-22%), under 5% from d = 0.3 and
+// ~0% from d = 0.5. The named states all sit at d < 0.09, so their framing holds.
+const FILE = { from: 0.08, span: 0.2, turn: 1.4, recede: 2.5, driftFrom: 0.14, driftSpan: 0.28, lift: 1.8, slide: 1 };
+const fileAway = (mesh, d) => {
+  const turn = smooth(clamp01((d - FILE.from) / FILE.span));
+  const drift = smooth(clamp01((d - FILE.driftFrom) / FILE.driftSpan));
+  if (turn <= 0 && drift <= 0) return;
+  const half = mesh.userData.size.width / 2;
+  const rest = mesh.userData.yaw;
+  const yaw = rest + turn * FILE.turn;
+  mesh.rotation.y = yaw;
+  mesh.position.x += (Math.cos(rest) - Math.cos(yaw)) * half + drift * FILE.slide;
+  mesh.position.y += drift * FILE.lift;
+  mesh.position.z += (Math.sin(yaw) - Math.sin(rest)) * half - turn * FILE.recede;
+};
+
+// Prints further down the hall are already part-way developed (the image starts
+// to come through from the top), so the queue reads as real photos waiting; each
+// finishes developing as the camera comes up to it.
+// The undeveloped tint is shown at the lit brightness but in its own colour (the
+// photo-neutral step), so it carries the warmth of the lit paper itself: the paper
+// border's hue, a little greyer.
+const DEVELOP_BASE = 0.4;
+const UNDEVELOPED = new THREE.Color(0.72, 0.52, 0.36);
 
 const cardSpot = (index) => new THREE.Vector3(1.6 + (index % 2 ? 0.08 : -0.08), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
 
@@ -462,7 +502,9 @@ const coat = (material, uniforms) => {
       .replace('#include <project_vertex>', '#include <project_vertex>\nvRoomWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\n${GLINT_GLSL}`)
-      .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`);
+      .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`)
+      // The back of a print is plain paper, not the photo seen through it.
+      .replace('#include <color_fragment>', '#include <color_fragment>\nif (!gl_FrontFacing) diffuseColor.rgb = vec3(0.94, 0.91, 0.85);');
   };
   material.customProgramCacheKey = () => `${key}-glint`;
 };
@@ -561,12 +603,18 @@ export class RoomChapter {
       mesh.geometry.dispose();
       mesh.geometry = curledSheet(size.width, size.height);
       coat(mesh.material, glint);
+      // Undeveloped prints down the hall: warm photo paper with a faint latent image,
+      // not flat grey (which reads lavender against the warm room).
+      const { tone, haze } = mesh.material.userData;
+      if (tone) tone.latent.value = 1;
+      if (haze) haze.copy(UNDEVELOPED);
       this.sun.uCardHalf.value[index].set(size.width / 2, size.height / 2);
       const spot = cardSpot(index);
       mesh.position.copy(spot);
       mesh.rotation.set(0, -0.2 + (index % 2 ? 0.08 : -0.04), (index % 2 ? 1 : -1) * 0.045);
       mesh.userData.home = spot.clone();
       mesh.userData.spin = mesh.rotation.z;
+      mesh.userData.yaw = mesh.rotation.y;
       stickTo(tapeTop(mesh, tex[`tape-${project.tape}`], { width: 0.62, rot: (index % 3 - 1) * 0.12 }), size);
       if (project.badge) {
         const badge = sticker(tex[project.badge], 0.95);
@@ -590,9 +638,11 @@ export class RoomChapter {
       posKeys.push(new THREE.Vector3(home.x - 2.2, home.y + 0.12, home.z + STAND));
       lookKeys.push(new THREE.Vector3(home.x - 1.45, home.y - 0.05, home.z));
     });
+    // The exit key eases off the last card without closing in on it, so it stays whole
+    // in frame while the room hands over to the desk.
     const last = this.cards.at(-1).userData.home;
-    posKeys.push(new THREE.Vector3(last.x - 1.6, last.y - 0.4, last.z + 1.6));
-    lookKeys.push(new THREE.Vector3(last.x - 1.2, last.y - 2.4, last.z - 8));
+    posKeys.push(new THREE.Vector3(last.x - 2.6, last.y - 0.2, last.z + 5));
+    lookKeys.push(new THREE.Vector3(last.x - 1.5, last.y - 1.2, last.z - 6));
     this.posCurve = new THREE.CatmullRomCurve3(posKeys, false, 'centripetal');
     this.lookCurve = new THREE.CatmullRomCurve3(lookKeys, false, 'centripetal');
     this.keyCount = posKeys.length;
@@ -797,14 +847,15 @@ export class RoomChapter {
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
       mesh.position.set(home.x, home.y + Math.sin(time * 0.6 + j) * 0.05, home.z);
-      mesh.rotation.z = mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012;
+      mesh.rotation.set(0, mesh.userData.yaw, mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012);
+      if (j < this.cards.length - 1) fileAway(mesh, c - j);
       mesh.updateMatrixWorld();
       uCards.value[j].copy(mesh.matrixWorld).invert();
       uCardSun.value[j].copy(SUN).transformDirection(uCards.value[j]);
       const develop = mesh.material.userData.develop;
-      if (develop) develop[0] = smooth(progress(c, [j - 0.95, j - 0.3]));
+      if (develop) develop[0] = DEVELOP_BASE + (1 - DEVELOP_BASE) * smooth(progress(c, [j - 0.95, j - 0.3]));
     });
-    this.focus = this.cards.map((_, j) => 1 - smooth(clamp01((Math.abs(c - j) - 0.16) / 0.3)));
+    this.focus = this.cards.map((_, j) => focusOn(c - j));
     this.active = Math.max(0, Math.min(this.cards.length - 1, Math.round(c)));
     const size = this.app.renderer.getDrawingBufferSize(SIZE);
     this.hazePass(size);

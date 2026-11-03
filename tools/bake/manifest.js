@@ -193,7 +193,7 @@ const riso = (p, key, w, h, options = {}) => cutOut(risograph(p[key], w, h, { ce
 // Window light: two columns of panes, mullions, leaves along one side, softened.
 // `rows` is each row's pane height (px, top to bottom). `nudge` moves single
 // leaves ({ index: [dx, dy] } px) without reseeding the rest.
-const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240] } = {}) => {
+const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240], bridges = [], open = [] } = {}) => {
   const canvas = makeCanvas(1024, 1024);
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
@@ -205,6 +205,14 @@ const windowGobo = ({ blur = 9, leaves = 60, nudge = {}, rows = [240, 240, 240] 
     for (let col = 0; col < 2; col += 1) ctx.fillRect(pane.x + col * (pane.w + pane.bar), top, pane.w, h);
     top += h + pane.bar;
   }
+  // A bridge [col, row] fills the bar under that row in that column, so the
+  // two panes either side of it read as one tall pane.
+  for (const [col, row] of bridges) {
+    const barTop = pane.y + rows.slice(0, row + 1).reduce((sum, h) => sum + h, 0) + row * pane.bar;
+    ctx.fillRect(pane.x + col * (pane.w + pane.bar), barTop, pane.w, pane.bar);
+  }
+  // Extra light: [x, y, w, h] rects opened in the frame (for example to thin a bar).
+  for (const [x, y, w, h] of open) ctx.fillRect(x, y, w, h);
   const rand = random(5);
   ctx.fillStyle = '#000';
   for (let k = 0; k < leaves; k += 1) {
@@ -370,6 +378,9 @@ export const TEXTURES = {
 
   // --- tape and stickers
   'tape-cream': { make: () => tapeCanvas(360, 104, { color: 'rgba(233,221,190,0.82)', seed: 71 }) },
+  // Kraft masking tape for the flash strip: warmer and darker than the cream, so
+  // it reads against the strip's white border and the sunlit wall (the bar's tape).
+  'tape-masking': { make: () => tapeCanvas(360, 104, { color: 'rgba(204,166,112,0.8)', seed: 73 }) },
   'tape-pink': { make: () => tapeCanvas(360, 104, { color: 'rgba(255,120,190,0.8)', stripes: 'rgba(255,255,255,0.55)', seed: 11 }) },
   'tape-blue': { make: () => tapeCanvas(360, 104, { color: 'rgba(120,180,240,0.8)', stripes: 'rgba(255,255,255,0.45)', seed: 12 }) },
   'tape-yellow': { make: () => tapeCanvas(360, 104, { color: 'rgba(255,214,90,0.82)', seed: 13 }) },
@@ -442,7 +453,19 @@ export const TEXTURES = {
   'room-floor': { make: () => floorboards(), quality: 0.86 },
 
   // --- scrapbook
-  'gators-riso': { make: (p) => riso(p, 'gators', 900, 675, { seed: 21 }) },
+  // gamma > 1 thins the dots, so the team reads in light paper, not a purple slab.
+  'gators-riso': { make: (p) => riso(p, 'gators', 900, 675, { seed: 21, gamma: 1.55 }) },
+  'ticket-outreach': {
+    make: () => ticketStub({
+      serial: 'Nº 110426',
+      seed: 23,
+      lines: [
+        { text: 'OUTREACH', font: '800 112px "Bricolage Grotesque"', x: 0.06, y: 0.5 },
+        { text: 'SSDC DODGEBALL · TUNKU PUTRA-HELP', font: '700 26px "JetBrains Mono"', x: 0.065, y: 0.7 },
+        { text: '11 APRIL 2026 — FACILITATOR', font: '500 25px "JetBrains Mono"', x: 0.065, y: 0.83, color: '#ff48b0' },
+      ],
+    }),
+  },
   'game-riso': { make: (p) => riso(p, 'game', 900, 600, { seed: 22 }) },
   'team-instant': { make: (p) => instant(p, 'team', 'outreach crew', { ratio: 0.8, seed: 110 }) },
   'certificate-instant': { make: (p) => instant(p, 'certificate', 'facilitator! 11 april', { ratio: 1.2, pose: { focusY: 0.32 }, seed: 111 }) },
@@ -458,10 +481,56 @@ export const TEXTURES = {
       { image: p.poster, zoom: 1.75, focusX: 0.75, focusY: 0.4 }, { image: p.portrait, focusY: 0.44 },
     ], { look: 'color', stamp: "'26 11 02", seed: 9 }),
   },
-  'note-hello': { make: () => note('say hi! ↓', { width: 420, font: '600 76px Caveat', seed: 53 }) },
-  // The dusk window: a taller middle row, so one pane holds the call to action
-  // all the way up the screen, and the leaves that would land on the copy, the
-  // note and the heart moved off them (5 into the frame, 35 below the note, 48
-  // past the heart).
-  'gobo-dusk': { make: () => windowGobo({ rows: [220, 280, 220], nudge: { 5: [220, 0], 35: [0, 60], 48: [60, 0] } }), quality: 0.9 },
+  // The contact note sits between the strip and the links; its ballpoint arrow
+  // leaves the note's left end and hooks up and left, at the email.
+  'note-hello': {
+    make: () => {
+      const canvas = makeCanvas(500, 190);
+      const ctx = canvas.getContext('2d');
+      roughRect(ctx, 6, 6, 488, 178, { jitter: 2.5, step: 12, seed: 53 });
+      ctx.fillStyle = '#fbf6ea';
+      ctx.fill();
+      ctx.fillStyle = INK;
+      ctx.strokeStyle = INK;
+      ctx.font = '600 80px Caveat';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('say hi!', 330, 102);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(196, 128);
+      ctx.quadraticCurveTo(110, 150, 52, 58);
+      ctx.stroke();
+      const back = Math.atan2(150 - 58, 110 - 52);
+      ctx.beginPath();
+      ctx.moveTo(52 + Math.cos(back + 0.55) * 34, 58 + Math.sin(back + 0.55) * 34);
+      ctx.lineTo(52, 58);
+      ctx.lineTo(52 + Math.cos(back - 0.5) * 34, 58 + Math.sin(back - 0.5) * 34);
+      ctx.stroke();
+      return canvas;
+    },
+  },
+  // The dusk window, thrown at a grazing angle: the left column is one tall pane
+  // (both bars bridged), widened to the left and down, and the mullion and the
+  // near edge of the right column are opened too, so the links, the note, the
+  // star and the strip all sit in one long patch of sun; the right column's
+  // remaining bars and leaves rake across the wall beyond the strip.
+  'gobo-dusk': {
+    make: () => windowGobo({ rows: [220, 280, 220], bridges: [[0, 0], [0, 1]], open: [[60, 120, 110, 880], [170, 900, 300, 100], [470, 120, 150, 880]] }),
+    quality: 0.9,
+  },
+
+  // --- the wall: about
+  // The about window: the left column is one tall pane (both its bars gone) so
+  // the copy column rises in sun, the mullion is thinned to 14 px so it fits
+  // the gap between the copy and the cluster, and the leaf that fell on the
+  // portrait (5) is moved out of the frame. The right column's middle pane
+  // holds the cluster, with its two bars just above and below it. The wall
+  // cross-fades into this window, so nothing switches.
+  'gobo-about': {
+    make: () => windowGobo({ bridges: [[0, 0], [0, 1]], open: [[470, 120, 8, 780], [492, 120, 8, 780]], nudge: { 5: [0, 2000] } }),
+    quality: 0.9,
+  },
 };

@@ -77,6 +77,46 @@
      "at": "2026-11-02T13:25:37.964Z",
      "compare": "rounds/flight/r4/compare.jpg",
      "strip": "rounds/flight/r4/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 5,
+     "score": 7,
+     "gap": "On the approach to PetAid (v~8.97) the camera pushes so close that the card fills the right half and is cut off at the right edge and bottom while its caption is already on screen; the dolly into each card should stop at the pinned framing instead of overshooting into a crop (Little Lemon does the same at v10.95).",
+     "notes": "Mood is strong: warm raking beams, window-gobo pools on the floor, dust, bright far window, and the window never sits behind captions. Pinned framings (spex, kacha, herbarium, lemon) are right of centre, fully in frame and clear of the left 40%. Kacha's photo area is a washed-out flat grey-beige with only a logo, so it reads as a blank print rather than a screenshot; the HaoJia and PetAid cards are type-only with no screenshot. Gloss sheen is a soft streak but the develop/curl reads weakly. Near-to-far depth in the queue of cards behind is good. Caption fades at v8.58 leave the copy dim while the card is already mid-frame.",
+     "at": "2026-11-03T00:36:15.208Z",
+     "compare": "rounds/flight/r5/compare.jpg",
+     "strip": "rounds/flight/r5/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 6,
+     "score": 7.5,
+     "gap": "Between cards the camera brushes past the previous card, which hangs as a flat out-of-focus cream slab across the right ~13% of the frame (v8.577, PetAid), so the next card's arrival is framed by a blank wall instead of the room and window.",
+     "notes": "Strong mood: warm beams, dust, bright window, gobo on the floor all carry the golden hour into the dim room, and the cards are framed right of centre clear of the caption column at every named state. Still weak: (1) PetAid jumps from small at 8.577 to very large at 8.973, so it lands in a lurch instead of a gentle slow-down. (2) The beam/gloss haze veils the lower-left of the herbarium and lemon screenshots, so they read washed out next to SPEX. (3) Depth between the near card and the far cards is good, but the far stack is a pale clump with no light falloff. (4) The kacha, HaoJia and PetAid cards are type or illustration cards, not photos, so they read less like developed prints. No console errors or failed chapters.",
+     "at": "2026-11-03T05:06:01.053Z",
+     "compare": "rounds/flight/r6/compare.jpg",
+     "strip": "rounds/flight/r6/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 7,
+     "score": 7,
+     "gap": "The far cards queued down the corridor show blank lavender rectangles instead of their screenshots (visible behind SPEX, kacha and herbarium), so the depth stack reads as empty placeholder frames rather than a row of real photos.",
+     "notes": "Mood is strong: warm beams, dust, floor gobo, bright window kept right of the copy. Hero cards are well framed right of centre and readable. Secondary: at the spex state the SPEX title and body are still faded grey (low contrast); mid-flight frames (v6.995) show the SPEX card swung huge and cropped at the top edge, and v8.973 has no caption at all while the herbarium card is a washed-out blur, so the hand-off between cards still feels like a gap; the beam glare washes the herbarium and lemon screenshots; cards are fully lit with little develop/gloss variation, so they read more as flat cards than semi-gloss photos. No console errors or failed chapters.",
+     "at": "2026-11-03T05:28:04.891Z",
+     "compare": "rounds/flight/r7/compare.jpg",
+     "strip": "rounds/flight/r7/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 8,
+     "score": 7.5,
+     "gap": "The far end of the corridor is a dead, near-black void: there is no bright far window or glow at the vanishing point, so the room has no depth anchor and all the light comes from the side windows.",
+     "notes": "Strong round: warm raking beams, gobo patches on the floor and dust carry the golden-hour mood; at all four held states the card sits right of centre, fully in frame, screenshot readable, clear of the caption column. Tape, develop and gloss streak read well, and the near/far stacking gives depth. Secondary issues: the paper borders look flat and evenly lit (no curl or lifted-corner shading compared with the bar); at v6.995 the SPEX card swings past the camera, strongly foreshortened and clipped at the top, which feels close to a whip; at v10.95 the card overlaps the window and the window blows it out on the right; between cards (v8.6-9.0) the caption fades out while the next card is still small and far away, so the frame reads empty. No console errors or failed chapters.",
+     "at": "2026-11-03T05:45:51.912Z",
+     "compare": "rounds/flight/r8/compare.jpg",
+     "strip": "rounds/flight/r8/strip.jpg"
     }
    ],
    "status": "open"
@@ -112,9 +152,40 @@
      "at": "2026-11-02T13:21:05.655Z",
      "compare": "rounds/to-room/r3/compare.jpg",
      "strip": "rounds/to-room/r3/strip.jpg"
+    },
+    {
+     "element": "to-room",
+     "round": 4,
+     "score": 7.5,
+     "gap": "At 6.3 the wall's DOM copy (the 'Next, I want a full-stack developer role' line and its mono meta) stays crisp near-black on top of the flare while the 3D wall behind it washes out, so the leak reads as a layer under the type, not light hitting the lens; the copy should fade or wash with the flare.",
+     "notes": "Capture landed in r5 dir (r4 dir had a partial earlier run); judged r5 frames. Strong: warm sun flare with a hot core and horizontal streak, no flat white or beige frame, the room is clearly there by 6.45 (window, floor gobo light, SPEX card) and fully settled by 6.65. Secondary: exposure jumps between 6.207 and 6.314 (wall nearly untouched, then about 60% washed out) - start the ramp earlier; the meta line is clipped at the top edge at 6.314; the soft circular ghost bottom-right at 6.3 reads like a smudge; ceiling beams are hard to read at 6.45 under the haze.",
+     "at": "2026-11-02T23:54:24.957Z",
+     "compare": "rounds/to-room/r4/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "to-room",
+     "round": 5,
+     "score": 7.5,
+     "gap": "At the peak (v6.314) the right half is a muddy, low-contrast double exposure: the about-wall cards (portrait, coursework, 3.49 badge) ghost over the room's window at equal weight, so it reads as a crossfade through beige haze rather than the flare swallowing the wall and the room emerging out of it.",
+     "notes": "Big improvement: warm sun blob upper-left, room established by 6.42 with window, floor light pools, dust and the SPEX card; 6.65 matches the bar's golden mood. Flare itself still lacks lens character (one faint horizontal streak, one soft ghost disc; no anamorphic/chromatic ghosts trailing across frame). Exposure ramp mostly smooth, but 6.207 to 6.314 is the biggest single jump in brightness, and the room keeps darkening noticeably 6.529 to 6.743 as the haze lifts. Beams/ceiling only read late (6.636+). No console errors, no failed chapters.",
+     "at": "2026-11-03T00:38:14.431Z",
+     "compare": "rounds/to-room/r5/compare.jpg",
+     "strip": "rounds/to-room/r5/strip.jpg"
+    },
+    {
+     "element": "to-room",
+     "round": 6,
+     "score": 6.5,
+     "gap": "At the peak (v6.314) the frame is a flat orange-to-white gradient: the wall cards are washed down to faint ghosts and the room hasn't come in yet, so nothing reads for that beat. Keep the wall's darker shapes, or the room's window and beams, showing through the flare at about 30-40% contrast.",
+     "notes": "Big improvement on a white wipe: the hot spot upper left, the horizontal streak and the ghost ring read as a lens flare in the right sun colour. 6.45 is lovely: the window, beams, floor gobo and SPEX card come through the haze. By 6.65 the room is fully established. The exposure ramp still steps hard from v6.207 (wall plainly visible) to v6.314 (near-flat) and back down by v6.421, so the peak feels like a pulse instead of a swell. The ghost ring sits in the flat lower right and reads a bit like a stamp; it should track the flare axis. Minor: the room text block pops in between v6.636 and v6.743.",
+     "at": "2026-11-03T05:01:31.299Z",
+     "compare": "rounds/to-room/r6/compare.jpg",
+     "strip": "rounds/to-room/r6/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped by the two-rounds rule (7.5, 7.5, 6.5). Round 5 removed the double exposure but over-burned the peak into a flat gradient. Smoothing pass: tune the type-1 burn between r4 and r5 (sink about 0.7, room window key about 0.6-0.85) so wall shapes or the room window read at 30-40% through the flare; move the ghost ring onto the flare line; fix the room text pop at 6.64-6.74."
   },
   "captions": {
    "rounds": [
@@ -173,9 +244,30 @@
      "at": "2026-11-02T12:52:54.194Z",
      "compare": "rounds/scrapbook/r3/compare.jpg",
      "strip": "rounds/scrapbook/r3/strip.jpg"
+    },
+    {
+     "element": "scrapbook",
+     "round": 4,
+     "score": 7,
+     "gap": "At rest (12.5) the memory cluster spills off the right edge: a fifth photo and a 'wa...' caption card are cut in half at x≈1830-1920, so the right side reads as cropped clutter instead of a composed four- or five-piece spread like the bar.",
+     "notes": "Page slide (11.15) now reads as paper: deckled top edge, soft contact shadow, gobo light on it; good. Drops land one by one with tape and settle; window light matches the wall. Text column is legible and lit, but the dark mullion bar sits right next to it and a heavy dark band runs across the top, so the page is moodier and murkier than the bar's warm open light. Photos all carry the same purple duotone, darker than the bar's warm prints; the two group shots read muddy. Only two stickers (star, sparkle); no ticket or label chips, so less cut-and-paste variety than the bar. At 11.557 one print is still a blank grey card mid-develop, fine in motion.",
+     "at": "2026-11-02T18:49:31.948Z",
+     "compare": "rounds/scrapbook/r4/compare.jpg",
+     "strip": "rounds/scrapbook/r4/strip.jpg"
+    },
+    {
+     "element": "scrapbook",
+     "round": 5,
+     "score": 7,
+     "gap": "The lower two photos land and sit as flat blank grey rectangles (11.7, still blank at 11.79): with no ghost image or warm tint as they develop, they read as missing textures, not developing instant film.",
+     "notes": "Page slide works: deckled edge and a soft contact shadow, no hard wipe. The settled frame (12.5) is strong: 4 photos plus a ticket, 3 stickers, riso halftone print, washi tape, ticket stub, all in the art-bible language. The text column is legible and clear of the photos, but the top-left heading band and Toolbox sit near the window-bar shadow, and the heavy vertical mullion shadow cuts the riso print and the outreach crew photo in half, so the memories feel less lit than the wall in the bar. At 11.79 the OUTREACH ticket overlaps a still-grey photo at a steep angle, which looks messy mid-drop. The left column below the copy stays empty for most of the sequence until the Facilitator and Toolbox fade in late (12.0-12.5).",
+     "at": "2026-11-02T19:16:21.072Z",
+     "compare": "rounds/scrapbook/r5/compare.jpg",
+     "strip": "rounds/scrapbook/r5/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (7, 7, 7), including one round from a fresh builder on a new layout. Round 5 gap (prints blank grey while developing) is shared with the flash strip and goes to the smoothing pass as a develop-shader fix."
   },
   "flash": {
    "rounds": [
@@ -218,9 +310,60 @@
      "at": "2026-11-02T13:54:06.162Z",
      "compare": "rounds/flash/r4/compare.jpg",
      "strip": "rounds/flash/r4/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 5,
+     "score": 7,
+     "gap": "No tape ever lands: the strip is held by the black photo corners that have been on the wall since the countdown, so at 2.95-3.2 nothing presses down; a translucent masking or washi tape strip should slap onto the strip's top edge with a small press and settle, as in the bar.",
+     "notes": "Countdown is strong: big riso-pink numerals with blue offset, centred in the corner marks where the strip lands, with a 'the photo lands here!' note. The 1 at v1.418 is a washed-out pale pink and 'smile!' is ballpoint blue, which is weaker than 3 and 2. The flash whites out with a warm hot centre and recovers fast; the peak is creamy peach, not hard white, and the amber edges and ghosted name keep it short of HDR. The strip enters blank from the top and develops frame by frame, top to bottom, cleanly. No swing or overshoot is visible, because it hangs dead upright in every strip frame. The caption 'four sittings...' reads well and leaves before taped. The taped frame matches the bar composition closely.",
+     "at": "2026-11-02T18:43:46.981Z",
+     "compare": "rounds/flash/r5/compare.jpg",
+     "strip": "rounds/flash/r5/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 6,
+     "score": 7.5,
+     "gap": "At flash peak the DOM layer (name, Liew, caption, skill chips, header labels) stays clearly legible as ghosted text over the white and the frame edges stay peach, so the moment reads as a translucent warm haze rather than a full HDR whiteout; the DOM needs to wash out with the frame and the white needs to reach the corners at peak.",
+     "notes": "Countdown 3/1/smile lands in the strip's corner-mount frame and reads well; the '1' at v1.418 is caught fading pale pink, so the numeral loses its riso punch early. The strip drops in from above and frames develop top to bottom one after another, which is good. The undeveloped frames are flat grey-beige with no latent-image or chemical tint, so they look like empty boxes. Taped end state matches the art-bible composition closely. The strip is held by dark photo corners, and no tape press is visible in the sampled frames. No console errors and no failed chapters.",
+     "at": "2026-11-02T19:04:14.863Z",
+     "compare": "rounds/flash/r6/compare.jpg",
+     "strip": "rounds/flash/r6/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 7,
+     "score": 7,
+     "gap": "The tape landing doesn't read: across 2.95-3.15 a faint near-invisible cream strip drifts in above the photobooth strip, then four hard near-black photo corners pop on, so the strip ends up held by black corner mounts instead of a visible translucent masking-tape piece across its top like the bar, and there's no press beat you can see.",
+     "notes": "Countdown is strong: big riso-pink numerals with blue offset, inside crop marks where the strip lands, 3-2-1-smile reads. The flash whites out fully and warm with no grey, but the peak frame is a flat cream field with no visible bloom falloff from a source. The strip slides in blank and frames develop top to bottom one at a time, which works. Black corners are darker than the warm-shade palette and are the heaviest marks in the cluster. Taped frame is close to the bar overall, but the camera is pushed in further and the cluster sits more to the left (strip about 1350px vs 1440px in the bar). The 'four sittings' caption fades as the tape lands. No console errors or failed chapters. The snapshot can't be served on its own (its fonts and vendored three 404), so landing stills came from the live site.",
+     "at": "2026-11-02T19:25:16.696Z",
+     "compare": "rounds/flash/r7/compare.jpg",
+     "strip": "rounds/flash/r7/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 8,
+     "score": 7.5,
+     "gap": "The fresh strip develops straight into warm full-colour frames, identical to the wall prints, when the art bible calls for black-and-white for the flash moment, so the new strip never reads as a just-printed photobooth strip and doesn't stand apart from the rest of the wall.",
+     "notes": "Countdown 3/1/smile reads well: big, pink with blue offset, inside the landing brackets. Flash peak is a full whiteout, warm at the edges and white at the centre, but it is a uniform cream field with no blown-out wall shapes, so the HDR bloom is implied rather than seen. Strip slides in from the top and the frames develop top to bottom in order. In the midpoint grabs the undeveloped frames look like flat grey cards. At v1.418 the numeral is mid-fade and looks washed-out salmon. The tape drops from above and settles between 3.0 and 3.05 with a small tilt; the press is subtle but visible. Taped frame matches the bar composition closely. No console errors.",
+     "at": "2026-11-02T19:34:24.125Z",
+     "compare": "rounds/flash/r8/compare.jpg",
+     "strip": "rounds/flash/r8/strip.jpg"
+    },
+    {
+     "element": "flash",
+     "round": 9,
+     "score": 8,
+     "gap": "The tape lands through the heart sticker: at 3.0 the masking tape comes in at a steep angle and overlaps the pink heart before snapping flat, so the final press reads as a collision rather than a clean slap onto the strip's top edge.",
+     "notes": "The full sequence works: 3, 1, smile! land in the corner-mark target, the flash goes to warm HDR white and recovers cleanly, the strip drops in from above and frames develop top to bottom (2.46 to 2.88), and the tape settles with a small press between 3.05 and 3.1. The taped frame is close to the bar. Secondary: the strip sits about 130px further left than in the bar, crowding the SPEX polaroid; the '1' in the 1.418 sample is a washed pastel pink, not saturated riso; at 2.045 the falling strip is a faint ghost that briefly crosses the heart. No console errors or failed chapters.",
+     "at": "2026-11-02T19:43:08.643Z",
+     "compare": "rounds/flash/r9/compare.jpg",
+     "strip": "rounds/flash/r9/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Met the bar at 8 in round 9. Secondary for smoothing: the tape path crosses the heart sticker at 3.0; the countdown 1 fades to pastel early."
   },
   "about": {
    "rounds": [
@@ -243,9 +386,60 @@
      "at": "2026-11-02T13:30:26.160Z",
      "compare": "rounds/about/r2/compare.jpg",
      "strip": "rounds/about/r2/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 3,
+     "score": 6.5,
+     "gap": "The horizontal window-mullion shadow cuts straight across the portrait's face and the Swinburne index card (and a vertical bar darkens the portrait's left half), so the cluster's hero sits in shade while the empty wall around it is lit; move the gobo/light so the portrait and cards sit in sun.",
+     "notes": "Copy is legible, in light, left 40%, never over a photo: good. At 5.6 the CGPA badge is cropped by the right frame edge; it only reads fully at 6.1. Cluster composition is otherwise close to the bar (5 papers + 2 stickers, tape, tilt), but the grid is a bit stiff/rectilinear versus the bar's looser scatter. Transition 4.5-5.0 passes a long stretch of empty wall (strip 4.964 has only half-cropped opening pieces and a dark mullion), which feels like dead time; then the heading rises in from the bottom while the wall pans sideways, so text and wall still read as two motions. At 6.25 a hot bloom blob appears top-left behind the copy. No console errors or failed chapters.",
+     "at": "2026-11-02T18:53:19.530Z",
+     "compare": "rounds/about/r3/compare.jpg",
+     "strip": "rounds/about/r3/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 4,
+     "score": 6.5,
+     "gap": "At the key about frame (5.6) the cluster is jammed against the right edge, so the CGPA badge is cut off by the frame and the centre third of the screen is just an empty shadow band; the cluster only composes properly (badge in full, balanced spacing) at 6.1, after the copy has already scrolled half off.",
+     "notes": "Copy is legible, in light and never on a photo; type matches the bible (Instrument Serif with pink italic, mono meta, Inter Tight body). The cluster pieces read well: instant-photo portrait, ruled index cards, CGPA badge, torn 'looking for' note. Transition 4.1-5.0 is a long stretch of bare plaster with the about cluster arriving before any copy (4.96 shows only the portrait), so text and wall still read as two moves. The pan is gentle, no whip. At 6.25 a blown-out warm hotspot in the upper left reaches near-white behind the copy. The 'looking for' note overlaps the coursework card corner. The CGPA appears three times (meta line, index card, badge). Captures had no console errors.",
+     "at": "2026-11-02T19:54:00.013Z",
+     "compare": "rounds/about/r4/compare.jpg",
+     "strip": "rounds/about/r4/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 5,
+     "score": 7,
+     "gap": "Wall and copy still move in sequence, not together: the camera finishes its dolly to the about cluster by about v4.96 while the copy hasn't entered yet (4.6 is a near-empty wall with only a cut-off portrait at the right edge), and then the cluster sits almost still while 'Hi, I'm You Wee.' scrolls up by itself from 5.0 to 6.1. Start the copy's rise during the dolly and keep a slow push or drift on the wall while the copy scrolls.",
+     "notes": "Settled frame (5.6) is close to the bar: copy is legible, in light, in the left 40% and off the photos; the cluster of portrait, Swinburne card, 3.49 badge, coursework card and looking-for note is balanced and warm, with two stickers. Secondary: (1) in the 4.1-4.9 transit the middle third is a big empty wall under the darkest mullion shadow, so it feels like dead air. (2) At 6.1-6.25 an unexplained bright hotspot blooms at the upper left, and the copy runs off the top while the cluster is still centred, which leaves the frame unbalanced. (3) The cluster sits mostly in flat light with no gobo bars across it, so it has less depth than the bar's hero cluster. (4) The portrait has no washi tape or lifted corner; it reads flatter than the bar's instant photos. No console errors and no failed chapters.",
+     "at": "2026-11-02T23:57:38.479Z",
+     "compare": "rounds/about/r5/compare.jpg",
+     "strip": "rounds/about/r5/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 6,
+     "score": 7,
+     "gap": "Between v4.1 and v4.6 the screen is a near-empty plaster wall with no copy and the about cluster half cut off at the right edge; the camera has finished its sideways dolly before the copy rises vertically from below (v4.96), so wall and text read as two separate moves with a dead beat in between.",
+     "notes": "Settled frame (5.6) is strong: copy legible, in light, left 40%, never on a photo; grade and type match the bar. Cluster is tidy but grid-like next to the bar's overlapping cut-and-paste: index card and coursework card sit square and aligned, little tilt variation, one tape piece each; lower-right is empty. The looking-for note butts into the coursework card's corner without reading as intentional overlap. Mullion shadow falls in the gutter between copy and cluster, which is fine. At 6.1 the copy has scrolled off the top while the cluster holds, leaving the left half bare. No console errors, no failed chapters.",
+     "at": "2026-11-03T00:11:26.363Z",
+     "compare": "rounds/about/r6/compare.jpg",
+     "strip": "rounds/about/r6/strip.jpg"
+    },
+    {
+     "element": "about",
+     "round": 7,
+     "score": 7,
+     "gap": "From about v4.9 to v5.8 the about cluster sits dead still while the copy scrolls up past it, and around v4.1 the camera passes a bare stretch of wall with neither cluster in view, so text and wall read as two separate motions rather than one slow dolly that carries the cluster gently along with the copy.",
+     "notes": "Copy is legible, sits in light, and never overlaps a photo. The about frame at 5.4 is clean and on-palette. The cluster is laid out in a tidy grid of separate columns (portrait, index card, badge, coursework card, note) with wide gaps of empty wall. The bar's pieces overlap and layer, so this reads sparser and more like a form than a scrapbook. 'You Wee.' has the pink italic but no riso-blue misregistered copy like 'Liew' in the bar. At 4.6 the CGPA badge is cut off at the right edge. At 6.25 a bright bloom washes out the upper left. No console errors and no failed chapters.",
+     "at": "2026-11-03T00:30:41.612Z",
+     "compare": "rounds/about/r7/compare.jpg",
+     "strip": "rounds/about/r7/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (7, 7, 7). Open for smoothing: the cluster reads as a tidy grid (overlap and layer the pieces); the wall holds still from 4.9 to 5.8 while copy scrolls; bare wall around 4.1; riso-blue offset on \"You Wee.\" (type pass); bloom at 6.25 upper left."
   },
   "contact": {
    "rounds": [
@@ -268,10 +462,132 @@
      "at": "2026-11-02T14:12:18.677Z",
      "compare": "rounds/contact/r2/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "contact",
+     "round": 3,
+     "score": 7,
+     "gap": "The 'say hi! ↓' note sits far right under the strip and its arrow points down at empty wall, nowhere near the email/GitHub links on the left, so the strip and note never frame the call to action: move the note (and point its arrow) toward the links so the eye travels strip → note → email.",
+     "notes": "Dusk reads well: same wall, lower warmer light, cool violet shadows, text in light. Email and GitHub are large, underlined in pink and clearly the CTA. Secondary: 'next memory.' italic is flat pink with no riso-blue offset copy like 'Liew' in the bar; a thin vertical wall seam runs through the headline/link column; the star sticker sits in shadow and reads muddy brown; the strip's drop shadow is offset far right so it looks like it floats off the wall; right third of the frame is empty shadow, so the page feels a little sparse rather than a deliberate last page.",
+     "at": "2026-11-02T23:59:48.208Z",
+     "compare": "rounds/contact/r3/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "contact",
+     "round": 4,
+     "score": 7,
+     "gap": "The 'say hi' note and the star sticker sit inside the vertical window-bar shadow, so the note goes grey-violet and the star reads as a muddy brown smudge; shift the light so the whole CTA cluster (links, note, strip) sits in one lit pane.",
+     "notes": "Dusk reads well: same wall, lower, warmer light with long cool-violet shadows. Email and GitHub are large, underlined in pink and clearly the CTA. Secondary: at state 14 the strip's shadow detaches into a separate grey slab offset to the right (still visible but smaller at rest); the right ~40% of the final frame is empty wall, so the ending feels sparse rather than like a last page; the bottom frame of the strip is blank at 14 then pops in; the to-wall transition shows a hard horizontal seam across the wall mid-wipe; the plaster panel seam line runs right beside the headline.",
+     "at": "2026-11-03T00:12:20.278Z",
+     "compare": "rounds/contact/r4/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "contact",
+     "round": 5,
+     "score": 8,
+     "gap": "The pink italic 'next memory.' has no riso-blue misregistered copy behind it (the bar's 'Liew' does, offset 0.45vw/0.3vw, multiply), so the closing headline reads flatter and less printed than the opening.",
+     "notes": "Final frame meets the bar: email and GitHub are the largest, clearest elements with pink underlines and an arrow; say-hi note points at them without crowding; strip, heart and star frame the right side; dusk reads as the same wall later, with lower purple-blue leaf shadows. Mid-scroll (14): the strip's drop shadow is a hard, flat grey slab offset ~150px to the right, reading as a separate card rather than a shadow; it tightens by the final frame but is still slightly slab-like. The plaster panel seam runs vertically just right of the heading. Left half of the wall is evenly lit with no gobo, a touch flat next to the bar. No console errors or failed chapters.",
+     "at": "2026-11-03T00:20:06.184Z",
+     "compare": "rounds/contact/r5/compare.jpg",
+     "strip": null
+    }
+   ],
+   "status": "done",
+   "final": "Met the bar at 8 in round 5. For the type pass: riso-blue offset on the italic \"next memory.\". For smoothing: strip drop shadow reads as a solid grey slab mid-scroll; plaster seam beside the heading."
+  },
+  "type": {
+   "rounds": [
+    {
+     "element": "type",
+     "round": 1,
+     "score": 6.5,
+     "gap": "The contact heading breaks as 'Let's make the next / memory.' at 1920x1080, leaving the pink italic 'memory.' as an orphaned one-word line; it should set as two balanced lines (e.g. 'Let's make the / next memory.').",
+     "notes": "Only the hello 'Liew' has the riso-blue misregistration copy; the pink italic accents in about ('You Wee.'), scrapbook ('mostly.') and contact are flat pink, so the display system is inconsistent with the art bible. Kicker placement drifts per chapter (top y about 40, 85, 128, 203px) and kicker colour changes (grey, amber on spex, riso-blue meta lines in scrapbook). Scrapbook Facilitator meta wraps leaving 'SCHOOL' alone on a line; toolbox pink mono labels are low-contrast on peach and sit above the body baseline. Hello top-right chrome ('SCRAPBOOK N...') and centre 'KUCHING, SARAWAK' sit in window shadow and are near-illegible. About has a dead gap between the intro paragraph and the degree meta. Links (pink underline, arrows) read clearly as links; focus styles not verifiable in stills. Fonts themselves are correct everywhere: Instrument Serif, Caveat, JetBrains Mono, Inter Tight.",
+     "at": "2026-11-03T00:35:27.754Z",
+     "compare": "rounds/type/r1/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "type",
+     "round": 2,
+     "score": 7,
+     "gap": "Chapter openings have no shared vertical rhythm: the mono kicker sits at y≈40 on about (headline jammed against the top edge), 85 on spex, 128 on scrapbook and 203 on contact, so the kicker-to-title-to-body stack jumps around instead of starting from one top margin.",
+     "notes": "Italic pink words in chapter titles (You Wee., mostly., next memory.) are flat pink with no riso-blue offset, unlike the hero Liew. Scrapbook toolbox category labels (FRONTEND, BACKEND, DATA...) are pink mono on peach and nearly illegible. Scrapbook Facilitator meta wraps leaving SCHOOL alone on a line. Straight apostrophes in display type (Hi, I'm / Let's) instead of curly. Hello top-right SCRAPBOOK N° chrome lost in window shadow. About has a large dead gap between the intro paragraph and the degree meta. Links (pink underline, arrows) read clearly; family usage itself is consistent.",
+     "at": "2026-11-03T00:42:42.336Z",
+     "compare": "rounds/type/r2/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "type",
+     "round": 3,
+     "score": 7.5,
+     "gap": "In the scrapbook Toolbox, the pink mono category labels (FRONTEND, BACKEND, DATA, SHIP, ALSO) are washed out to near-illegible on the lit wall and sit a few px above the baseline of their Inter Tight values; they need riso-pink at full strength (or ink) and baseline alignment with each row.",
+     "notes": "System is consistent: Instrument Serif display with pink italic, Caveat notes, JetBrains Mono kickers, Inter Tight body, 84px left margin and kicker at the same y on about/spex/scrapbook/contact. Links are clearly links (pink underline + arrow). No one-word orphans in headings. Secondary: Facilitator meta line wraps leaving 'SCHOOL' alone on a second line; hello top-right chrome 'SCRAPBOOK N° 12' and centre 'KUCHING, SARAWAK' nearly vanish in the window shadow; SPEX title and body read greyed/low-contrast on the dark room; 'Hi, I'm You Wee.' and other pink italics lack the riso-blue offset the hero uses (fine if deliberate, but the bible names it for display italics); focus styles not verifiable from stills.",
+     "at": "2026-11-03T04:56:47.396Z",
+     "compare": "rounds/type/r3/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "type",
+     "round": 4,
+     "score": 7,
+     "gap": "In the projects room (spex) the type goes washed out: the SPEX title is a pale grey at low contrast and the body copy and chips are mid-grey on dark wood, so it reads faded next to the crisp ink-on-plaster chapters; give the dark-room text a light-on-dark treatment with real contrast (paper-white title, about 85% body) so it holds the same weight as the other chapters.",
+     "notes": "Faces are consistent everywhere (Instrument Serif, Caveat, JetBrains Mono, Inter Tight) and the kicker sits at the same left margin and height in about, spex, scrapbook and contact. No one-word orphans in headings at 1920. The pink italic accent words in about, scrapbook and contact lack the riso-blue offset copy that hello's 'Liew' has, so the display treatment isn't one system. The hello top-right chrome (KUCHING, SCRAPBOOK N° 12) almost disappears in the gobo shadow. The Facilitator meta line breaks after a dangling '·'. The pink-underlined toolbox labels (FRONTEND, BACKEND...) look like links but aren't. The contact links are clearly links with pink rules. Focus styles can't be checked from stills.",
+     "at": "2026-11-03T05:05:25.276Z",
+     "compare": "rounds/type/r4/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
+  },
+  "look": {
+   "rounds": [
+    {
+     "element": "look",
+     "round": 1,
+     "score": 6,
+     "gap": "Photos are orange-soaked. Skin samples at #b15e2c to #b3553b and white shirts at #d19c66 (hello SPEX polaroid, contact strip), so faces read terracotta and whites never get near paper-white. The warm grade needs to stay off photo midtones and highlights so skin looks natural.",
+     "notes": "Wall chapters (hello, taped, scrapbook) otherwise match the bar's light well: raking gobo and warm plaster. Shadows are inconsistent. Hello and taped shadows are dark warm brown (#43322a, darker and less cool than the bible's #6b4a3a shade). Contact's shadows swing to violet (#483a47), so the grade doesn't read as continuous across chapters. Contact wall has a visible hard vertical seam line at about x=580. Kacha room: blacks are deep but hold detail (about #1f120c), and bloom stays on the window and light shafts. The floor sun patches are saturated orange (#df8a51), and a soft glow haze bleeds off the polaroid's right edge. Grain is fine and visible. No obvious banding at capture resolution. Capture was clean: no console errors, no failed chapters.",
+     "at": "2026-11-03T05:05:36.180Z",
+     "compare": "rounds/look/r1/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "look",
+     "round": 2,
+     "score": 7,
+     "gap": "The projects room (kacha) is orange-soaked: its shadows sit at red-brown (about rgb 49,28,20 with the blue channel near zero) with no cool sky fill, so it breaks from the wall chapters (contact shadows read lavender, about 75,59,64) and the grade is not one continuous look; pull the room's shadows toward a cool, slightly blue-neutral brown and trim its overall orange.",
+     "notes": "hello/taped match the bar closely: warm lit plaster, soft window shadows, fine grain, natural skin. Scrapbook is close but hazy and low-contrast, and the shadow band is grey-brown with little coolness. Contact shadows lean noticeably violet, more than the bar, so wall and contact disagree in the other direction. Room bloom sits correctly on the window and floor patches with no full-frame haze; dust motes are a bit large and bright. Room blacks are deep and not crushed. No visible banding. No console errors or failed chapters.",
+     "at": "2026-11-03T05:20:33.321Z",
+     "compare": "rounds/look/r2/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "look",
+     "round": 3,
+     "score": 7,
+     "gap": "The grade does not hold across chapters: in contact (and the top of scrapbook) the window shadows turn grey-violet (about rgb 71,59,71) instead of the warm umber shade the wall uses in hello/taped and the bar (about 66,48,39 / #6b4a3a), so the last chapter reads as a different, colder film.",
+     "notes": "Hello/taped are close to the bar: warm lit plaster, brown shadows, fine grain, no banding seen, photos' skin natural. Kacha room: blacks deep but not crushed and the sun shafts and floor pools read well, but a milky veil sits over the right third of the kacha card near the window (halation spilling onto mid-tones rather than true highlights). Scrapbook wall is slightly greyer/flatter than the opening wall; lit plaster in contact and scrapbook leans pinker peach than the bar's #ece0cd->#f3c99a. Capture: 5 frames, no failed chapters, no console problems.",
+     "at": "2026-11-03T05:36:47.706Z",
+     "compare": "rounds/look/r3/compare.jpg",
+     "strip": null
+    },
+    {
+     "element": "look",
+     "round": 4,
+     "score": 7,
+     "gap": "In the kacha room the window panes sit at a dull cream-grey (~196,181,162) and never clip to a blooming white, while the hero card's photo is the brightest thing on screen and reads milky/lavender-washed, so the light source has no halation and the bloom sits on the wrong object.",
+     "notes": "Wall chapters (hello, taped, scrapbook) now track the bar closely: warm lit plaster, cool grey-brown window shadows, fine visible grain, no banding seen. Skin tones natural on the wall; scrapbook photos are a touch faded/peachy. Contact wall is flat peach and slightly more orange than the bar's #ece0cd lit plaster, with purple-grey top shadow. Room blacks deep and not crushed (~30,28,31) but room shadows lean red-brown rather than cool. Dust motes and floor glow under the card add a little haze to the lower right of kacha.",
+     "at": "2026-11-03T05:45:43.217Z",
+     "compare": "rounds/look/r4/compare.jpg",
+     "strip": null
+    }
+   ],
+   "status": "done",
+   "final": "Stopped at 7 by the two-rounds rule (6, 7, 7, 7). Wall chapters now track the bar. Open for smoothing: room window panes never clip or bloom while the near card photo is the brightest object (lift window emissive, cap card photo highlights); scrapbook photos a little faded/peachy; contact lit wall slightly orange."
   }
  },
- "updated": "2026-11-02T14:12:18.678Z"
+ "updated": "2026-11-03T05:45:54.975Z"
 }

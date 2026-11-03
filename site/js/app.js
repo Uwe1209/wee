@@ -2,7 +2,7 @@
 // HDR target; the pipeline blends chapters, blooms, tone maps and presents.
 import * as THREE from 'three';
 import { Pipeline } from './post/pipeline.js';
-import { STATES, TIMELINE as T, clamp01, easeInOut, flashEnvelope, lerp, progress, smooth } from './motion/timeline.js';
+import { LEAK, STATES, TIMELINE as T, clamp01, easeInOut, flashEnvelope, leakGlare, lerp, progress, smooth } from './motion/timeline.js';
 import { SmoothScroll } from './motion/scroll.js';
 import { pendingUploads, uploadOne } from './engine/textures.js';
 import { WallChapter } from './chapters/wall.js';
@@ -30,17 +30,6 @@ const mixLook = (a, b, t) => {
 const FALLBACK = new THREE.Color(0xd9c7ad);
 const CROSSFADE = 4;
 
-// Wall to room is light, not a wipe. In fractions of the transition window:
-// the glare builds to its peak exactly as the chapters cross (the swap is
-// centred on the peak, `half` either side, 0.15 vh in all), then decays over
-// the rest of the window and eases out, so the room's darkness arrives as a
-// ramp that settles instead of stopping dead.
-const LEAK = { peak: 0.3, half: 0.125 };
-const leakGlare = (p) => {
-  if (p < LEAK.peak) return smooth(p / LEAK.peak) ** 0.6;
-  const q = (p - LEAK.peak) / (1 - LEAK.peak);
-  return (1 - q) ** 1.75 * (1 + 0.75 * q);
-};
 // The glare opens the lens: exposure lifts, bloom and halation spread its
 // energy, and the vignette eases (the shader vignettes only the scene).
 const glareLook = (look, g) => ({

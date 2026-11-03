@@ -24,8 +24,8 @@ export const TIMELINE = {
 
   // Unpinned blocks: the scroll value at which each block's top meets the top of the screen.
   blocks: {
-    'about-intro': 5.74,
-    'about-goal': 6.08,
+    'about-intro': 5.31, // kicker rests on --chapter-top (11 vh) at the about state; it enters ~4.53, during the camera glide
+    'about-goal': 5.62, // one block with the intro: all of it on screen together around 5.4
     contact: 14.4,
   },
 
@@ -55,14 +55,20 @@ export const TIMELINE = {
     tape: [2.95, 3.2], // settles and gets taped
     push: [1.0, 1.8], // camera eases toward the empty spot
     peak: 9, // HDR flash intensity
-    veil: 0.95, // peak opacity of the warm veil that blows the page's text out with the scene
+    veil: 1, // peak opacity of the veil that blows the page's text out with the scene (opaque at the peak)
   },
 
   about: {
-    // Glide past the opening cluster at about the copy's speed (the wall drifts up
-    // with a gentle camera drop), then settle by the about cluster. Lengthened by
-    // 0.8 vh so the copy never sits on a photo and peak wall speed stays ~1.2x the copy's.
-    dolly: [3.25, 5.9, 6.25],
+    // Glide past the opening cluster (the wall drifts up with a gentle camera
+    // drop) while the about copy starts to rise, land on the cluster's framing
+    // by 4.9, then keep a slow drift and push while the copy scrolls, until the
+    // light leak. The glide is short enough that the departing gators photo
+    // clears the copy column before the copy reaches it (~80 px clearance).
+    dolly: [3.25, 4.9, 6.25],
+    // The sun swings right and down onto the copy column and the about window
+    // fades in over the day's: in by the time the copy rises into view, out
+    // once the light leak has hidden the wall.
+    light: { in: [3.9, 4.5], fade: [3.9, 4.4], out: [6.42, 6.75] },
   },
 
   transitions: {
@@ -81,6 +87,7 @@ export const TIMELINE = {
 
   contact: {
     strip: [13.35, 14.1],
+    note: [14.15, 14.3], // the 'say hi' note lands once the title has risen past its spot
     dusk: [12.6, 14.4],
   },
 };
@@ -92,16 +99,16 @@ export const STATES = {
   flash: 1.83,
   strip: 2.45,
   taped: 3.25,
-  about: 5.6,
+  about: 5.4,
   'to-room': 6.45,
-  spex: 6.95,
-  buildup: 7.4,
-  kacha: 7.85,
-  haojia: 8.35,
-  petaid: 8.8,
-  herbarium: 9.25,
-  aws: 9.75,
-  bar: 10.2,
+  spex: 6.82,
+  buildup: 7.28,
+  kacha: 7.76,
+  haojia: 8.25,
+  petaid: 8.73,
+  herbarium: 9.21,
+  aws: 9.7,
+  bar: 10.18,
   lemon: 10.65,
   'to-desk': 11.2,
   scrapbook: 12.5,
@@ -131,6 +138,22 @@ export const softPin = (x, length, s = TIMELINE.softness) => {
 export const flashEnvelope = (v, { fire, rise, fade } = TIMELINE.flash) => (v < fire
   ? smooth(progress(v, [fire - rise, fire]))
   : (1 - smooth(progress(v, [fire, fire + fade]))) ** 2);
+
+// Wall to room is light, not a wipe. In fractions of the transition window:
+// the glare builds to its peak exactly as the chapters cross (the swap is
+// centred on the peak, `half` either side, 0.15 vh in all), then decays over
+// the rest of the window and eases out, so the room's darkness arrives as a
+// ramp that settles instead of stopping dead. `veil` is the peak opacity of
+// the DOM veil that washes the page's text out with the flare.
+export const LEAK = { peak: 0.3, half: 0.125, veil: 0.85 };
+export const leakGlare = (p) => {
+  if (p < LEAK.peak) return smooth(p / LEAK.peak) ** 0.45;
+  const q = (p - LEAK.peak) / (1 - LEAK.peak);
+  return (1 - q) ** 1.75 * (1 + 0.75 * q);
+};
+// The same glare keyed on scroll, 0 outside the window. The composite and the
+// DOM veil both read it, so the text washes exactly with the scene.
+export const wallLeak = (v) => leakGlare(progress(v, TIMELINE.transitions.wallToRoom));
 
 // Critically damped approach, frame-rate independent.
 export const damp = (current, target, lambda, dt) => current + (target - current) * (1 - Math.exp(-lambda * dt));

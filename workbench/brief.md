@@ -64,3 +64,26 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 ## Smoothing-pass notes (seams between elements)
 
 - The light leak (6.15-6.75) burns the 3D scene to white, but the about copy is page text and stays crisp over the burn. Drive the flash's page veil from the leak's glare too (lower peak), so page text washes with the scene.
+- Phone, scrapbook: phone text boxes cover most of the screen so memories sit behind them; the paper stops short of top and bottom, leaving dark bands (for the phone element).
+- Develop shader: undeveloped prints in the scrapbook drops are flat grey-beige boxes. paper3d.js now has `material.userData.tone = { latent: 1 }` (flash r8); turn it on for the desk prints.
+- Scrapbook: heavy vertical window-bar shadow cuts the riso print and "outreach crew"; at 11.79 the ticket overlaps a still-grey photo.
+- Flash tape: at 3.0 the tape comes in steeply across the heart sticker before it flattens (reads as a collision); bring it in from straight above the strip's top edge. Countdown "1" fades to pastel pink too early.
+- About: CGPA shows three times (degree line, index card, badge) — cut to one or two in the type pass. "Looking for" note overlaps the coursework card corner. At 6.25 a warm patch blows out behind the copy (leak glare; see the page-veil note above).
+- Hello to about: at 3.75-3.9 the hello chips cross the top of the SPEX polaroid while the wall glides (hello copy timing).
+- Phone contact (14.4): the wall's top and bottom edges show as beige bands against the dark background (phone element). "Say hi" note on phone falls in dusk shade.
+- Contact: "next memory." italic is flat pink, no riso-blue offset like "Liew" (type pass). Thin vertical wall seam runs through the headline/links column (also seen in about at x≈1090; check the wall texture tiling). Strip drop shadow offset far right at dusk, strip looks floating. Star sticker muddy in shade.
+- Contact strip: at 14.0 the strip's bottom frame is blank then pops in; strip shadow detaches as a grey slab offset right. Desk-to-wall wipe (13.0-13.5) shows a hard horizontal seam across the wall partway. Right ~40% of the final frame is bare wall.
+- Type: riso-blue offset only on "Liew"; "You Wee.", "mostly.", "next memory." are flat pink. Kicker height/colour inconsistent across chapters. Scrapbook Facilitator meta orphans "SCHOOL"; pink toolbox labels low-contrast and above baseline. Hello chrome ("SCRAPBOOK N°", "KUCHING, SARAWAK") nearly unreadable in shadow.
+- Flight: kacha card's photo area reads as washed-out beige with only a logo (check the kacha bake: crop a real screen from the repo). HaoJia and PetAid cards are type only. Caption still dim at 8.58 while the card is centred.
+- Contact at 1440x900: "say hi!" note's bottom edge touches the footer line. At 1280x720 the footer orphans "LIEW".
+- Type: display headlines use straight apostrophes ("Hi, I'm", "Let's"); use curly ones. Big gap in about between intro paragraph and degree meta.
+- Phone spex: the SPEX project card overlaps the polaroid caption "SPEX: catch it…" (phone element).
+- Projects copy: SPEX title and body look grey/low-contrast against the dark room (type/look).
+- To-room burn (priority): r5 over-burns the peak (6.314) into a flat orange-white gradient. Tune `sink` to ~0.7 and the room `shine` key to ~(0.6, 0.85) so wall shapes or the room window read at 30-40% contrast; keep no double exposure. Ghost ring sits alone in the lower right; put it on the flare line. Room text block pops in at 6.64-6.74.
+- Scrapbook toolbox: the pink swipe under the labels reads like a link underline; make it a highlighter block (full-height, offset, slightly rotated) or a label-maker chip instead. Facilitator meta line ends with a dangling "·".
+- Look: shadow colour inconsistent across chapters (hello/taped #43322a darker than the bible's #6b4a3a; contact violet #483a47). Kacha room floor sun patches very saturated orange (#df8a51); glow bleeds off the kacha polaroid's right edge.
+- Flight: beam haze and card gloss wash out the lower-left of the herbarium and lemon screenshots. Far cards read as a pale clump with no light falloff.
+- Look: scrapbook hazy/low-contrast, grey-brown shadow band; contact shadows lean too violet; room dust motes a bit large and bright.
+- Look: milky halation over the right third of the kacha card near the window (halation spreading onto mid-tones).
+- Room window (priority): panes are dull cream-grey (~196,181,162), never clip or bloom, while the near card photo is the brightest thing and looks milky. Raise window emissive/exposure so it clips into bloom; keep PHOTO_NEUTRAL photo gain from making the card brighter than the window.
+- Flight: SPEX card swings past near-whip at 6.995 (foreshortened, cut at top); empty frame between captions 8.6-9.0 while the next card is small; card borders flat with no curl shading vs the bar.

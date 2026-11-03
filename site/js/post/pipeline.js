@@ -135,14 +135,17 @@ void main() {
     float burn = g * g * g;
     // The swap is a dissolve in a compressed range, x / (1 + x), so the room's
     // HDR window fades in like any other surface. Both chapters sink under the
-    // burn while they cross, so each is glimpsed through the light but the two
-    // never double-expose readably; the room then rises out of the light, its
-    // window glowing through it.
+    // burn while they cross, almost entirely at its top, so the flare swallows
+    // the wall and the two never double-expose; the light fills in for them
+    // and the room then rises out of it, its window glowing through.
     vec3 ka = max(a, vec3(0.0)) / (1.0 + max(a, vec3(0.0)));
     vec3 kb = max(b, vec3(0.0)) / (1.0 + max(b, vec3(0.0)));
-    float sink = 1.0 - 0.5 * burn;
+    float sink = 1.0 - 0.88 * burn;
     float leave = (1.0 - uMix) * (1.0 - uMix) * sink;
-    float arrive = uMix * uMix * sink;
+    // Only the room's window (far brighter than any paper) burns through the
+    // flare early, so the room's first sign is its light, not its walls.
+    float shine = smoothstep(0.8, 0.95, dot(kb, vec3(0.2126, 0.7152, 0.0722)));
+    float arrive = mix(uMix * uMix * sink, uMix, shine);
     vec3 k = ka * leave + kb * arrive;
     color = k / max(vec3(1.0) - k, vec3(0.002));
     // Light fills in for whatever of the two chapters is missing mid-swap.

@@ -1,0 +1,8 @@
+{
+ "element": "type",
+ "round": 4,
+ "score": 7,
+ "gap": "In the projects room (spex) the type goes washed out: the SPEX title is a pale grey at low contrast and the body copy and chips are mid-grey on dark wood, so it reads faded next to the crisp ink-on-plaster chapters; give the dark-room text a light-on-dark treatment with real contrast (paper-white title, about 85% body) so it holds the same weight as the other chapters.",
+ "notes": "Faces are consistent everywhere (Instrument Serif, Caveat, JetBrains Mono, Inter Tight) and the kicker sits at the same left margin and height in about, spex, scrapbook and contact. No one-word orphans in headings at 1920. The pink italic accent words in about, scrapbook and contact lack the riso-blue offset copy that hello's 'Liew' has, so the display treatment isn't one system. The hello top-right chrome (KUCHING, SCRAPBOOK N° 12) almost disappears in the gobo shadow. The Facilitator meta line breaks after a dangling '·'. The pink-underlined toolbox labels (FRONTEND, BACKEND...) look like links but aren't. The contact links are clearly links with pink rules. Focus styles can't be checked from stills.",
+ "at": "2026-11-03T05:05:25.276Z"
+}
