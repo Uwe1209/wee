@@ -117,6 +117,16 @@
      "at": "2026-11-03T05:45:51.912Z",
      "compare": "rounds/flight/r8/compare.jpg",
      "strip": "rounds/flight/r8/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 9,
+     "score": 7.5,
+     "gap": "On the pinned cards the beam/gloss streak lies across the screenshot itself and washes it to low-contrast sepia (herbarium is the worst: its UI text and buttons are barely legible under a diagonal white haze); keep the sheen on the paper border and lip so each screenshot reads crisp.",
+     "notes": "Mood is strong: warm beams, dust, bright far window, floor gobo; window never sits behind caption copy. Pinned cards sit right of centre and clear the left 40%. Depth between near and far cards reads well. The camera settles at each card; mid-flight frames (v6.995) turn the near card hard sideways and push it off the right edge, which reads quickly but is not a whip. The v8.973 between-cards frame is empty, with no caption and only a small, distant card. Tape is present but flat (mostly yellow masking), and the cards have no lifted corner or curl to match the instant-photo spec. No console errors or failed chapters.",
+     "at": "2026-11-03T10:01:17.697Z",
+     "compare": "rounds/flight/r9/compare.jpg",
+     "strip": "rounds/flight/r9/strip.jpg"
     }
    ],
    "status": "open"
@@ -614,5 +624,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T09:59:04.132Z"
+ "updated": "2026-11-03T10:01:17.697Z"
 }
