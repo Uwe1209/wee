@@ -49,6 +49,10 @@ const PLANKS = [2.88, 5.76];
 // by the bounce off this line.
 const POOL_X = HALL.right - ((WINDOW.sill + WINDOW.head) / 2 - HALL.floor) * (SUN.x / SUN.y);
 
+// The doorway at the far end of the hall (centre x, centre y, size) and how bright
+// it and its halo are.
+const FAR_DOOR = { x: 2.1, y: -0.4, width: 2.6, height: 4.4, bright: 9, halo: 0.6 };
+
 // The cards' paper, in card space (z toward the viewer): the right part bows back
 // (`bend` is its slope at the right edge) and the top-right corner lifts away
 // further. The bowed side's coat faces back up the hall and the corner's faces up
@@ -577,6 +581,7 @@ export class RoomChapter {
     };
     this.hall(tex);
     this.dust();
+    this.farLight();
 
     // Light for the cards: warm key from behind the viewer, sky fill, and in the
     // coat the windows themselves (GLINT_GLSL).
@@ -658,6 +663,36 @@ export class RoomChapter {
     this.ready = true;
   }
 
+  // The far end of the hall: an open doorway onto low sun, so the vanishing point
+  // has its own light. It sits in the right half of the end wall (clear of the
+  // caption column) and ignores the fog, which would otherwise swallow it 70-130
+  // units down the hall: a soft-edged opening bright enough to clip into bloom,
+  // and a broad warm halo round it.
+  farLight() {
+    const door = glowTexture(128, 256, (ctx, w, h) => {
+      ctx.filter = 'blur(6px)';
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(18, 18, w - 36, h - 30);
+    });
+    const halo = glowTexture(128, 128, (ctx, w) => {
+      const g = ctx.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(0.35, 'rgba(255,255,255,0.35)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, w);
+    });
+    const glow = (map, color, size, y) => {
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(...size), new THREE.MeshBasicMaterial({
+        map, color, fog: false, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      }));
+      mesh.position.set(FAR_DOOR.x, y, HALL.far + 0.1);
+      this.scene.add(mesh);
+    };
+    glow(halo, new THREE.Color(1, 0.6, 0.3).multiplyScalar(FAR_DOOR.halo), [16, 16], FAR_DOOR.y + 0.4);
+    glow(door, new THREE.Color(1, 0.66, 0.36).multiplyScalar(FAR_DOOR.bright), [FAR_DOOR.width, FAR_DOOR.height], FAR_DOOR.y);
+  }
+
   // Floor, ceiling, both side walls and the two ends, each a single quad shaded
   // by SURFACE_FRAG. Textures run in world units, so every wall matches. The same
   // quads, alone in their own scene, draw the haze pass.
@@ -720,7 +755,7 @@ export class RoomChapter {
           uSky: { value: sky },
           uGround: { value: ground },
           uBounce: { value: new THREE.Color(0xffc28a).multiplyScalar(0.8) },
-          uGlass: { value: new THREE.Color(1, 0.55, 0.25).multiplyScalar(2.5) },
+          uGlass: { value: new THREE.Color(1, 0.6, 0.3).multiplyScalar(5) },
           uGlassOn: { value: spec.glass ? 1 : 0 },
           uBoards: { value: tex.floor },
           uDado: { value: spec.dado ?? 0 },

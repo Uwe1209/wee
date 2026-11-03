@@ -587,7 +587,22 @@
    ],
    "status": "done",
    "final": "Stopped at 7 by the two-rounds rule (6, 7, 7, 7). Wall chapters now track the bar. Open for smoothing: room window panes never clip or bloom while the near card photo is the brightest object (lift window emissive, cap card photo highlights); scrapbook photos a little faded/peachy; contact lit wall slightly orange."
+  },
+  "phone": {
+   "rounds": [
+    {
+     "element": "phone",
+     "round": 1,
+     "score": 5,
+     "gap": "The wall plane doesn't fill the phone frame: in hello, taped, about and contact the tilted edge of the plaster shows, with flat grey-brown void bands across the top and bottom (about loses its whole bottom quarter to it), so it reads as a desktop set seen through a tall crop instead of a wall composed for the phone.",
+     "notes": "Frames really are 390x844 at DPR 2 (780x1688), so round.mjs honoured the viewport. No console errors and no failed chapters. Hello and taped: the name/memories/tagline zones work, but the SPEX polaroid is cut off at the left edge, the ADMIT ONE ticket is clipped in taped and the tagline runs into it, and the photos are a bit small at about 200px. About, scrapbook and contact: the stacked opaque copy cards cover the memories (the portrait is half-hidden behind the bio card in about, the dodgeball photos only show faintly through the toolbox card, and the photobooth strip in contact sits under the card), so words and memories don't get their own zones. The cards also read as flat UI panels rather than paper. Body text is a readable 16-17px with no horizontal clipping. SPEX is the strongest frame: a large photo with a readable card below it.",
+     "at": "2026-11-03T09:44:35.828Z",
+     "compare": "rounds/phone/r1/compare.jpg",
+     "strip": null
+    }
+   ],
+   "status": "open"
   }
  },
- "updated": "2026-11-03T05:45:54.975Z"
+ "updated": "2026-11-03T09:44:35.828Z"
 }
