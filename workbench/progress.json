@@ -630,6 +630,16 @@
      "at": "2026-11-03T09:59:04.128Z",
      "compare": "rounds/phone/r2/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "phone",
+     "round": 3,
+     "score": 6.5,
+     "gap": "Opening (hello/taped) is a squeezed desktop: the SPEX polaroid is cut off by the left screen edge, in taped the ADMIT ONE ticket is clipped at left and its bottom edge collides with the tagline's first line, while a ~200px empty wall band sits between the name and the photos; give name, memories and tagline their own non-overlapping zones with every card fully on screen.",
+     "notes": "Body text below 16px on phone: SPEX card description 15px, Live site/Code links 14px, scrapbook toolbox dd 15px (about lead 17px and dodgeball para 16px pass); mono labels/meta at 9-10px are hard to read (footer, card meta, chips). No horizontal scroll (scrollWidth 390), no console errors. Tagline sits half in a window-bar shadow in hello/taped (light should move, not copy). About, spex, scrapbook and contact are well composed: cream backings readable, photos large enough to recognise people, contact strip excellent. SPEX hand caption 'SPEX catch it in' is overlapped/clipped by the card. Photobooth strip in taped is small and partly shadowed.",
+     "at": "2026-11-03T10:24:20.519Z",
+     "compare": "rounds/phone/r3/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
@@ -650,5 +660,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T10:21:15.694Z"
+ "updated": "2026-11-03T10:24:20.524Z"
 }
