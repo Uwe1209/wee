@@ -115,6 +115,14 @@ export class WallChapter {
     plaster.position.x = 17;
     plaster.receiveShadow = true;
     wall.add(plaster);
+    // A phone's tall lens sees well above and below the 11-unit wall, so narrow
+    // screens get a 30-unit-tall plane mapped at the same texel scale (the
+    // mirrored wrap carries the plaster on past the original edges, seamless).
+    const tall = new THREE.PlaneGeometry(54, 30);
+    const uv = tall.attributes.uv;
+    for (let i = 0; i < uv.count; i += 1) uv.setY(i, (uv.getY(i) * 30 - 9.5) / 11);
+    this.plasterShapes = { wide: plaster.geometry, narrow: tall };
+    this.plaster = plaster;
 
     // Light: the sun through a window, cool sky fill.
     const sun = new THREE.SpotLight(DAY.sun, DAY.sunIntensity, 0, 0.5, 0.2, 0);
@@ -267,6 +275,7 @@ export class WallChapter {
     // Keep the wall composition on narrow screens: widen the lens a little.
     this.camera.fov = aspect < 1 ? 46 : 30;
     this.camera.updateProjectionMatrix();
+    this.plaster.geometry = aspect < 1 ? this.plasterShapes.narrow : this.plasterShapes.wide;
     if (this.contactNote) {
       const rest = aspect < 1 ? CONTACT_NOTE.narrow : CONTACT_NOTE.wide;
       place(this.wall, this.contactNote, rest);

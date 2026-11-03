@@ -51,7 +51,7 @@ const POOL_X = HALL.right - ((WINDOW.sill + WINDOW.head) / 2 - HALL.floor) * (SU
 
 // The doorway at the far end of the hall (centre x, centre y, size) and how bright
 // it and its halo are.
-const FAR_DOOR = { x: 2.1, y: -0.4, width: 2.6, height: 4.4, bright: 9, halo: 0.6 };
+const FAR_DOOR = { x: 2.1, y: -0.4, width: 2.6, height: 4.4, bright: 9, halo: 1.2 };
 
 // The cards' paper, in card space (z toward the viewer): the right part bows back
 // (`bend` is its slope at the right edge) and the top-right corner lifts away
@@ -667,7 +667,8 @@ export class RoomChapter {
   // has its own light. It sits in the right half of the end wall (clear of the
   // caption column) and ignores the fog, which would otherwise swallow it 70-130
   // units down the hall: a soft-edged opening bright enough to clip into bloom,
-  // and a broad warm halo round it.
+  // and a warm halo round it that dies out well inside the end wall (wider, it
+  // lights the whole wall evenly and reads as a lit box).
   farLight() {
     const door = glowTexture(128, 256, (ctx, w, h) => {
       ctx.filter = 'blur(6px)';
@@ -677,7 +678,8 @@ export class RoomChapter {
     const halo = glowTexture(128, 128, (ctx, w) => {
       const g = ctx.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
       g.addColorStop(0, 'rgba(255,255,255,1)');
-      g.addColorStop(0.35, 'rgba(255,255,255,0.35)');
+      g.addColorStop(0.3, 'rgba(255,255,255,0.3)');
+      g.addColorStop(0.65, 'rgba(255,255,255,0.06)');
       g.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, w);
@@ -689,7 +691,7 @@ export class RoomChapter {
       mesh.position.set(FAR_DOOR.x, y, HALL.far + 0.1);
       this.scene.add(mesh);
     };
-    glow(halo, new THREE.Color(1, 0.6, 0.3).multiplyScalar(FAR_DOOR.halo), [16, 16], FAR_DOOR.y + 0.4);
+    glow(halo, new THREE.Color(1, 0.6, 0.3).multiplyScalar(FAR_DOOR.halo), [FAR_DOOR.width * 2.4, FAR_DOOR.width * 2.4], FAR_DOOR.y);
     glow(door, new THREE.Color(1, 0.66, 0.36).multiplyScalar(FAR_DOOR.bright), [FAR_DOOR.width, FAR_DOOR.height], FAR_DOOR.y);
   }
 
