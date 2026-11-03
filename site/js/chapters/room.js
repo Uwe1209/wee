@@ -82,6 +82,28 @@ const focusOn = (d) => (d < 0
   ? 1 - smooth(clamp01((-d - 0.16) / 0.3))
   : 1 - smooth(clamp01((d - 0.02) / 0.14)));
 
+// A card the camera has just looked at is filed away, so it never hangs across
+// the lens as a blank slab while the camera passes it. After its caption starts
+// fading (d = c - j past its rest), it swings on its window-side edge toward the
+// wall and recedes down the hall; once the caption is gone it lifts and slides
+// toward the windows, out of frame by the time the next card is in view. Everything
+// is a function of d, so scrolling back unfiles it. Measured: a passed card never
+// covers more of the frame than at its rest (18-22%), under 5% from d = 0.3 and
+// ~0% from d = 0.5. The named states all sit at d < 0.09, so their framing holds.
+const FILE = { from: 0.08, span: 0.2, turn: 1.4, recede: 2.5, driftFrom: 0.14, driftSpan: 0.28, lift: 1.8, slide: 1 };
+const fileAway = (mesh, d) => {
+  const turn = smooth(clamp01((d - FILE.from) / FILE.span));
+  const drift = smooth(clamp01((d - FILE.driftFrom) / FILE.driftSpan));
+  if (turn <= 0 && drift <= 0) return;
+  const half = mesh.userData.size.width / 2;
+  const rest = mesh.userData.yaw;
+  const yaw = rest + turn * FILE.turn;
+  mesh.rotation.y = yaw;
+  mesh.position.x += (Math.cos(rest) - Math.cos(yaw)) * half + drift * FILE.slide;
+  mesh.position.y += drift * FILE.lift;
+  mesh.position.z += (Math.sin(yaw) - Math.sin(rest)) * half - turn * FILE.recede;
+};
+
 const cardSpot = (index) => new THREE.Vector3(1.6 + (index % 2 ? 0.08 : -0.08), ((index % 3) - 1) * 0.35, -2 - SPACING * index);
 
 // Cubic from 0 to 1 over x in [0, 1] with slope a at the start and b at the end.
@@ -471,7 +493,9 @@ const coat = (material, uniforms) => {
       .replace('#include <project_vertex>', '#include <project_vertex>\nvRoomWorld = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\n${GLINT_GLSL}`)
-      .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`);
+      .replace('#include <opaque_fragment>', `${GLINT_MAIN}\n#include <opaque_fragment>`)
+      // The back of a print is plain paper, not the photo seen through it.
+      .replace('#include <color_fragment>', '#include <color_fragment>\nif (!gl_FrontFacing) diffuseColor.rgb = vec3(0.94, 0.91, 0.85);');
   };
   material.customProgramCacheKey = () => `${key}-glint`;
 };
@@ -576,6 +600,7 @@ export class RoomChapter {
       mesh.rotation.set(0, -0.2 + (index % 2 ? 0.08 : -0.04), (index % 2 ? 1 : -1) * 0.045);
       mesh.userData.home = spot.clone();
       mesh.userData.spin = mesh.rotation.z;
+      mesh.userData.yaw = mesh.rotation.y;
       stickTo(tapeTop(mesh, tex[`tape-${project.tape}`], { width: 0.62, rot: (index % 3 - 1) * 0.12 }), size);
       if (project.badge) {
         const badge = sticker(tex[project.badge], 0.95);
@@ -808,7 +833,8 @@ export class RoomChapter {
     this.cards.forEach((mesh, j) => {
       const home = mesh.userData.home;
       mesh.position.set(home.x, home.y + Math.sin(time * 0.6 + j) * 0.05, home.z);
-      mesh.rotation.z = mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012;
+      mesh.rotation.set(0, mesh.userData.yaw, mesh.userData.spin + Math.sin(time * 0.4 + j * 1.7) * 0.012);
+      if (j < this.cards.length - 1) fileAway(mesh, c - j);
       mesh.updateMatrixWorld();
       uCards.value[j].copy(mesh.matrixWorld).invert();
       uCardSun.value[j].copy(SUN).transformDirection(uCards.value[j]);
