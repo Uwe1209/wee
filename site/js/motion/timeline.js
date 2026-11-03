@@ -86,6 +86,7 @@ export const TIMELINE = {
 
   contact: {
     strip: [13.35, 14.1],
+    note: [14.15, 14.3], // the 'say hi' note lands once the title has risen past its spot
     dusk: [12.6, 14.4],
   },
 };

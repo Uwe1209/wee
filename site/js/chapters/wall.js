@@ -35,7 +35,7 @@ const DUSK = {
 // Where the contact note rests on wide and narrow screens; on a phone it is
 // drawn larger so its handwriting stays readable at the wider lens.
 const CONTACT_NOTE = {
-  wide: { x: 26.85, y: -0.75, z: 0.14, rot: 0.05, scale: 1.1 },
+  wide: { x: 27.18, y: -0.75, z: 0.14, rot: 0.05, scale: 1.0 },
   narrow: { x: 32.2, y: -1.3, z: 0.14, rot: 0.05, scale: 1.6 },
 };
 // `ABOUT_AIM` slides the sun (and its target) along the wall and down for the
@@ -328,6 +328,12 @@ export class WallChapter {
     const mounts = 1 - smooth(progress(v, [T.flash.develop[1] - 0.25, T.flash.tape[0] + 0.03]));
     this.mountMaterial.opacity = mounts;
     this.mountMaterial.visible = mounts > 0;
+    // The note is slapped on after the strip, so the eye goes strip, note, email.
+    const note = this.contactNote;
+    const away = 1 - easeOut(progress(v, T.contact.note));
+    note.visible = v > T.contact.note[0];
+    note.position.set(note.userData.rest.x, note.userData.rest.y + away * 0.25, note.userData.rest.z + away * 0.8);
+    note.rotation.z = note.userData.rest.rot + away * 0.12;
     this.updateStrip(this.contactStrip, v, { print: T.contact.strip, develop: [T.contact.strip[0] + 0.2, T.contact.strip[1] + 0.2], tape: [T.contact.strip[1] - 0.1, T.contact.strip[1] + 0.1] });
 
     // Anticipation: the room dims a touch during the countdown.
