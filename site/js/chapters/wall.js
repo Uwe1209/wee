@@ -174,10 +174,17 @@ export class WallChapter {
     // A phone's tall lens sees well above and below the 11-unit wall, so narrow
     // screens get a 30-unit-tall plane mapped at the same texel scale (the
     // mirrored wrap carries the plaster on past the original edges, seamless).
-    const tall = new THREE.PlaneGeometry(54, 30);
-    const uv = tall.attributes.uv;
-    for (let i = 0; i < uv.count; i += 1) uv.setY(i, (uv.getY(i) * 30 - 9.5) / 11);
-    this.plasterShapes = { wide: plaster.geometry, narrow: tall };
+    // Wide screens get a little extra too: at about's landing (v 4.9) a
+    // 16:9 view reaches 0.06 units past the 11-unit edge.
+    const extended = (height) => {
+      const geometry = new THREE.PlaneGeometry(54, height);
+      const uv = geometry.attributes.uv;
+      for (let i = 0; i < uv.count; i += 1) uv.setY(i, (uv.getY(i) * height - (height - 11) / 2) / 11);
+      return geometry;
+    };
+    plaster.geometry.dispose();
+    plaster.geometry = extended(12);
+    this.plasterShapes = { wide: plaster.geometry, narrow: extended(30) };
     this.plaster = plaster;
 
     // Light: the sun through a window, cool sky fill.
@@ -516,9 +523,11 @@ export class WallChapter {
       const base = (tapePiece.userData.base ??= { x: tapePiece.position.x, y: tapePiece.position.y, z: tapePiece.position.z, rot: tapePiece.rotation.z });
       const away = 1 - fall * fall; // accelerates into the hit
       tapePiece.visible = u > 0;
-      tapePiece.position.set(base.x - 0.04 * away, base.y + 0.2 * away, base.z + 0.5 * away);
-      tapePiece.rotation.z = base.rot + 0.28 * away;
-      tapePiece.scale.set(1 + 0.3 * away + 0.05 * press, 1 + 0.3 * away - 0.04 * press, 1);
+      // Straight down onto the strip's top edge: barely skewed and barely
+      // larger, so it never sweeps across the heart sticker beside it.
+      tapePiece.position.set(base.x, base.y + 0.45 * away, base.z + 0.2 * away);
+      tapePiece.rotation.z = base.rot + 0.05 * away;
+      tapePiece.scale.set(1 + 0.1 * away + 0.05 * press, 1 + 0.1 * away - 0.04 * press, 1);
       tapePiece.material.opacity = 0.85 * smooth(clamp01(fall / 0.4)); // stays see-through
     }
   }

@@ -146,7 +146,7 @@ export class App {
     this.v = this.scroll.update(dt) / this.vh;
     uploadOne(this.renderer);
     this.render(this.v);
-    this.dom.update(this.v, this.intro, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null);
+    this.dom.update(this.v, this.intro, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null, this.stillDip);
     this.adapt(dt);
     if (FLAGS.debug) this.debug(dt);
   }
@@ -221,6 +221,9 @@ export class App {
     const plan = this.plan(v);
     this.drawn = new Set([plan.a, plan.b].filter(Boolean));
     const fade = this.reduced && !plan.b ? this.stillFade(plan.a, v) : null;
+    // Reduced motion: page copy tied to a still dips out to the crossfade's
+    // midpoint (where the dominant still, and so the caption, swaps) and back.
+    this.stillDip = fade ? Math.abs(1 - 2 * fade.mix) : 1;
     let a;
     let source = this.slots[0];
     if (fade) {
@@ -237,7 +240,7 @@ export class App {
       look = mixLook(look, (b ?? this.chapters.wall).look, plan.mix);
       if (glare > 0) look = glareLook(look, glare);
     }
-    const flash = flashEnvelope(v) * (this.reduced ? 0.05 : 1);
+    const flash = flashEnvelope(v) * (this.reduced ? T.flash.reduced : 1);
     this.pipeline.setLook({ ...look, exposure: look.exposure * (1 + 1.5 * flash), flash: flash * T.flash.peak });
     this.pipeline.present({ time: this.time, source });
   }
@@ -257,7 +260,7 @@ export class App {
     this.scroll.setTarget(v * this.vh, { instant: true });
     this.v = this.scroll.update(0) / this.vh;
     this.render(this.v);
-    this.dom.update(this.v, 1, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null);
+    this.dom.update(this.v, 1, this.drawn.has('room') ? this.chapters.room : null, this.drawn.has('wall') ? this.chapters.wall : null, this.stillDip);
     this.api.info = { state, v: this.v, failed: [...this.failed] };
     this.api.ready = true;
     return this.v;

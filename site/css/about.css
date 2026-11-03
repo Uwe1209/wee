@@ -1,3 +1,8 @@
 /* ---- about: along the wall ---- */
 .sec-about .block { max-width: 48vw; }
 .facts { font-size: max(12px, 0.85vw); line-height: 1.75; letter-spacing: 0.08em; color: #3c2a1e; }
+/* Short landscape screens: the lead's 16px floor outgrows the gap between the
+   intro and the degree line, so it sets by height in a slightly wider column. */
+@media (min-aspect-ratio: 1/1) and (max-height: 800px) {
+  .sec-about .lead { font-size: max(14px, calc(var(--vh) * 2.3)); max-width: 40vw; }
+}
