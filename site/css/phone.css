@@ -12,16 +12,27 @@
   .flash-caption { right: var(--pad); left: var(--pad); bottom: calc(var(--vh) * 26); max-width: none; font-size: 5.4vw; }
   .block, .sec-scrapbook .screen { padding-left: var(--pad); padding-right: var(--pad); max-width: none !important; }
   .title { font-size: 13vw; }
-  .sec-scrapbook .title { font-size: 12vw; }
+  .sec-scrapbook .title { font-size: 10.5vw; }
   .lead, .role, .skills { max-width: none; }
   .lead { font-size: 17px; margin-top: 14px; }
   .kicker { font-size: 10px; margin-bottom: 10px; }
-  .sec-about .block > *, .sec-contact .block > div {
+  .sec-contact .block > div {
     background: rgba(250, 245, 236, 0.86); padding: 14px 16px; border-radius: 3px; box-shadow: 0 6px 20px rgba(60, 38, 24, 0.12);
   }
-  .sec-about .block > * + * { margin-top: 0; }
-  /* The intro rests lower now (chapter top); keep the goal cards below its taller phone lead. */
-  .sec-about [data-block="about-goal"] { padding-top: calc(var(--vh) * 28); }
+  /* Copy sits on paper in the upper zone; the memories get the lower one. Each
+     block is one sheet: its parts butt together (padding, not margins) on the
+     same backing, with one shadow for the whole sheet, so no seams show. */
+  .sec-about .block > *, .sec-scrapbook .screen > * {
+    background: rgba(250, 245, 236, 0.88); margin: 0; padding: 10px 16px 0; border-radius: 0; box-shadow: none;
+  }
+  .sec-about .block > :first-child, .sec-scrapbook .screen > :first-child { padding-top: 14px; border-radius: 3px 3px 0 0; }
+  .sec-about .block > :last-child, .sec-scrapbook .screen > :last-child { padding-bottom: 14px; border-radius: 0 0 3px 3px; }
+  .sec-about .block, .sec-scrapbook .screen { filter: drop-shadow(0 6px 14px rgba(60, 38, 24, 0.14)); }
+  .sec-about [data-block="about-intro"] { transform: rotate(-0.5deg); }
+  /* The goal is a second note, pinned just under the intro. */
+  .sec-about [data-block="about-goal"] { padding-top: calc(var(--vh) * 19.5); transform: rotate(0.6deg); }
+  .sec-about .lead { margin-top: 0; }
+  .sec-about .facts { font-size: 11px; line-height: 1.6; }
   .projects-head { top: calc(var(--chapter-top) + 14px); } /* level with the kickers inset 14px in their cards */
   .projects-head .hand { font-size: 6vw; }
   .project { top: auto; bottom: calc(var(--vh) * 4); width: auto; right: var(--pad); background: rgba(18, 12, 8, 0.72); padding: 16px; border-radius: 4px; }
@@ -30,11 +41,13 @@
   .stack { gap: 5px; margin-top: 12px; }
   .stack li { padding: 5px 7px; }
   .links { margin-top: 12px; gap: 16px; }
-  .sec-scrapbook .screen > * { background: rgba(250, 245, 236, 0.88); padding: 12px 14px; border-radius: 3px; }
-  .role { margin-top: 10px; }
-  .role h3 { font-size: 7vw; }
-  .skills { margin-top: 10px; }
-  .skills dl { gap: 4px 10px; }
+  .sec-scrapbook .screen { padding-top: calc(var(--vh) * 7); }
+  .sec-scrapbook .kicker { margin-bottom: 6px; }
+  .role h3 { font-size: 6vw; }
+  .role .meta { font-size: 10px; letter-spacing: 0.08em; margin: 4px 0; }
+  .role p:not(.meta) { font-size: 16px; line-height: 1.4; }
+  .skills dl { gap: 2px 10px; }
+  .skills dd { font-size: 15px; line-height: 1.35; }
   .contact-links a { font-size: 6vw; overflow-wrap: anywhere; } /* the full address fits a 390 px screen */
   .footer { font-size: 9px; margin-top: 18px; max-width: none; }
 }

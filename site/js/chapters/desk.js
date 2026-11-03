@@ -34,14 +34,14 @@ const SPREAD = {
     'sticker-sparkle': { at: [0.683, 0.445], width: 0.026, rot: 0.15 },
   },
   narrow: {
-    'gators-riso': { at: [0.32, 0.56], width: 0.48, rot: -0.05 },
-    'certificate-instant': { at: [0.77, 0.58], width: 0.32, rot: 0.06 },
-    'team-instant': { at: [0.27, 0.76], width: 0.34, rot: -0.035 },
-    'coaching-instant': { at: [0.6, 0.77], width: 0.26, rot: 0.045 },
-    'ticket-outreach': { at: [0.75, 0.84], width: 0.36, rot: -0.06 },
-    'sticker-star': { at: [0.6, 0.49], width: 0.08, rot: 0.2 },
-    'sticker-heart': { at: [0.92, 0.68], width: 0.07, rot: -0.2 },
-    'sticker-sparkle': { at: [0.1, 0.86], width: 0.06, rot: 0.15 },
+    // The copy sheet owns the frame down to ~0.71; the memories get the band
+    // below it. A phone has room for two, large: the team riso and the
+    // certificate. Pieces left out of a spread stay off the page.
+    'gators-riso': { at: [0.33, 0.85], width: 0.62, rot: -0.04 },
+    'certificate-instant': { at: [0.8, 0.852], width: 0.34, rot: 0.06 },
+    'sticker-star': { at: [0.655, 0.75], width: 0.075, rot: 0.2 },
+    'sticker-heart': { at: [0.95, 0.965], width: 0.065, rot: -0.2 },
+    'sticker-sparkle': { at: [0.05, 0.975], width: 0.055, rot: 0.15 },
   },
 };
 const SPREAD_STATE = STATES.scrapbook; // the camera pose the spread is solved for
@@ -277,6 +277,8 @@ export class DeskChapter {
     const spread = this.camera.aspect < 1 ? SPREAD.narrow : SPREAD.wide;
     this.pose(SPREAD_STATE);
     this.items.forEach((mesh) => {
+      mesh.userData.hidden = !spread[mesh.userData.spread];
+      if (mesh.userData.hidden) return;
       const { at: [u, v], width, rot } = spread[mesh.userData.spread];
       const z = mesh.userData.rest.z;
       const centre = this.onPage(u, v, z);
@@ -298,7 +300,7 @@ export class DeskChapter {
       const rest = mesh.userData.rest;
       const t = clamp01((v - (start + index * step)) / (step * 3));
       const land = backOut(t);
-      mesh.visible = t > 0;
+      mesh.visible = t > 0 && !mesh.userData.hidden;
       const rise = DROP.rise * (1 - smooth(t));
       mesh.position.set(lerp(rest.x, eye.x, rise), lerp(rest.y, eye.y, rise) + (1 - land) * DROP.slide, lerp(rest.z, eye.z, rise));
       mesh.rotation.z = rest.rot + (1 - land) * mesh.userData.spinIn;
@@ -339,7 +341,7 @@ export class DeskChapter {
   stills() {
     this.items.forEach((mesh) => {
       const rest = mesh.userData.rest;
-      mesh.visible = true;
+      mesh.visible = !mesh.userData.hidden;
       mesh.position.set(rest.x, rest.y, rest.z);
       mesh.rotation.z = rest.rot;
       const develop = mesh.material.userData.develop;
