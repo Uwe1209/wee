@@ -1,7 +1,7 @@
 /* ---- phones: name on top, memories in the middle, words at the bottom ---- */
 @media (max-aspect-ratio: 1/1) {
   :root { --pad: 6vw; --chapter-top: calc(var(--vh) * 9); }
-  .bar { font-size: 9px; letter-spacing: 0.12em; }
+  .bar { font-size: 9px; letter-spacing: 0.12em; color: rgba(52, 32, 20, 0.9); } /* small, so a touch darker than desktop */
   .bar span:nth-child(3) { display: none; }
   .name { top: calc(var(--vh) * 8); font-size: 17vw; }
   .riso { margin-left: 8vw; }
