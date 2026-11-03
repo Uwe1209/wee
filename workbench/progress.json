@@ -690,9 +690,20 @@
      "at": "2026-11-03T15:34:48.272Z",
      "compare": "rounds/phone/r8/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "phone",
+     "round": 9,
+     "score": 7.5,
+     "gap": "Scrapbook screen is one wall-of-text card covering ~70% of the frame (role, dates, full toolbox), with the memories squeezed into the bottom fifth, where the team photo is a dark pink halftone whose faces can't be made out; split it so the photos get a real zone and the team shot reads as people.",
+     "notes": "Hello/taped: strong phone composition (name top, collage middle, tagline+chips bottom), but a dead ~120px band between collage and tagline and another under the chips; tagline could sit closer. Scrapbook card shows a hairline step/seam at the TOOLBOX join (two stacked papers misaligned by a pixel or two at both edges). About: good, readable, portrait large; GPA sticker crowds the polaroid corner. SPEX: best frame, caption panel readable, map large. Contact: clean; photostrip's lower half is plain wall with the star floating, slightly empty. Overall grade is flatter/more uniformly orange than the bar's raking light and shade. Body text >=16px everywhere, nothing clipped, no console problems.",
+     "at": "2026-11-03T15:41:14.318Z",
+     "compare": "rounds/phone/r9/compare.jpg",
+     "strip": null
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Stopped at 7.5 on budget (5, 6, 6.5, 7, 7, 7.5, 7, 7.5, 7.5): the two-rounds rule had not fired, but nine rounds in with repeated usage-limit stops, the remaining gaps go to the smoothing pass. Open: phone scrapbook copy card ~70% of the frame (split the toolbox off or shorten it), riso team photo too dark on phones, empty bands under the hello collage and chips, hairline step at TOOLBOX, GPA sticker crowds the portrait corner."
   },
   "reduced": {
    "rounds": [
@@ -731,5 +742,5 @@
    "final": "Stopped at 7 by the two-rounds rule (7.5, 7, 7). Fixed along the way: resize flash, quality-only resizes no longer drop the pending scroll, crossfades between stills. For smoothing: scrapbook Toolbox overflows short screens (all modes); freeze dust in reduced; lower the reduced flash pulse; hide countdown/\"smile!\" and the \"scroll to take a photo\" cue in reduced; swap project captions at the crossfade midpoint."
   }
  },
- "updated": "2026-11-03T15:34:48.273Z"
+ "updated": "2026-11-03T15:41:29.137Z"
 }
