@@ -71,3 +71,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - About: CGPA shows three times (degree line, index card, badge) — cut to one or two in the type pass. "Looking for" note overlaps the coursework card corner. At 6.25 a warm patch blows out behind the copy (leak glare; see the page-veil note above).
 - Hello to about: at 3.75-3.9 the hello chips cross the top of the SPEX polaroid while the wall glides (hello copy timing).
 - Phone contact (14.4): the wall's top and bottom edges show as beige bands against the dark background (phone element). "Say hi" note on phone falls in dusk shade.
+- Contact: "next memory." italic is flat pink, no riso-blue offset like "Liew" (type pass). Thin vertical wall seam runs through the headline/links column (also seen in about at x≈1090; check the wall texture tiling). Strip drop shadow offset far right at dusk, strip looks floating. Star sticker muddy in shade.
