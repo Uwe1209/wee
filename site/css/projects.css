@@ -1,6 +1,6 @@
 /* ---- projects: the room ---- */
 .sec-projects { color: var(--cream); }
-.projects-head { position: absolute; left: var(--pad); top: calc(var(--vh) * 7); }
+.projects-head { position: absolute; left: var(--pad); top: var(--chapter-top); }
 .projects-head .kicker { color: rgba(243, 233, 218, 0.72); }
 .projects-head .hand { font-size: 1.7vw; color: var(--sun); rotate: -2deg; transform-origin: left; }
 .projects { list-style: none; }
