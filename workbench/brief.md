@@ -78,3 +78,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Contact at 1440x900: "say hi!" note's bottom edge touches the footer line. At 1280x720 the footer orphans "LIEW".
 - Type: display headlines use straight apostrophes ("Hi, I'm", "Let's"); use curly ones. Big gap in about between intro paragraph and degree meta.
 - Phone spex: the SPEX project card overlaps the polaroid caption "SPEX: catch it…" (phone element).
+- Projects copy: SPEX title and body look grey/low-contrast against the dark room (type/look).
