@@ -1,0 +1,8 @@
+{
+ "element": "phone",
+ "round": 4,
+ "score": 7,
+ "gap": "On spex the dark translucent info card sits over the lower third of the SPEX polaroid, so its 'SPEX: catch it in' caption ghosts through behind the SPEX title and the photo is cut off at the right edge; lift the card's top below the polaroid lip (or shrink and raise the polaroid fully inside the frame) so the photo, its caption and the copy each get their own zone.",
+ "notes": "Body text checks out: Inter Tight is 16-17px everywhere and scrollWidth is 390, so there is no horizontal scroll. Mono labels and meta are 9-10px, which is small but legible. Hello and taped are flat warm beige with no window gobo or raking sun, and a heavy brown vignette swallows the top 'MEMORIES 2024-2026' label and the corners. Both have a dead gap of about 100px between the memories cluster and the handwritten note. In hello, the empty 'photo lands here' corner marks take the centre of the screen. About is strong: big, recognisable portrait and solid paper backings, but the coursework note's handwriting is about 7px and unreadable. On scrapbook the copy card fills about 70% of the screen and the photos are squeezed under it. Contact is well composed. No console errors and no failed chapters.",
+ "at": "2026-11-03T10:45:34.790Z"
+}
