@@ -127,9 +127,20 @@
      "at": "2026-11-03T10:01:17.697Z",
      "compare": "rounds/flight/r9/compare.jpg",
      "strip": "rounds/flight/r9/strip.jpg"
+    },
+    {
+     "element": "flight",
+     "round": 10,
+     "score": 8,
+     "gap": "The hero card reads as a flat matte plane: no semi-gloss sheen moving across the print and no curl or lifted corner (see lemon, herbarium), so it looks like a card in 3D rather than a photo on paper beside the tape.",
+     "notes": "Room mood carries golden hour well: warm beams, floor gobo, dust shaft, bright far window. All four hero cards sit right of centre, fully in frame, readable, clear of the caption column; window and beams stay right of the text. Strip shows the flight easing at each card with no whip. Minor: the herbarium screenshot is hazed and desaturated by the beam and dust in front of it; the dust shaft sits brightest under the card and pulls the eye down to the floor; mid-flight frames (v8.577, v8.973) fade the caption early while the next card is still small and far, which leaves a half-empty moment. No console errors, no failed chapters.",
+     "at": "2026-11-03T10:21:00.979Z",
+     "compare": "rounds/flight/r10/compare.jpg",
+     "strip": "rounds/flight/r10/strip.jpg"
     }
    ],
-   "status": "open"
+   "status": "done",
+   "final": "Met the bar at 8 in round 10. For smoothing: stronger visible curl and lifted corner on the near card; dust shaft brightest under the card pulls the eye down; brief half-empty frame between captions at 8.58-8.97."
   },
   "to-room": {
    "rounds": [
@@ -639,5 +650,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T10:14:07.559Z"
+ "updated": "2026-11-03T10:21:15.694Z"
 }

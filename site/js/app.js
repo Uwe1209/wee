@@ -125,9 +125,13 @@ export class App {
     this.slots.forEach((slot) => slot.setSize(size.x, size.y));
     this.pipeline.setSize(size.x, size.y);
     Object.values(this.chapters).forEach((chapter) => chapter.ready && chapter.resize(this.aspect));
-    this.dom.layout(height);
-    this.scroll.setLength((T.total + 1) * height);
-    if (v > 0) this.scroll.setTarget(v * height, { instant: true });
+    // A quality-only resize (adapt) keeps the window size: leave the DOM and the scroll alone.
+    const windowChanged = this.api.layout?.width !== width || this.api.layout?.vh !== height;
+    if (windowChanged) {
+      this.dom.layout(height);
+      this.scroll.setLength((T.total + 1) * height);
+      if (v > 0) this.scroll.setTarget(v * height, { instant: true });
+    }
     this.api.layout = { vh: height, width, total: T.total, dpr, buffer: [size.x, size.y], sections: T.sections };
     // Resizing clears the canvas; redraw now so the browser never composites an empty frame.
     if (this.loop) this.render(this.v);
