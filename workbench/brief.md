@@ -95,3 +95,4 @@ Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM 
 - Phone r4: hello/taped are flat beige with no window light (the big pane removed the gobo); heavy edge darkening hides "MEMORIES 2024-2026"; ~100px dead space between photos and note; empty "photo lands here" marks take the middle of hello. About coursework handwriting ~7px. Scrapbook text card ~70% of the screen.
 - Phone r5: top vignette hides "MEMORIES · 2024 — 2026" and the top-right label; about has an empty shadowed strip above the cards and the portrait/notes sit in window shadow; contact has a hard dark band over the top 40%.
 - Phone r6: hello photos small (~110pt wide); scrapbook riso group photo too contrasty on phone (faces hard to read).
+- Phone r7: taped strip crowds the ADMIT ONE ticket and URIIS photo; corner brackets read as stray triangles; about/contact have a dark shadow band across the middle.

@@ -670,6 +670,16 @@
      "at": "2026-11-03T14:50:34.721Z",
      "compare": "rounds/phone/r6/compare.jpg",
      "strip": null
+    },
+    {
+     "element": "phone",
+     "round": 7,
+     "score": 7,
+     "gap": "The opening (hello/taped) has no golden-hour window light: the wall is a flat orange with no mullion or leaf gobo shadows, and a heavy dark vignette crushes the corners so the top MEMORIES · 2024 — 2026 label and the right-hand meta are nearly unreadable and the chip row sits in murk. Light the wall with the raking gobo like the bar, and ease the phone vignette so the top and bottom chrome sit in light.",
+     "notes": "Later screens are well composed for a phone: about, scrapbook and contact cards have their own zones, body text is a comfortable 16px+ and nothing is clipped. SPEX room is the strongest frame. Hello has a dead band between the collage and the tagline, and the 'photo lands here' corner brackets look like stray dark triangles. In taped the strip is crowded: it covers the ADMIT ONE ticket's edge and the URIIS photo, and the collage prints are small (faces only about 25-30px tall). The scrapbook team riso print reads muddy with low contrast. About and contact put a dark shadow band through the middle of the frame. No console errors or failed chapters.",
+     "at": "2026-11-03T15:22:18.698Z",
+     "compare": "rounds/phone/r7/compare.jpg",
+     "strip": null
     }
    ],
    "status": "open"
@@ -700,5 +710,5 @@
    "status": "open"
   }
  },
- "updated": "2026-11-03T14:50:34.721Z"
+ "updated": "2026-11-03T15:22:18.699Z"
 }
