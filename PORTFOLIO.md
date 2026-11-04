@@ -10,15 +10,18 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 ## 1. SPEX: Animal Disease Forecasting
 **Final year project · 2026**
 
-- **Live site:** https://spex-disease.vercel.app
-- **Code:** https://github.com/Uwe1209/SPEX_Disease
-- **Role:** Team lead (team of 5); owned integration and deployment
+- **Live site:** https://spex002-production.up.railway.app
+- **Code:** https://github.com/Uwe1209/spex002
+- **Role:** Team lead (team of 5) and main developer
 - **What I did:**
-  - Led the five-person team: planning, task split and keeping the parts working together
-  - Integrated the machine-learning models, the FastAPI backend and the React frontend into one system
-  - Deployed the backend on Railway, the frontend on Vercel and the database on Supabase, with a weekly data refresh
-- **Key technologies:** React, TypeScript, three.js, Python, FastAPI, LightGBM, Supabase (PostgreSQL), Railway, Vercel
-- **Description:** Forecasts where 38 animal diseases are likely to appear over the next 12 months across 245 countries, so outbreaks can be caught in herds and flocks before they reach people.
+  - Led the five-person team and wrote most of the code (1,061 of the repository's 1,075 commits)
+  - Built the data pipeline that loads outbreak records from WOAH WAHIS, FAO EMPRES-i and WHO, plus climate, land, livestock, population and trade data, into Supabase Postgres
+  - Trained a LightGBM model per disease that gives each country a calibrated chance of having the disease, 12 months ahead and month by month, plus province-level models; every model is tested on years it never saw (2023 and 2024 to 2025)
+  - Built the Express API, a Python FastAPI service that runs an outbreak spread simulation (SEIR model), and the React app: an interactive globe, a nine-layer map, disease and country pages, and a three.js scroll story
+  - Added an AI helper on the Anthropic API that explains, from SPEX's own data, why a place's risk is high
+  - Deployed two services on Railway with Docker; set up a weekly job that refreshes the data, rescores every model and emails watch alerts, and GitHub Actions CI that runs about 1,600 automated tests
+- **Key technologies:** React 19, TypeScript, Vite, Tailwind CSS, three.js, Leaflet, Node.js, Express, Python, FastAPI, LightGBM, scikit-learn, pandas, Supabase (PostgreSQL), Anthropic API, Docker, Railway, GitHub Actions
+- **Description:** Forecasts where 38 animal diseases are likely to appear over the next 12 months across 245 countries, and for 29 of them by province, so outbreaks can be caught in herds and flocks before they reach people. 24 of the 38 diseases can pass to humans.
 
 ## 2. BuildUp: National AI Talent Platform
 **URIIS Student Business Innovation Challenge 2026 · Top 5, consolation prize**
@@ -110,9 +113,9 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 
 | Area | Tools |
 |---|---|
-| Frontend | React, TypeScript, JavaScript, Vue 3, HTML, CSS, three.js |
-| Backend | Python, FastAPI, Express, PHP, REST APIs |
-| Data | PostgreSQL, Supabase, MySQL, SQL, Firebase, LightGBM |
-| Cloud and shipping | AWS, Vercel, Railway, Docker, Git, GitHub |
+| Frontend | React, TypeScript, JavaScript, Vue 3, HTML, CSS, Tailwind CSS, three.js, Leaflet |
+| Backend | Node.js, Express, Python, FastAPI, PHP, REST APIs, Anthropic API |
+| Data and ML | PostgreSQL, Supabase, MySQL, SQL, Firebase, LightGBM, scikit-learn, pandas |
+| Cloud and shipping | AWS, Vercel, Railway, Docker, Git, GitHub, GitHub Actions |
 | Design | Figma, Photoshop |
 | Also | Java, C, C++, C# |
