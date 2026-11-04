@@ -48,6 +48,15 @@ Stored in `site/assets/img/memories/`, resized, metadata stripped. The two schoo
 | `game.jpg` | Gators DC match, mid-dive |
 | `outreach-team.jpg` | Outreach dodgeball facilitators team photo |
 
+**Photobooth strip (user's choice, 2026-11-04).** The four frames of every strip (the flash strip, its black-and-white develop, and the contact strip, which runs them last-first) are these, in `site/assets/img/strip/`, resized with metadata stripped:
+
+| File | What it shows |
+|---|---|
+| `suit.jpg` | You Wee's mirror selfie in a black suit and tie |
+| `vice-president.jpg` | You Wee kneeling by a red dodgeball in a Gators DC #10 jersey; the photo's own lettering reads "Vice President" and "You Wee" |
+| `cat.jpg` | You Wee smiling, holding a tabby cat |
+| `cowboy.jpg` | You Wee in a cowboy hat, mirrored sports sunglasses and a pink paisley bandana |
+
 ## Process (from the user's brief)
 
 Raw three.js, vendored, importmap, no build. One smooth scroll value drives DOM and WebGL. Chapters render to their own HDR targets; one composite pass. Builder and critic are separate agents; the critic captures from a frozen snapshot and names the single biggest gap. Progress lives in `workbench/`.

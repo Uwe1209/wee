@@ -46,6 +46,7 @@ const DEVELOP_MAP = /* glsl */ `
   vec4 sampledDiffuseColor = texture2D( map, vMapUv );
   float developed = 1.0;
   float inPhoto = 0.0;
+  float stampZone = 0.0; // the date imprint sits in a frame's lower-right corner
   for (int i = 0; i < DEV_COUNT; i++) {
     vec4 r = uRects[i];
     vec2 size = max(r.zw - r.xy, vec2(1e-4));
@@ -55,11 +56,14 @@ const DEVELOP_MAP = /* glsl */ `
     float reveal = clamp(uDevelop[i] * 1.8 - (1.0 - local.y) * 0.45 - wave, 0.0, 1.0);
     developed = mix(developed, reveal * reveal * (3.0 - 2.0 * reveal), inside);
     inPhoto = max(inPhoto, inside);
+    stampZone = max(stampZone, inside * step(0.55, local.x) * step(local.y, 0.3));
   }
   devPhotoMask = inPhoto;
   vec3 photo = sampledDiffuseColor.rgb;
   float photoLuma = dot(photo, vec3(0.2126, 0.7152, 0.0722));
-  float imprint = smoothstep(0.55, 0.75, photo.r - photo.b) * smoothstep(0.7, 0.9, photo.r);
+  // Only the orange imprint keeps its colour in black and white, not any
+  // orange in the photo itself (a red bracelet, say).
+  float imprint = smoothstep(0.55, 0.75, photo.r - photo.b) * smoothstep(0.7, 0.9, photo.r) * stampZone;
   photo = mix(photo, vec3(photoLuma), uMono * inPhoto * (1.0 - imprint));
   vec3 haze = mix(uHaze, uHaze * (0.8 + 0.4 * photoLuma), uLatent);
   sampledDiffuseColor.rgb = mix(haze, photo, developed);

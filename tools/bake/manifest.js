@@ -21,6 +21,10 @@ const PHOTOS = {
   pitch: 'memories/uriis-pitch.jpg',
   game: 'memories/game.jpg',
   team: 'memories/outreach-team.jpg',
+  suit: 'strip/suit.jpg',
+  vicePresident: 'strip/vice-president.jpg',
+  cat: 'strip/cat.jpg',
+  cowboy: 'strip/cowboy.jpg',
   spexMap: 'projects/spex-map.jpg',
   kacha: 'projects/kacha-camera.jpg',
   herbarium: 'projects/herbarium.jpg',
@@ -33,11 +37,16 @@ export const loadPhotos = async () => Object.fromEntries(
   await Promise.all(Object.entries(PHOTOS).map(async ([key, file]) => [key, await loadImage(IMG + file)])),
 );
 
+// The photobooth strip's four sittings (the owner's own photos), in the order
+// he gave them. Crops: the suit selfie keeps face and phone; the vice-president
+// shot keeps face, jersey and its "You Wee" lettering (the vertical "Vice
+// President" falls outside); the cat photo keeps both faces and leaves the
+// air-conditioner badge out; the cowboy keeps the hat brim and the bandana.
 const memoryFrames = (p) => [
-  { image: p.portrait, zoom: 1.0, focusX: 0.5, focusY: 0.44 },
-  { image: p.poster, zoom: 1.75, focusX: 0.75, focusY: 0.4 },
-  { image: p.certificate, zoom: 1.0, focusX: 0.5, focusY: 0.3 },
-  { image: p.coaching, zoom: 1.0, focusX: 0.5, focusY: 0.31 },
+  { image: p.suit, zoom: 1.1, focusX: 0.45, focusY: 0.37 },
+  { image: p.vicePresident, zoom: 1.6, focusX: 0.55, focusY: 0.36 },
+  { image: p.cat, zoom: 1.25, focusX: 0.6, focusY: 0.4 },
+  { image: p.cowboy, zoom: 1.0, focusX: 0.5, focusY: 0.45 },
 ];
 
 const cutOut = (source, { pad = 28, seed = 3 } = {}) => {
@@ -564,10 +573,8 @@ export const TEXTURES = {
 
   // --- contact
   'strip-contact': {
-    make: (p) => photoStrip([
-      { image: p.coaching, focusY: 0.31 }, { image: p.certificate, focusY: 0.3 },
-      { image: p.poster, zoom: 1.75, focusX: 0.75, focusY: 0.4 }, { image: p.portrait, focusY: 0.44 },
-    ], { look: 'color', stamp: "'26 11 02", seed: 9 }),
+    // The same four sittings as the flash strip, last one first.
+    make: (p) => photoStrip([...memoryFrames(p)].reverse(), { look: 'color', stamp: "'26 11 02", seed: 9 }),
   },
   // The contact note sits between the strip and the links; its ballpoint arrow
   // leaves the note's left end and hooks up and left, at the email.
