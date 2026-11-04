@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["tools/serve.py", "site", "8080"],
       "port": 8080
+    },
+    {
+      "name": "wee-root",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["tools/serve.py", ".", "8091"],
+      "port": 8091
     }
   ]
 }

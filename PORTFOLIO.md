@@ -41,11 +41,11 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 - **Key technologies:** React 19, Vite, Supabase Auth, Express, Vercel
 - **Description:** A photobooth that runs in the browser. Pick a strip, take your shots, edit them with filters, and keep every strip in an album of memories.
 
-## 4. HaoJia HR System
-**Full-stack · 2026 · in progress**
+## 4. F&B HR System
+**Client project · 2026 · in progress**
 
-- **Code:** https://github.com/Uwe1209/HaoJiaHRSystem
-- **Role:** Full-stack developer *[confirm: solo, or for a real client?]*
+- **Code:** private (client project)
+- **Role:** Full-stack developer
 - **What I did:** Designed the database and role-based access; built the team, outlet and worker profile modules with validated forms and work-pass expiry warnings
 - **Key technologies:** React, TypeScript, Vite, Supabase (PostgreSQL), React Hook Form, Zod
 - **Description:** An HR system for a food and beverage group with several outlets, replacing the staff spreadsheet with one source of truth.
