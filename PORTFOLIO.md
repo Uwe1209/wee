@@ -62,7 +62,7 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 ## 6. Herbarium for Plant Biodiversity
 **Web Application Development · 2025**
 
-- **Code:** https://github.com/Uwe1209/PlantBiodiversityProject
+- **Link:** not hosted online
 - **Role:** Developer *[confirm: individual or group assignment]*
 - **What I did:** Built user accounts, plant photo and record uploads, identification and classification pages, and PDF downloads
 - **Key technologies:** PHP, MySQL, HTML, CSS
