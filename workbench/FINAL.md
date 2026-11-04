@@ -80,4 +80,4 @@ About 53% was subagents (builders, critics, smoothing, motion QA) and 47% this o
 
 ## Privacy
 
-The repo is public, and `Liew You Wee_resume.pdf` on `main` shows your phone number and home address. The site itself shows only your email and GitHub.
+`Liew You Wee_resume.pdf` (which shows a phone number and home address) was deleted from `main` and from this branch on 2026-11-04. The repo is public, though, and the file is still in git history: the commit that uploaded it (7eaf39e) can still be opened on GitHub, and pull requests #1 and #2 keep references to it. Fully purging it means rewriting history on both branches and asking GitHub Support to clear cached views and pull-request refs, or making the repo private. The phone number and address appear nowhere else in the repo; the site shows only email and GitHub.
