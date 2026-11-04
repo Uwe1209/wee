@@ -23,7 +23,7 @@ Read this first if you are picking the project up from disk.
 | Card | Source | Notes |
 |---|---|---|
 | SPEX | Uwe1209/spex002, Uwe1209/SPEX_Disease | FYP, led a team of five. 38 animal diseases, 245 countries, calibrated 12-month risk. FastAPI on Railway, frontend on Vercel, Supabase Postgres, weekly refresh. Stack also includes React, TypeScript, three.js (scroll story) and LightGBM models (spex002 package.json and README). Live: spex-disease.vercel.app |
-| BuildUp | resume | URIIS Student Biz Innov Challenge 2026, Top 5. National AI talent platform concept: skills matching, AI career coach on the Anthropic API, Skills Passport, workforce dashboards |
+| BuildUp | resume | URIIS Student Biz Innov Challenge 2026, Top 5. National AI talent platform concept: skills matching, AI career coach on the Anthropic API, Skills Passport, workforce dashboards. Live: buildup-showcase.vercel.app (from the user, 2026-11-04) |
 | kacha | Uwe1209/kacha | Photobooth web app: choose strip, camera, filters editor, album/memories. React 19, Vite, Supabase, Express. Live: kacha-smoky.vercel.app |
 | HaoJia HR | Uwe1209/HaoJiaHRSystem | HR system for a multi-outlet F&B operator: org + worker directory, work-pass expiry. In progress: code is React, TypeScript, Vite, Supabase client, React Hook Form, Zod; Tailwind and RLS policies are in the design spec but not in the repo yet, so don't claim them as built. (fnb-hr-portal repo is empty, folded in here) |
 | PetAid | Uwe1209/pet-aids | Pet first-aid web app with owner, vet and admin roles. React, Vite, Express |
@@ -47,6 +47,15 @@ Stored in `site/assets/img/memories/`, resized, metadata stripped. The two schoo
 | `gators.jpg` | Gators DC dodgeball team photo |
 | `game.jpg` | Gators DC match, mid-dive |
 | `outreach-team.jpg` | Outreach dodgeball facilitators team photo |
+
+**Photobooth strip (user's choice, 2026-11-04).** The four frames of every strip (the flash strip, its black-and-white develop, and the contact strip, which runs them last-first) are these, in `site/assets/img/strip/`, resized with metadata stripped:
+
+| File | What it shows |
+|---|---|
+| `suit.jpg` | You Wee's mirror selfie in a black suit and tie |
+| `vice-president.jpg` | You Wee kneeling by a red dodgeball in a Gators DC #10 jersey; the photo's own lettering reads "Vice President" and "You Wee" |
+| `cat.jpg` | You Wee smiling, holding a tabby cat |
+| `cowboy.jpg` | You Wee in a cowboy hat, mirrored sports sunglasses and a pink paisley bandana |
 
 ## Process (from the user's brief)
 
