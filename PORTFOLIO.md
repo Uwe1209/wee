@@ -24,9 +24,11 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 **URIIS Student Business Innovation Challenge 2026 · Top 5, consolation prize**
 
 - **Showcase site:** https://buildup-showcase.vercel.app
-- **Role:** Team member *[confirm your exact role]*
-- **What I did:** Helped design and prototype the web and mobile apps and present the pitch *[adjust to your part]*
-- **Key technologies:** Web and mobile prototypes, Anthropic API (Claude), pitch deck
+- **Role:** Team lead
+- **What I did:**
+  - Led the team through the competition to a Top 5 finish and a consolation prize
+  - Built the prototype: web and mobile apps with skills-based job matching, an AI career coach on the Anthropic API, a digital Skills Passport and workforce planning dashboards
+- **Key technologies:** Anthropic API (Claude), web and mobile prototypes *[add the framework you built them with]*
 - **Description:** A platform concept tackling Malaysia's graduate skills mismatch, with skills-based job matching, an AI career coach, a digital Skills Passport and workforce planning dashboards.
 
 ## 3. kacha: Browser Photobooth
