@@ -60,7 +60,7 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 - **Description:** First-aid help for pet emergencies, with guides, vet-approved videos and quizzes for dogs, cats, rabbits and more.
 
 ## 6. Herbarium for Plant Biodiversity
-**COS30020 Web Application Development · 2025**
+**Web Application Development · 2025**
 
 - **Code:** https://github.com/Uwe1209/PlantBiodiversityProject
 - **Role:** Developer *[confirm: individual or group assignment]*
@@ -69,7 +69,7 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 - **Description:** A website where participants upload plant photos and records for researchers to use.
 
 ## 7. Bar: Online Drinks Shop
-**COS30043 Interface Design and Development · 2025**
+**Interface Design and Development · 2025**
 
 - **Code:** https://github.com/Uwe1209/Bar
 - **Role:** Frontend developer *[confirm: individual or group]*
