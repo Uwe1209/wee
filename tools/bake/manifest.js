@@ -31,6 +31,7 @@ const PHOTOS = {
   aws: 'projects/aws-architecture.jpg',
   bar: 'projects/bar.jpg',
   lemon: 'projects/little-lemon.jpg',
+  hrDashboard: 'projects/hr-dashboard.png',
 };
 
 export const loadPhotos = async () => Object.fromEntries(
@@ -541,7 +542,7 @@ export const TEXTURES = {
   'card-spex': { make: (p) => instant(p, 'spexMap', 'SPEX: catch it in the animals', { ratio: 0.7, seed: 101 }) },
   'card-buildup': { make: (p) => instant(p, 'pitch', 'BuildUp at URIIS 2026', { ratio: 0.66, pose: { zoom: 1.15, focusX: 0.52, focusY: 0.42 }, seed: 102 }) },
   'card-kacha': { make: (p) => instant(p, 'kacha', 'kacha! a photobooth', { ratio: 1.0, pose: { zoom: 1.9 }, seed: 103 }) },
-  'card-haojia': { make: () => typeCard('F&B HR', ['teams · outlets · workers', 'work-pass expiry alerts', 'phase one, in progress'], { caption: 'client project, still building', seed: 104 }) },
+  'card-haojia': { make: (p) => instant(p, 'hrDashboard', 'F&B HR, sample data', { ratio: 0.62, pose: { focusX: 0 }, seed: 104 }) },
   'card-petaid': { make: () => typeCard('PetAid', ['first aid for pets', 'owners · vets · admins', 'react + express'], { ink: '#ff48b0', accent: '#0078bf', caption: 'petaid', seed: 105 }) },
   'card-herbarium': { make: (p) => instant(p, 'herbarium', 'herbarium project', { ratio: 0.6, pose: { focusX: 0 }, seed: 106 }) },
   'card-aws': { make: (p) => instant(p, 'aws', 'AWS, drawn properly', { ratio: 0.8, seed: 107 }) },

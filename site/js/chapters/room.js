@@ -15,7 +15,7 @@ export const PROJECTS = [
   { key: 'spex', tex: 'card-spex', ratio: 0.7, width: 2.8, tape: 'pink' },
   { key: 'buildup', tex: 'card-buildup', ratio: 0.66, width: 2.8, tape: 'yellow', badge: 'badge-top5' },
   { key: 'kacha', tex: 'card-kacha', ratio: 1.0, width: 2.25, tape: 'blue' },
-  { key: 'haojia', tex: 'card-haojia', ratio: 0.62, width: 2.6, tape: 'cream', typeCard: true },
+  { key: 'haojia', tex: 'card-haojia', ratio: 0.62, width: 2.6, tape: 'cream' },
   { key: 'petaid', tex: 'card-petaid', ratio: 0.62, width: 2.6, tape: 'pink', typeCard: true },
   { key: 'herbarium', tex: 'card-herbarium', ratio: 0.6, width: 2.7, tape: 'yellow' },
   { key: 'aws', tex: 'card-aws', ratio: 0.8, width: 2.5, tape: 'blue' },
