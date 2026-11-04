@@ -28,9 +28,7 @@ const PHOTOS = {
   spexMap: 'projects/spex-map.jpg',
   kacha: 'projects/kacha-camera.jpg',
   herbarium: 'projects/herbarium.jpg',
-  aws: 'projects/aws-architecture.jpg',
   bar: 'projects/bar.jpg',
-  lemon: 'projects/little-lemon.jpg',
   hrDashboard: 'projects/hr-dashboard.png',
 };
 
@@ -545,9 +543,7 @@ export const TEXTURES = {
   'card-haojia': { make: (p) => instant(p, 'hrDashboard', 'F&B HR, sample data', { ratio: 0.62, pose: { focusX: 0 }, seed: 104 }) },
   'card-petaid': { make: () => typeCard('PetAid', ['first aid for pets', 'owners · vets · admins', 'react + express'], { ink: '#ff48b0', accent: '#0078bf', caption: 'petaid', seed: 105 }) },
   'card-herbarium': { make: (p) => instant(p, 'herbarium', 'herbarium project', { ratio: 0.6, pose: { focusX: 0 }, seed: 106 }) },
-  'card-aws': { make: (p) => instant(p, 'aws', 'AWS, drawn properly', { ratio: 0.8, seed: 107 }) },
   'card-bar': { make: (p) => instant(p, 'bar', 'Bar: drinks shop', { ratio: 0.62, seed: 108 }) },
-  'card-lemon': { make: (p) => instant(p, 'lemon', 'little lemon', { ratio: 0.62, seed: 109 }) },
   'room-floor': { make: () => floorboards(), quality: 0.86 },
 
   // --- scrapbook

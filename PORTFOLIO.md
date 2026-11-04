@@ -68,16 +68,7 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 - **Key technologies:** PHP, MySQL, HTML, CSS
 - **Description:** A website where participants upload plant photos and records for researchers to use.
 
-## 7. Cloud Architecture on AWS
-**COS20019 Cloud Computing Architecture · 2025**
-
-- **Report:** https://github.com/Uwe1209/CloudComputingArchitectureProject
-- **Role:** Architect and report author *[confirm: individual or group]*
-- **What I did:** Designed the architecture, drew the AWS service diagrams, mapped the workflow for each key process and wrote the reasoning for every design decision
-- **Key technologies:** AWS, cloud architecture design
-- **Description:** An architecture report for a cloud-hosted system, covering the services used, how key processes flow through them, and why.
-
-## 8. Bar: Online Drinks Shop
+## 7. Bar: Online Drinks Shop
 **COS30043 Interface Design and Development · 2025**
 
 - **Code:** https://github.com/Uwe1209/Bar
@@ -86,16 +77,7 @@ Final-year Bachelor of Computer Science student, Swinburne University of Technol
 - **Key technologies:** Vue 3, Bootstrap, JavaScript
 - **Description:** An online drinks shop with product pages, a cart, purchase history and user accounts.
 
-## 9. Little Lemon: Restaurant Website
-**Meta Front-End Developer course · 2024**
-
-- **Code:** https://github.com/Uwe1209/Little-Lemon-project
-- **Role:** Solo developer
-- **What I did:** Designed and built the full site layout and pages
-- **Key technologies:** HTML, CSS
-- **Description:** A restaurant website built with only HTML and CSS, one of my first projects.
-
-## 10. wee: Interactive Portfolio Site
+## 8. wee: Interactive Portfolio Site
 **Personal project · 2026**
 
 - **Code:** https://github.com/Uwe1209/wee *[not hosted yet; deploy to Vercel or GitHub Pages and add the live link]*

@@ -18,9 +18,7 @@ export const PROJECTS = [
   { key: 'haojia', tex: 'card-haojia', ratio: 0.62, width: 2.6, tape: 'cream' },
   { key: 'petaid', tex: 'card-petaid', ratio: 0.62, width: 2.6, tape: 'pink', typeCard: true },
   { key: 'herbarium', tex: 'card-herbarium', ratio: 0.6, width: 2.7, tape: 'yellow' },
-  { key: 'aws', tex: 'card-aws', ratio: 0.8, width: 2.5, tape: 'blue' },
   { key: 'bar', tex: 'card-bar', ratio: 0.62, width: 2.7, tape: 'cream' },
-  { key: 'lemon', tex: 'card-lemon', ratio: 0.62, width: 2.7, tape: 'yellow' },
 ];
 
 // Cards hang SPACING apart; the camera rests STAND in front of each one, so the card
