@@ -1,6 +1,6 @@
 # Project Portfolio: You Wee Liew
 
-Final-year Bachelor of Computer Science student, Swinburne University of Technology Sarawak (CGPA 3.49). Looking for a full-stack developer role.
+Final-year Bachelor of Computer Science student, Swinburne University of Technology Sarawak (CGPA 3.48). Looking for a full-stack developer role.
 
 - Email: liewyouwee123@gmail.com
 - GitHub: https://github.com/Uwe1209

@@ -483,7 +483,7 @@ export const TEXTURES = {
   'sticker-heart': { make: () => stickerCanvas('heart', 220, '#ff5fa2', { seed: 2 }) },
   'sticker-sparkle': { make: () => stickerCanvas('sparkle', 220, '#3d7bf0', { seed: 3 }) },
   'sticker-star-pink': { make: () => stickerCanvas('star', 220, '#ff5fa2', { seed: 4 }) },
-  'badge-cgpa': { make: () => badge('3.49', 'cgpa · y3s2', { ink: '#0078bf', paper: '#eef6fc' }) },
+  'badge-cgpa': { make: () => badge('3.48', 'cgpa · y3s2', { ink: '#0078bf', paper: '#eef6fc' }) },
   'badge-top5': { make: () => badge('TOP 5', 'uriis 2026', { bigFont: '800 112px "Bricolage Grotesque"' }) },
   'ticket-admit': {
     make: () => ticketStub({
